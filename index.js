@@ -3,7 +3,7 @@ const app = express();
 const path = require('path');
 const PORT = 80;
  
-app.use(express.static(path.join(__dirname, 'Pages'), { // Serve Pages directory
+app.use(express.static(path.join(__dirname, 'Content'), { // Serve Pages directory
     extensions: ['html'],
 }));
  
