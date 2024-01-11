@@ -20,7 +20,7 @@ body {
     padding: 14px 16px;
     text-decoration: none;
     font-size: 17px;
-    transition: 0.2s;
+    transition: 0.5s;
 }
 
 .right {
@@ -31,7 +31,18 @@ body {
     background-color: #204641;
 }
 
+.topnav a:active {
+    background-color: #162c29;
+}
+
 .topnav a.active {
     background-color: #439187;
     color: white;
+}
+
+.textcontainer {
+    text-align: left;
+    margin: auto;
+    max-width: 75%;
+    font-size: 1.25em;
 }
