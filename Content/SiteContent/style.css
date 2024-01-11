@@ -1,0 +1,26 @@
+* { 
+    margin: 0; 
+    padding: 0; 
+} 
+
+.topbar {
+    position: absolute;
+    top: 0;
+    height: 75px;
+    background-color: rgb(229, 229, 229);
+    width: 100%;
+}
+
+.logo {
+    padding-left: 10px;
+    height: 100%;
+}
+
+.logo h1 {
+    width: 25%;
+    height: 100%;
+}
+
+body {
+    font-family: sans-serif;
+}
