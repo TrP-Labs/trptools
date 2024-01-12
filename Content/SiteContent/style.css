@@ -41,14 +41,24 @@ body {
     background-color: #162c29;
 }
 
-.topnav a.active {
-    background-color: #439187;
-    color: white;
-}
-
 .textcontainer {
     text-align: left;
     margin: auto;
     max-width: 75%;
     font-size: 1.25em;
+}
+
+.inputbutton {
+    padding: 6px;
+    margin: 10px;
+    border: none;
+    border-radius: 35px;
+    align-self: center;
+    color: white;
+    font-size: 1em;
+}
+
+.centerbar {
+    flex-direction: row;
+    justify-content: center;
 }
