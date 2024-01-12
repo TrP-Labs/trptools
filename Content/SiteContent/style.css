@@ -11,20 +11,26 @@ body {
     overflow: hidden;
     border-radius: 25px;
     width: fit-content;
+    max-height: 100%;
 }
 
 .topnav a {
     float: left;
     color: #f2f2f2;
     text-align: center;
-    padding: 14px 16px;
+    padding: 20px 16px;
     text-decoration: none;
     font-size: 17px;
-    transition: 0.5s;
+    transition: 0.25s;
 }
 
 .nav-right {
     margin-left: auto;
+}
+
+.nav-float {
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .nav-fill {
@@ -34,11 +40,11 @@ body {
 }
 
 .topnav a:hover {
-    background-color: #204641;
+    background-color: rgb(184, 184, 184);
 }
 
 .topnav a:active {
-    background-color: #162c29;
+    background-color: rgb(216, 216, 216);
 }
 
 .textcontainer {
@@ -49,13 +55,24 @@ body {
 }
 
 .inputbutton {
-    padding: 6px;
+    padding: 10px;
     margin: 10px;
     border: none;
     border-radius: 35px;
     align-self: center;
     color: white;
     font-size: 1em;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.inputbutton:hover {
+    background-color: rgb(184, 184, 184) !important;
+}
+
+.inputbutton:active {
+    background-color: rgb(216, 216, 216) !important;
+    transform: scale(0.75);
 }
 
 .centerbar {
