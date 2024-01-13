@@ -2,7 +2,9 @@
 
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="http://127.0.0.1:5500/Content/SiteContent/style.css">
+        <link rel="stylesheet" type="text/css" href="/SiteContent/style.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="/SiteContent/dispatchHandler.js"></script>
     </head>
 
     <body>
@@ -25,6 +27,22 @@
             </div>
         </div>
 
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Vehicle Number</th>
+                    <th>Vehicle type</th>
+                    <th>Depot</th>
+                    <th>Owner</th>
+                    <th>Assigned</th>
+                    <th>Route</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="table">
+
+            </tbody>
+        </table>
 
         <h1>Dispatch portal</h1>
     </body>
