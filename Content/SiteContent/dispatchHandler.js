@@ -1,4 +1,4 @@
-let dispatchTracker = []
+let dispatchTracker = {}
 let loadeddispatchstring = ""
 
 const Ajv = window.ajv7
@@ -43,12 +43,12 @@ function appendEntry(number) {
 
     // Set Vehicle Name
     $('<td>', {
-        text: dispatchTracker[number].Name,
+        text: dispatchTracker["E_" + number].Name,
     }).appendTo('#' + parentid);
 
     // Set Depot Name
     $('<td>', {
-        text: dispatchTracker[number].Depot,
+        text: dispatchTracker["E_" + number].Depot,
     }).appendTo('#' + parentid);
 
     // Set Owner Name
@@ -58,24 +58,47 @@ function appendEntry(number) {
 
     ownerName.appendTo('#' + parentid);
 
-    if (!dispatchTracker[number].username) {
-        $.ajax({url: "/proxy/name?id="+dispatchTracker[number].OwnerId, success: function(result){
+    if (!dispatchTracker["E_" + number].username) {
+        $.ajax({url: "/proxy/name?id="+dispatchTracker["E_" + number].OwnerId, success: function(result){
             ownerName.html(result.data);
-            dispatchTracker[number].username = result.data
+            dispatchTracker["E_" + number].username = result.data
         }});
     } else {
-        ownerName.html(dispatchTracker[number].username)
+        ownerName.html(dispatchTracker["E_" + number].username)
     }
-    // Add empty stuff
 
-    $('<td>', {
+    // Manage checkbox
+
+    let checkbox = $('<td>', {
         html: '<input type="checkbox">',
-    }).appendTo('#' + parentid);
+    })
+    checkbox.appendTo('#' + parentid);
 
-    $('<td>', {
-        text: ' - ',
-    }).appendTo('#' + parentid);
+    if (dispatchTracker["E_" + number].assigned == true) {
+        checkbox.find(":first-child").prop("checked", true)
+    }
 
+    checkbox.find(":first-child").change(function() {
+        if ($(this).is(":checked")) {
+            dispatchTracker["E_" + number].assigned = true
+        } else {
+            dispatchTracker["E_" + number].assigned = false
+        }
+    });
+
+    // load route (if it exists)
+
+    let route
+    if (!dispatchTracker["E_" + number].route) {
+        route = " - "
+    } else {
+        route = dispatchTracker["E_" + number].route
+    }
+    const routeobj = $('<td>', {
+        text: route,
+        class: "route",
+    }).appendTo('#' + parentid);
+    
     const buttonholder = $('<td>').appendTo('#' + parentid);
 
     // Add buttons
@@ -83,6 +106,11 @@ function appendEntry(number) {
         class: 'inputbutton',
         text: 'Solve',
         style: 'background-color: #4CAF50;',
+        click: function() {
+            const solvedroute = autoSolve(dispatchTracker["E_" + number])
+            dispatchTracker["E_" + number].route = solvedroute
+            routeobj.text(solvedroute)
+        }
     }).appendTo(buttonholder);
 
     $('<button>', {
@@ -102,13 +130,13 @@ function appendEntry(number) {
 }
 
 function createEntry(information) {
-    dispatchTracker[information.Id] = information
+    dispatchTracker["E_" + information.Id] = information
     appendEntry(information.Id)
 }
 
 function deleteEntry(number) {
     $("#" + number).remove();
-    delete dispatchTracker[number]
+    delete dispatchTracker["E_" + number]
 }
 
 function modifyEntry(number, modifications) {
@@ -175,4 +203,20 @@ function show() {
     item.show();
     const input = $('#prompt-data')
     input.focus();
+}
+
+function solveAll() {
+    let i = 0;
+    console.log(dispatchTracker)
+    for (const i in dispatchTracker) {
+        const item = dispatchTracker[i];
+        console.log(item);
+        if (item && !item.route) {
+            const solvedroute = autoSolve(item)
+            dispatchTracker[i].route = solvedroute
+
+            const obj = $("#" + item.Id).find('.route');
+            obj.text(solvedroute)
+        }
+    }
 }
