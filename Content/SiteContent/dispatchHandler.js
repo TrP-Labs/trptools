@@ -1,4 +1,4 @@
-let dispatchTracker = {}
+let dispatchTracker = []
 let loadeddispatchstring = ""
 
 const Ajv = window.ajv7
@@ -29,7 +29,7 @@ function exportTrack() {
 }
 
 function appendEntry(number) {
-    const parentid = "ENTRY" + number
+    const parentid = number
 
     // Create entry parent
     $('<tr>', {
@@ -58,13 +58,14 @@ function appendEntry(number) {
 
     ownerName.appendTo('#' + parentid);
 
-    /* Currently disabled because proxy system is not implemented yet
-
-    $.ajax({url: "/proxy/name?id="+dispatchTracker[number].OwnerId, success: function(result){
-        ownerName.html(result);
-    }});
-    */
-
+    if (!dispatchTracker[number].username) {
+        $.ajax({url: "/proxy/name?id="+dispatchTracker[number].OwnerId, success: function(result){
+            ownerName.html(result.data);
+            dispatchTracker[number].username = result.data
+        }});
+    } else {
+        ownerName.html(dispatchTracker[number].username)
+    }
     // Add empty stuff
 
     $('<td>', {
@@ -88,6 +89,9 @@ function appendEntry(number) {
         class: 'inputbutton',
         text: 'Delete',
         style: 'background-color: #802c2c;',
+        click: function() {
+            deleteEntry($(this).parent().parent().attr('id'));
+        }
     }).appendTo(buttonholder);
 
     $('<button>', {
@@ -103,16 +107,20 @@ function createEntry(information) {
 }
 
 function deleteEntry(number) {
-    $("#ENTRY" + number.toString()).remove();
-    dispatchTracker[number] = null;
+    $("#" + number).remove();
+    delete dispatchTracker[number]
 }
 
 function modifyEntry(number, modifications) {
 
 }
 
-function loadAll() {
-
+function loadAll(list) {
+    let i = 0;
+    while (i < list.length) {
+        createEntry(list[i]);
+        i++;
+    }
 }
 
 function validateString(data) {
@@ -146,10 +154,12 @@ async function submit() {
     const val = input.val()
     const valid = validateString(val)
     if (valid == true) {
-        loadeddispatchstring = val;
+        loadeddispatchstring = JSON.parse(val);
         let item = $('#prompt-parent');
         item.hide();
         input.val("")
+
+        loadAll(loadeddispatchstring)
     }
 }
 
