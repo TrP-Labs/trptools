@@ -23,6 +23,8 @@ const route_overrides = {
     'VAZ-2109 Sputnik': "Staff"
 }
 
+// This is just a basic version, needs to account for the amount of vehicles on each route
+
 function autoSolve(data) {
     let route = null
 
