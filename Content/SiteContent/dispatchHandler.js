@@ -130,6 +130,7 @@ function appendEntry(number) {
 }
 
 function createEntry(information) {
+    if (dispatchTracker["E_" + information.Id]) return
     dispatchTracker["E_" + information.Id] = information
     appendEntry(information.Id)
 }
@@ -148,6 +149,27 @@ function loadAll(list) {
     while (i < list.length) {
         createEntry(list[i]);
         i++;
+    }
+}
+
+function compare(current) {
+    for (const i in dispatchTracker) {
+        const item = dispatchTracker[i];
+
+        let found = false;
+
+        let b = 0;
+        while (b < current.length) {
+            if (current[b].Id == item.Id) {
+                found = true
+            }
+            b++;
+        }
+        
+        if (found == false) {
+           const obj = $("#" + item.Id) 
+           obj.css("background-color","#E37979");
+        }    
     }
 }
 
@@ -187,6 +209,7 @@ async function submit() {
         item.hide();
         input.val("")
 
+        compare(loadeddispatchstring)
         loadAll(loadeddispatchstring)
     }
 }
