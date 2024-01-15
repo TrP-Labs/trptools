@@ -222,10 +222,16 @@ function cancel() {
 }
 
 function show() {
-    let item = $('#prompt-parent');
-    item.show();
-    const input = $('#prompt-data')
-    input.focus();
+    showCustom({
+        title: "Input JSON",
+        description: "Paste JSON data from ExportVehicleList command",
+        input: true,
+        buttons: [
+            {text: "Cancel", color: "#802c2c", function: cancel},
+            {text: "Paste", color: "#2c4980", width: "15%", function: paste},
+            {text: "Submit", color: "#4CAF50", function: submit}
+        ]
+    })
 }
 
 function solveAll() {
@@ -241,5 +247,33 @@ function solveAll() {
             const obj = $("#" + item.Id).find('.route');
             obj.text(solvedroute)
         }
+    }
+}
+
+
+function showCustom(info) {
+    $("#prompt-title").text(info.title)
+    $("#prompt-desc").text(info.description)
+
+    const bh = $("prompt-buttonholder")
+    bh.empty()
+    info.buttons.forEach((button) => {
+        if (!button.width) {button.width = '25%'}
+        $('<button>', {
+            class: 'inputbutton',
+            text: button.text,
+            style: `background-color: ${button.color}; width: ${button.width};`,
+            click: button.function,
+        }).appendTo(bh);
+    });
+
+    $('#prompt-parent').show();
+
+    const input = $('#prompt-data')
+    if (info.input == true) {
+        input.show();
+        input.focus();
+    } else {
+        input.hide();
     }
 }

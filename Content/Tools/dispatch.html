@@ -12,9 +12,9 @@
 
     <body>
         <div class="promptdiv" id="prompt-parent" style="display: none;">
-            <h1>Input JSON</h1>
-            <p>
-                Paste JSON data from ExportVehicleList command
+            <h1 id="prompt-title"></h1>
+            <p id="prompt-desc">
+                
             </p>
             <textarea id="prompt-data" name="JSON Data" rows="4" cols="50"> </textarea>
 
@@ -23,7 +23,7 @@
                 <p id="alert-text" style="margin: 0;">Alert box</p>
               </div>
 
-            <div>
+            <div id="prompt-buttonholder">
                 <button onclick="cancel()" id="prompt-cancel" class="inputbutton" style="background-color: #802c2c;"> Cancel </button>
                 <button onclick="paste()" class="inputbutton" style="background-color: #2c4980; width: 15%;"> Paste </button>
                 <button onclick="submit()" id="prompt-submit" class="inputbutton" style="background-color: #4CAF50;"> Submit </button>                
