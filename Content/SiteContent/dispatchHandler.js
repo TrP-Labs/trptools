@@ -136,8 +136,21 @@ function createEntry(information) {
 }
 
 function deleteEntry(number) {
-    $("#" + number).remove();
-    delete dispatchTracker["E_" + number]
+    function yes_delete() {
+        $("#" + number).remove();
+        delete dispatchTracker["E_" + number]
+        closewindow()
+    }
+
+    showCustom({
+        title: "Delete " + number + "?",
+        description: "Are you sure you want to delete bus " + number + " owned by " + dispatchTracker["E_" + number].username + "?",
+        input: false,
+        buttons: [
+            {text: "No", color: "#802c2c", function: closewindow},
+            {text: "Yes", color: "#4CAF50", function: yes_delete}
+        ]
+    })
 }
 
 function modifyEntry(number, modifications) {
@@ -205,18 +218,18 @@ async function submit() {
     const valid = validateString(val)
     if (valid == true) {
         loadeddispatchstring = JSON.parse(val);
-        let item = $('#prompt-parent');
-        item.hide();
-        input.val("")
+        closewindow()
 
         compare(loadeddispatchstring)
         loadAll(loadeddispatchstring)
     }
 }
 
-function cancel() {
+
+function closewindow() {
     let item = $('#prompt-parent');
     const input = $('#prompt-data')
+    $('#overlay').hide()
     item.hide();
     input.val("")
 }
@@ -227,7 +240,7 @@ function show() {
         description: "Paste JSON data from ExportVehicleList command",
         input: true,
         buttons: [
-            {text: "Cancel", color: "#802c2c", function: cancel},
+            {text: "Cancel", color: "#802c2c", function: closewindow},
             {text: "Paste", color: "#2c4980", width: "15%", function: paste},
             {text: "Submit", color: "#4CAF50", function: submit}
         ]
@@ -255,9 +268,10 @@ function showCustom(info) {
     $("#prompt-title").text(info.title)
     $("#prompt-desc").text(info.description)
 
-    const bh = $("prompt-buttonholder")
+    const bh = $("#prompt-buttonholder")
     bh.empty()
     info.buttons.forEach((button) => {
+        console.log('button')
         if (!button.width) {button.width = '25%'}
         $('<button>', {
             class: 'inputbutton',
@@ -268,6 +282,7 @@ function showCustom(info) {
     });
 
     $('#prompt-parent').show();
+    $('#overlay').show()
 
     const input = $('#prompt-data')
     if (info.input == true) {

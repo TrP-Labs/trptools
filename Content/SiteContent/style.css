@@ -129,6 +129,11 @@ textarea {
     max-height: 400px;
 }
 
+input {
+    height: 25px;
+    width: 25px;
+}
+
 .alert {
     padding: 20px;
     background-color: #993932;
@@ -155,4 +160,13 @@ textarea {
   /* When moving the mouse over the close button */
   .closebtn:hover {
     color: black;
+  }
+
+  .overlay {
+    background-color: rgba(0,0,0,0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
   }

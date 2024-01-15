@@ -11,7 +11,7 @@
     </head>
 
     <body>
-        <div class="promptdiv" id="prompt-parent" style="display: none;">
+        <div class="promptdiv" id="prompt-parent" style="display: none; z-index: 3;">
             <h1 id="prompt-title"></h1>
             <p id="prompt-desc">
                 
@@ -23,12 +23,11 @@
                 <p id="alert-text" style="margin: 0;">Alert box</p>
               </div>
 
-            <div id="prompt-buttonholder">
-                <button onclick="cancel()" id="prompt-cancel" class="inputbutton" style="background-color: #802c2c;"> Cancel </button>
-                <button onclick="paste()" class="inputbutton" style="background-color: #2c4980; width: 15%;"> Paste </button>
-                <button onclick="submit()" id="prompt-submit" class="inputbutton" style="background-color: #4CAF50;"> Submit </button>                
+            <div id="prompt-buttonholder">          
             </div>
         </div>
+
+        <div id="overlay" class="overlay" style="display: none;"></div>
 
         <div class="topnavholder">
             <div class="topnav">
