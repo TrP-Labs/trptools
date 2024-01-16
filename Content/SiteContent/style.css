@@ -188,3 +188,15 @@ input {
     color: black;
     text-decoration: none; 
   }
+
+  .bottombar {
+    position: fixed;
+    background-color: #3a3a3a;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    white-space: nowrap;
+    color: white;
+    vertical-align: middle;
+    padding: 3px;
+  }

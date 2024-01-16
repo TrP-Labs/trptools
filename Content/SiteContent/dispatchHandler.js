@@ -292,3 +292,10 @@ function showCustom(info) {
         input.hide();
     }
 }
+
+// bottombar updates
+
+setInterval(function() {
+    const total = Object.keys(dispatchTracker).length;
+    $('#bottombar').text("Total Vehicles: " + total)
+}, 500);
