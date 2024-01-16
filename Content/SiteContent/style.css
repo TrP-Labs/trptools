@@ -50,7 +50,6 @@ body {
 .textcontainer {
     text-align: left;
     margin: auto;
-    max-width: 75%;
     font-size: 1.25em;
 }
 
@@ -169,4 +168,23 @@ input {
     left: 0;
     height: 100%;
     width: 100%;
+  }
+
+  .frontboxholder {
+    padding-top: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .frontboxholder div {
+    margin: 25px;
+    max-width: 500px;
+  }
+
+  /* remove link style */
+  a {
+    color: black;
+    text-decoration: none; 
   }
