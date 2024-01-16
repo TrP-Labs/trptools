@@ -249,13 +249,14 @@ function show() {
 
 function solveAll() {
     let i = 0;
-    console.log(dispatchTracker)
     for (const i in dispatchTracker) {
         const item = dispatchTracker[i];
         console.log(item);
         if (item && !item.route) {
             const solvedroute = autoSolve(item)
             dispatchTracker[i].route = solvedroute
+
+            routestatus[solvedroute.toString()] = routestatus[solvedroute.toString()] + 1
 
             const obj = $("#" + item.Id).find('.route');
             obj.text(solvedroute)
@@ -297,5 +298,10 @@ function showCustom(info) {
 
 setInterval(function() {
     const total = Object.keys(dispatchTracker).length;
-    $('#bottombar').text("Total Vehicles: " + total)
+    $('#bottombar .all').text("Vehicles: " + total)
+    $('#bottombar .6').text("R6: " + routestatus['6'])
+    $('#bottombar .9').text("R9: " + routestatus['9'])
+    $('#bottombar .10').text("R10: " + routestatus['10'])
+    $('#bottombar .14').text("R14: " + routestatus['14'])
+    $('#bottombar .16').text("R16: " + routestatus['16'])
 }, 500);

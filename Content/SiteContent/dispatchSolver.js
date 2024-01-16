@@ -23,6 +23,14 @@ const route_overrides = {
     'VAZ-2109 Sputnik': "Staff"
 }
 
+const routestatus = {
+    ['6'] : 0,
+    ['9'] : 0,
+    ['10'] : 0,
+    ['14'] : 0,
+    ['16'] : 0,
+}
+
 // This is just a basic version, needs to account for the amount of vehicles on each route
 
 function autoSolve(data) {
