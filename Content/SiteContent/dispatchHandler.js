@@ -140,7 +140,6 @@ function appendEntry(number) {
             showCustom({
                 title: "Vehicle information for " + number + ":",
                 description: `Owner: ${dispatchTracker["E_" + number].username} <br> Depot: ${dispatchTracker["E_" + number].Depot} <br> Vehicle: ${dispatchTracker["E_" + number].Name}`,
-                input: false,
                 buttons: [
                     {text: "Close", color: "#4CAF50", function: closewindow}
                 ]
@@ -165,7 +164,6 @@ function deleteEntry(number) {
     showCustom({
         title: "Delete " + number + "?",
         description: "Are you sure you want to delete bus " + number + " owned by " + dispatchTracker["E_" + number].username + "?",
-        input: false,
         buttons: [
             {text: "No", color: "#802c2c", function: closewindow},
             {text: "Yes", color: "#4CAF50", function: yes_delete}
@@ -274,7 +272,9 @@ function show() {
     showCustom({
         title: "Input JSON",
         description: "Paste JSON data from ExportVehicleList command",
-        input: true,
+        input: [
+            {title: '', id: 'prompt-data'}
+        ],
         buttons: [
             {text: "Cancel", color: "#802c2c", function: closewindow},
             {text: "Paste", color: "#2c4980", width: "15%", function: paste},
@@ -304,10 +304,24 @@ function showCustom(info) {
     $("#prompt-title").text(info.title)
     $("#prompt-desc").html(info.description)
 
+    const ih = $("#prompt-inputholder")
+    ih.empty()
+    if (info.input) {
+        info.input.forEach((input) => {
+            $('<h1>', {
+                text: input.title
+            }).appendTo(ih);
+            $('<textarea>', {
+                rows: 4,
+                cols: 50,
+                id: input.id,
+            }).appendTo(ih);
+        });
+    }
+
     const bh = $("#prompt-buttonholder")
     bh.empty()
     info.buttons.forEach((button) => {
-        console.log('button')
         if (!button.width) {button.width = '25%'}
         $('<button>', {
             class: 'inputbutton',
@@ -319,14 +333,6 @@ function showCustom(info) {
 
     $('#prompt-parent').show();
     $('#overlay').show()
-
-    const input = $('#prompt-data')
-    if (info.input == true) {
-        input.show();
-        input.focus();
-    } else {
-        input.hide();
-    }
 }
 
 // bottombar updates
