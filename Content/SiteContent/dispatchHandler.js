@@ -5,11 +5,11 @@ const Ajv = window.ajv7
 const ajv = new Ajv();
 
 const routecolors = {
-    "6" : "#966a27",
-    "9" : "#2d8d42",
-    "10" : "#8d872d",
-    "14" : "#5c5cbd",
-    "16" : "#993838"
+    "6" : "#d5a55d",
+    "9" : "#64ce7b",
+    "10" : "#bbce64",
+    "14" : "#6e6ec4",
+    "16" : "#c86a6a"
 }
 
 const schema = {
