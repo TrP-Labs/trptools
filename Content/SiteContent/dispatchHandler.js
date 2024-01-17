@@ -49,16 +49,6 @@ function appendEntry(number) {
         text: number,
     }).appendTo('#' + parentid);
 
-    // Set Vehicle Name
-    $('<td>', {
-        text: dispatchTracker["E_" + number].Name,
-    }).appendTo('#' + parentid);
-
-    // Set Depot Name
-    $('<td>', {
-        text: dispatchTracker["E_" + number].Depot,
-    }).appendTo('#' + parentid);
-
     // Set Owner Name
     let ownerName = $('<td>', {
         text: "Loading...",
@@ -75,25 +65,6 @@ function appendEntry(number) {
         ownerName.html(dispatchTracker["E_" + number].username)
     }
 
-    // Manage checkbox
-
-    let checkbox = $('<td>', {
-        html: '<input type="checkbox">',
-    })
-    checkbox.appendTo('#' + parentid);
-
-    if (dispatchTracker["E_" + number].assigned == true) {
-        checkbox.find(":first-child").prop("checked", true)
-    }
-
-    checkbox.find(":first-child").change(function() {
-        if ($(this).is(":checked")) {
-            dispatchTracker["E_" + number].assigned = true
-        } else {
-            dispatchTracker["E_" + number].assigned = false
-        }
-    });
-
     // load route (if it exists)
 
     let route
@@ -106,7 +77,26 @@ function appendEntry(number) {
         text: route,
         class: "route",
     }).appendTo('#' + parentid);
-    
+
+    // Manage checkbox
+
+    let checkbox = $('<td>', {
+        html: '<input type="checkbox">',
+    })
+    checkbox.appendTo('#' + parentid);
+
+    if (dispatchTracker["E_" + number].assigned == true) {
+        checkbox.find(":first-child").prop("checked", true)
+    }
+
+    checkbox.find(":first-child").change(function () {
+        if ($(this).is(":checked")) {
+            dispatchTracker["E_" + number].assigned = true
+        } else {
+            dispatchTracker["E_" + number].assigned = false
+        }
+    });
+
     const buttonholder = $('<td>').appendTo('#' + parentid);
 
     // Add buttons
@@ -138,6 +128,22 @@ function appendEntry(number) {
         class: 'inputbutton',
         text: 'Edit',
         style: 'background-color: #81693d;',
+    }).appendTo(buttonholder);
+
+    $('<button>', {
+        class: 'inputbutton',
+        text: 'Information',
+        style: 'background-color: #326da8;',
+        click: function() {
+            showCustom({
+                title: "Vehicle information for vehicle " + number + ":",
+                description: `Owner: ${dispatchTracker["E_" + number].username} <br> Depot: ${dispatchTracker["E_" + number].Depot} <br> Vehicle: ${dispatchTracker["E_" + number].Name}`,
+                input: false,
+                buttons: [
+                    {text: "Close", color: "#4CAF50", function: closewindow}
+                ]
+            })
+        }
     }).appendTo(buttonholder);
 }
 
@@ -289,7 +295,7 @@ function solveAll() {
 
 function showCustom(info) {
     $("#prompt-title").text(info.title)
-    $("#prompt-desc").text(info.description)
+    $("#prompt-desc").html(info.description)
 
     const bh = $("#prompt-buttonholder")
     bh.empty()
@@ -333,8 +339,10 @@ setInterval(function() {
     }
 
     for (const key in dispatchTracker) {
-        let item = dispatchTracker[key].route.toString()
-        calcroutestatus[item.toString()] = calcroutestatus[item.toString()] + 1
+        let item = dispatchTracker[key].route
+        if (item) {
+            calcroutestatus[item.toString()] = calcroutestatus[item.toString()] + 1
+        }
     }
 
     routestatus = calcroutestatus

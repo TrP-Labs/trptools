@@ -109,6 +109,7 @@ body {
     background-color: #3a3a3a;
     color: white;
     border-radius: 25px;
+    padding: 15px;
 }
 
 .promptdiv input {
