@@ -97,11 +97,13 @@ function appendEntry(number) {
         }
     });
 
-    const buttonholder = $('<td>').appendTo('#' + parentid);
+    const buttonholder = $('<td>', {
+        class: 'buttonholder',
+    }).appendTo('#' + parentid);
 
     // Add buttons
     $('<button>', {
-        class: 'inputbutton',
+        class: 'inputbutton solvebutton',
         text: 'Solve',
         style: 'background-color: #4CAF50;',
         click: function() {
@@ -136,7 +138,7 @@ function appendEntry(number) {
         style: 'background-color: #326da8;',
         click: function() {
             showCustom({
-                title: "Vehicle information for vehicle " + number + ":",
+                title: "Vehicle information for " + number + ":",
                 description: `Owner: ${dispatchTracker["E_" + number].username} <br> Depot: ${dispatchTracker["E_" + number].Depot} <br> Vehicle: ${dispatchTracker["E_" + number].Name}`,
                 input: false,
                 buttons: [
@@ -174,10 +176,15 @@ function deleteEntry(number) {
 function modifyEntry(number, modifications) {
     switch (modifications.type) {
         case 'route':
+            // internal updates
             const routeobj = $("#" + number).find('.route')
             dispatchTracker["E_" + number].route = modifications.data
+            // visual updates
             routeobj.text(modifications.data)
             routeobj.css('background-color', routecolors[modifications.data])
+            const solvebutton = $("#" + number).find('.buttonholder').find('.solvebutton')
+            solvebutton.css('background-color', '#7e8f46')
+            solvebutton.text('Re-Solve')
           break;
         case 'number':
             dispatchTracker["E_" + modifications.data] = dispatchTracker["E_" + number]
