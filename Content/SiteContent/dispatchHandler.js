@@ -4,6 +4,14 @@ let loadeddispatchstring = ""
 const Ajv = window.ajv7
 const ajv = new Ajv();
 
+const routecolors = {
+    "6" : "#966a27",
+    "9" : "#2d8d42",
+    "10" : "#8d872d",
+    "14" : "#5c5cbd",
+    "16" : "#993838"
+}
+
 const schema = {
     "type": "array",
     "items": {
@@ -108,8 +116,11 @@ function appendEntry(number) {
         style: 'background-color: #4CAF50;',
         click: function() {
             const solvedroute = autoSolve(dispatchTracker["E_" + number])
-            dispatchTracker["E_" + number].route = solvedroute
-            routeobj.text(solvedroute)
+
+            modifyEntry(number, {
+                type : 'route', 
+                data : solvedroute
+            })
         }
     }).appendTo(buttonholder);
 
@@ -154,7 +165,15 @@ function deleteEntry(number) {
 }
 
 function modifyEntry(number, modifications) {
-
+    switch (modifications.type) {
+        case 'route':
+            const routeobj = $("#" + number).find('.route')
+            dispatchTracker["E_" + number].route = modifications.data
+            routeobj.text(modifications.data)
+        case 'number':
+            dispatchTracker["E_" + modifications.data] = dispatchTracker["E_" + number]
+            delete dispatchTracker["E_" + number]
+    }
 }
 
 function loadAll(list) {
@@ -251,13 +270,14 @@ function solveAll() {
     let i = 0;
     for (const i in dispatchTracker) {
         const item = dispatchTracker[i];
-        console.log(item);
         if (item && !item.route) {
             const solvedroute = autoSolve(item)
             dispatchTracker[i].route = solvedroute
 
-            const obj = $("#" + item.Id).find('.route');
-            obj.text(solvedroute)
+            modifyEntry(item.Id, {
+                type : 'route', 
+                data : solvedroute
+            })
         }
     }
 }
