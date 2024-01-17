@@ -256,8 +256,6 @@ function solveAll() {
             const solvedroute = autoSolve(item)
             dispatchTracker[i].route = solvedroute
 
-            routestatus[solvedroute.toString()] = routestatus[solvedroute.toString()] + 1
-
             const obj = $("#" + item.Id).find('.route');
             obj.text(solvedroute)
         }
@@ -297,8 +295,27 @@ function showCustom(info) {
 // bottombar updates
 
 setInterval(function() {
+    // set total
     const total = Object.keys(dispatchTracker).length;
     $('#bottombar .all').text("Vehicles: " + total)
+
+    // update route stats internally
+    const calcroutestatus = {
+        ['6'] : 0,
+        ['9'] : 0,
+        ['10'] : 0,
+        ['14'] : 0,
+        ['16'] : 0,
+    }
+
+    for (const key in dispatchTracker) {
+        let item = dispatchTracker[key].route.toString()
+        calcroutestatus[item.toString()] = calcroutestatus[item.toString()] + 1
+    }
+
+    routestatus = calcroutestatus
+
+    // set route stats
     $('#bottombar .6').text("R6: " + routestatus['6'])
     $('#bottombar .9').text("R9: " + routestatus['9'])
     $('#bottombar .10').text("R10: " + routestatus['10'])

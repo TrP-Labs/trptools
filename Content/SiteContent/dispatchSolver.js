@@ -23,7 +23,7 @@ const route_overrides = {
     'VAZ-2109 Sputnik': "Staff"
 }
 
-const routestatus = {
+let routestatus = {
     ['6'] : 0,
     ['9'] : 0,
     ['10'] : 0,
