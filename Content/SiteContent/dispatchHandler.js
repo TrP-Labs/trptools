@@ -115,6 +115,7 @@ function appendEntry(number) {
         text: 'Solve',
         style: 'background-color: #4CAF50;',
         click: function() {
+            console.log(dispatchTracker["E_" + number])
             const solvedroute = autoSolve(dispatchTracker["E_" + number])
 
             modifyEntry(number, {
@@ -170,9 +171,12 @@ function modifyEntry(number, modifications) {
             const routeobj = $("#" + number).find('.route')
             dispatchTracker["E_" + number].route = modifications.data
             routeobj.text(modifications.data)
+            routeobj.css('background-color', routecolors[modifications.data])
+          break;
         case 'number':
             dispatchTracker["E_" + modifications.data] = dispatchTracker["E_" + number]
             delete dispatchTracker["E_" + number]
+          break;
     }
 }
 
