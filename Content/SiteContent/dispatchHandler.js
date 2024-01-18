@@ -79,7 +79,7 @@ function appendEntry(numindex) {
     // Manage checkbox
 
     let checkbox = $('<td>', {
-        html: '<input type="checkbox">',
+        html: '<input type="checkbox" class="checkbox">',
     })
     checkbox.appendTo(entry);
 

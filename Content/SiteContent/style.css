@@ -193,3 +193,8 @@ textarea {
     vertical-align: middle;
     padding: 3px;
   }
+
+  .checkbox {
+    height: 25px;
+    width: 25px;
+  }
