@@ -1,17 +1,21 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const PORT = 80;
- 
-app.use(express.static(path.join(__dirname, 'Content'), { // Serve Pages directory
+const http = require('http').createServer(app);
+
+app.use(express.static(path.join(__dirname, 'Content'), {
     extensions: ['html'],
 }));
 
-// Rendering and API modules
+// Require module systems
 app.use('/proxy', require(__dirname + '/serverModules/proxy.js'));
- 
-app.use(function(req, res) { // 404 Handler - This must come last
+
+const socketIO = require(__dirname + '/serverModules/dispatchSocket.js');
+socketIO(http);
+
+// 404 Handler - This must come last
+app.use(function(req, res) {
     res.status(404).send('404 not found');
 });
 
-app.listen(PORT)
+http.listen(80);
