@@ -28,79 +28,76 @@ const schema = {
 
 const validate = ajv.compile(schema);
 
-function importTrack(track) {
-    dispatchTracker = JSON.parse(track)
-}
-
-function exportTrack() {
-    return JSON.stringify(dispatchTracker)
-}
-
 function appendEntry(numindex) {
     const number = dispatchTracker["E_" + numindex].Id
+    const info = dispatchTracker["E_" + numindex]
 
     // Create entry parent
-    $('<tr>', {
+    const entry = $('<tr>', {
         id: number,
     }).appendTo('#table');
+
+    if (info.dead == true) {
+        entry.css("background-color","#E37979");
+    }
 
     // Set Vehicle ID
     $('<td>', {
         class: "number",
         text: number,
-    }).appendTo('#' + number);
+    }).appendTo(entry);
 
     // Set Owner Name
     let ownerName = $('<td>', {
         text: "Loading...",
     })
 
-    ownerName.appendTo('#' + number);
+    ownerName.appendTo(entry);
 
-    if (!dispatchTracker["E_" + number].username) {
-        $.ajax({url: "/proxy/name?id="+dispatchTracker["E_" + number].OwnerId, success: function(result){
+    if (!info.username) {
+        $.ajax({url: "/proxy/name?id="+info.OwnerId, success: function(result){
             ownerName.html(result.data);
-            dispatchTracker["E_" + number].username = result.data
+            info.username = result.data
         }});
     } else {
-        ownerName.html(dispatchTracker["E_" + number].username)
+        ownerName.html(info.username)
     }
 
     // load route (if it exists)
 
     let route
-    if (!dispatchTracker["E_" + number].route) {
+    if (!info.route) {
         route = " - "
     } else {
-        route = dispatchTracker["E_" + number].route
+        route = info.route
     }
     const routeobj = $('<td>', {
         text: route,
         class: "route",
-    }).appendTo('#' + number);
+    }).appendTo(entry);
 
     // Manage checkbox
 
     let checkbox = $('<td>', {
         html: '<input type="checkbox">',
     })
-    checkbox.appendTo('#' + number);
+    checkbox.appendTo(entry);
 
-    if (dispatchTracker["E_" + number].assigned == true) {
+    if (info.assigned == true) {
         checkbox.find(":first-child").prop("checked", true)
     }
 
     checkbox.find(":first-child").change(function () {
         if ($(this).is(":checked")) {
-            dispatchTracker["E_" + number].assigned = true
+            info.assigned = true
         } else {
-            dispatchTracker["E_" + number].assigned = false
+            info.assigned = false
         }
     });
 
     const buttonholder = $('<td>', {
         class: 'buttonholder',
-    }).appendTo('#' + number);
+    }).appendTo(entry);
 
     // Add buttons
     $('<button>', {
@@ -108,8 +105,7 @@ function appendEntry(numindex) {
         text: 'Solve',
         style: 'background-color: #4CAF50;',
         click: function() {
-            console.log(dispatchTracker["E_" + number])
-            const solvedroute = autoSolve(dispatchTracker["E_" + number])
+            const solvedroute = autoSolve(info)
 
             modifyEntry(number, {
                 type : 'route', 
@@ -123,7 +119,7 @@ function appendEntry(numindex) {
         text: 'Delete',
         style: 'background-color: #802c2c;',
         click: function() {
-            deleteEntry($(this).parent().parent().attr('id'));
+            modifyEntry(number, {type: 'delete'})
         }
     }).appendTo(buttonholder);
 
@@ -145,7 +141,7 @@ function appendEntry(numindex) {
                 ]
             })
 
-            $('#prompt-route').val(dispatchTracker["E_" + number].route)
+            $('#prompt-route').val(info.route)
 
             function apply() {
                 modifyEntry(number, {type: 'route', data: $('#prompt-route').val()})
@@ -161,7 +157,7 @@ function appendEntry(numindex) {
         click: function() {
             showCustom({
                 title: "Vehicle information for " + number + ":",
-                description: `Owner: ${dispatchTracker["E_" + number].username} <br> Depot: ${dispatchTracker["E_" + number].Depot} <br> Vehicle: ${dispatchTracker["E_" + number].Name}`,
+                description: `Owner: ${info.username} <br> Depot: ${info.Depot} <br> Vehicle: ${info.Name}`,
                 buttons: [
                     {text: "Close", color: "#4CAF50", function: closewindow}
                 ]
@@ -174,23 +170,6 @@ function createEntry(information) {
     if (dispatchTracker["E_" + information.Id]) return
     dispatchTracker["E_" + information.Id] = information
     appendEntry(information.Id)
-}
-
-function deleteEntry(number) {
-    function yes_delete() {
-        $("#" + number).remove();
-        delete dispatchTracker["E_" + number]
-        closewindow()
-    }
-
-    showCustom({
-        title: "Delete " + number + "?",
-        description: "Are you sure you want to delete bus " + number + " owned by " + dispatchTracker["E_" + number].username + "?",
-        buttons: [
-            {text: "No", color: "#802c2c", function: closewindow},
-            {text: "Yes", color: "#4CAF50", function: yes_delete}
-        ]
-    })
 }
 
 function modifyEntry(number, modifications) {
@@ -208,6 +187,27 @@ function modifyEntry(number, modifications) {
             solvebutton.css('background-color', '#7e8f46')
             solvebutton.text('Re-Solve')
           break;
+        case 'delete':
+            function yes_delete() {
+                $("#" + number).remove();
+                delete dispatchTracker["E_" + number]
+                closewindow()
+            }
+        
+            showCustom({
+                title: "Delete " + number + "?",
+                description: "Are you sure you want to delete bus " + number + " owned by " + dispatchTracker["E_" + number].username + "?",
+                buttons: [
+                    {text: "No", color: "#802c2c", function: closewindow},
+                    {text: "Yes", color: "#4CAF50", function: yes_delete}
+                ]
+            })
+          break;
+        case 'dead':
+            const obj = $("#" + number) 
+            obj.css("background-color","#E37979");
+            dispatchTracker["E_" + number].dead = true
+        break;
     }
 }
 
@@ -234,8 +234,7 @@ function compare(current) {
         }
         
         if (found == false) {
-           const obj = $("#" + item.Id) 
-           obj.css("background-color","#E37979");
+            modifyEntry(item.Id, {type: 'dead'})
         }    
     }
 }
@@ -257,8 +256,6 @@ function validateString(data) {
         return false;
     }
 }
-
-// Button Proccessors
 
 async function paste() {
     const text = await navigator.clipboard.readText()
