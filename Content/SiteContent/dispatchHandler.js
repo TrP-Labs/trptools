@@ -36,25 +36,26 @@ function exportTrack() {
     return JSON.stringify(dispatchTracker)
 }
 
-function appendEntry(number) {
-    const parentid = number
+function appendEntry(numindex) {
+    const number = dispatchTracker["E_" + numindex].Id
 
     // Create entry parent
     $('<tr>', {
-        id: parentid,
+        id: number,
     }).appendTo('#table');
 
     // Set Vehicle ID
     $('<td>', {
+        class: "number",
         text: number,
-    }).appendTo('#' + parentid);
+    }).appendTo('#' + number);
 
     // Set Owner Name
     let ownerName = $('<td>', {
         text: "Loading...",
     })
 
-    ownerName.appendTo('#' + parentid);
+    ownerName.appendTo('#' + number);
 
     if (!dispatchTracker["E_" + number].username) {
         $.ajax({url: "/proxy/name?id="+dispatchTracker["E_" + number].OwnerId, success: function(result){
@@ -76,14 +77,14 @@ function appendEntry(number) {
     const routeobj = $('<td>', {
         text: route,
         class: "route",
-    }).appendTo('#' + parentid);
+    }).appendTo('#' + number);
 
     // Manage checkbox
 
     let checkbox = $('<td>', {
         html: '<input type="checkbox">',
     })
-    checkbox.appendTo('#' + parentid);
+    checkbox.appendTo('#' + number);
 
     if (dispatchTracker["E_" + number].assigned == true) {
         checkbox.find(":first-child").prop("checked", true)
@@ -99,7 +100,7 @@ function appendEntry(number) {
 
     const buttonholder = $('<td>', {
         class: 'buttonholder',
-    }).appendTo('#' + parentid);
+    }).appendTo('#' + number);
 
     // Add buttons
     $('<button>', {
@@ -130,6 +131,27 @@ function appendEntry(number) {
         class: 'inputbutton',
         text: 'Edit',
         style: 'background-color: #81693d;',
+        click: function() { 
+            console.log(number)
+            showCustom({
+                title: "Apply edits for vehicle " + number,
+                description: "",
+                input: [
+                    {title: "Route", id: "prompt-route", focus: true},
+                ],
+                buttons: [
+                    {text: "Cancel", color: "#802c2c", function: closewindow},
+                    {text: "Apply", color: "#4CAF50", function: apply}
+                ]
+            })
+
+            $('#prompt-route').val(dispatchTracker["E_" + number].route)
+
+            function apply() {
+                modifyEntry(number, {type: 'route', data: $('#prompt-route').val()})
+                closewindow()
+            }
+        }
     }).appendTo(buttonholder);
 
     $('<button>', {
@@ -179,14 +201,12 @@ function modifyEntry(number, modifications) {
             dispatchTracker["E_" + number].route = modifications.data
             // visual updates
             routeobj.text(modifications.data)
-            routeobj.css('background-color', routecolors[modifications.data])
+            let color = routecolors[modifications.data]
+            if (!color) {color = '#bc42f5'}
+            routeobj.css('background-color', color)
             const solvebutton = $("#" + number).find('.buttonholder').find('.solvebutton')
             solvebutton.css('background-color', '#7e8f46')
             solvebutton.text('Re-Solve')
-          break;
-        case 'number':
-            dispatchTracker["E_" + modifications.data] = dispatchTracker["E_" + number]
-            delete dispatchTracker["E_" + number]
           break;
     }
 }
@@ -273,7 +293,7 @@ function show() {
         title: "Input JSON",
         description: "Paste JSON data from ExportVehicleList command",
         input: [
-            {title: '', id: 'prompt-data'}
+            {title: '', id: 'prompt-data', textarea: true, focus: true}
         ],
         buttons: [
             {text: "Cancel", color: "#802c2c", function: closewindow},
@@ -303,19 +323,33 @@ function solveAll() {
 function showCustom(info) {
     $("#prompt-title").text(info.title)
     $("#prompt-desc").html(info.description)
+    let focusbox = null
 
     const ih = $("#prompt-inputholder")
     ih.empty()
     if (info.input) {
         info.input.forEach((input) => {
-            $('<h1>', {
+            $('<h2>', {
                 text: input.title
             }).appendTo(ih);
-            $('<textarea>', {
-                rows: 4,
-                cols: 50,
-                id: input.id,
-            }).appendTo(ih);
+
+
+            if (input.textarea == true) {
+                let obj = $('<textarea>', {
+                    rows: 4,
+                    cols: 50,
+                    id: input.id,
+                })
+                if (input.focus == true) {focusbox = obj}
+                obj.appendTo(ih);
+            } else {
+                let obj = $('<input>', {
+                    id: input.id,
+                })
+                if (input.focus == true) {focusbox = obj}
+                obj.appendTo(ih);
+            }
+
         });
     }
 
@@ -333,6 +367,7 @@ function showCustom(info) {
 
     $('#prompt-parent').show();
     $('#overlay').show()
+    if (focusbox) {focusbox.focus()}
 }
 
 // bottombar updates

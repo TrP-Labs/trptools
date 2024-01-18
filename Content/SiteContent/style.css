@@ -114,10 +114,7 @@ body {
 
 .promptdiv input {
     text-align: left;
-    width: 65%;
-    height: 75px;
     margin: 5px;
-    padding-bottom: 100%;
 }
 .promptdiv button {
     width: 25%;
@@ -127,11 +124,6 @@ body {
 textarea {
     resize: vertical; 
     max-height: 400px;
-}
-
-input {
-    height: 25px;
-    width: 25px;
 }
 
 .alert {
