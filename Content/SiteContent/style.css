@@ -104,7 +104,7 @@ body {
     transform: translate(-50%, -50%); 
     left: 50%;
     top: 50%;
-    min-width: 25%;
+    min-width: 450px;
     max-width: 25%;
     background-color: #3a3a3a;
     color: white;
