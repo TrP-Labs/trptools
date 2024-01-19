@@ -28,6 +28,14 @@ const schema = {
 
 const validate = ajv.compile(schema);
 
+function importdata(data) {
+    console.log(data)
+    $('#table').empty()
+    dispatchTracker = {}
+
+    loadAll(Object.values(data))
+}
+
 function appendEntry(numindex) {
     const number = dispatchTracker["E_" + numindex].Id
     const info = dispatchTracker["E_" + numindex]
@@ -76,24 +84,25 @@ function appendEntry(numindex) {
         class: "route",
     }).appendTo(entry);
 
+    if (route != ' - ') {modifyEntry({id: number, type: 'route', data: route})}
+
     // Manage checkbox
 
-    let checkbox = $('<td>', {
-        html: '<input type="checkbox" class="checkbox">',
-    })
-    checkbox.appendTo(entry);
+    let checkboxholder = $('<td>')
+    checkboxholder.appendTo(entry);
+
+    const checkbox = $('<input>', {
+        type: 'checkbox',
+        class: 'checkbox',
+        change: function() {
+            modifyEntry({id: number, type: 'checked', data: $(this).is(':checked')})
+        }
+    }).appendTo(checkboxholder);
 
     if (info.assigned == true) {
-        checkbox.find(":first-child").prop("checked", true)
+        console.log('checked')
+        checkbox.prop("checked", true)
     }
-
-    checkbox.find(":first-child").change(function () {
-        if ($(this).is(":checked")) {
-            info.assigned = true
-        } else {
-            info.assigned = false
-        }
-    });
 
     const buttonholder = $('<td>', {
         class: 'buttonholder',
@@ -107,7 +116,8 @@ function appendEntry(numindex) {
         click: function() {
             const solvedroute = autoSolve(info)
 
-            modifyEntry(number, {
+            modifyEntry({
+                id : number,
                 type : 'route', 
                 data : solvedroute
             })
@@ -119,7 +129,19 @@ function appendEntry(numindex) {
         text: 'Delete',
         style: 'background-color: #802c2c;',
         click: function() {
-            modifyEntry(number, {type: 'delete'})
+            function yes_delete() {
+                modifyEntry({id: number, type: 'delete'})
+                closewindow()
+            }
+        
+            showCustom({
+                title: "Delete " + number + "?",
+                description: "Are you sure you want to delete bus " + number + " owned by " + dispatchTracker["E_" + number].username + "?",
+                buttons: [
+                    {text: "No", color: "#802c2c", function: closewindow},
+                    {text: "Yes", color: "#4CAF50", function: yes_delete}
+                ]
+            })   
         }
     }).appendTo(buttonholder);
 
@@ -144,7 +166,7 @@ function appendEntry(numindex) {
             $('#prompt-route').val(info.route)
 
             function apply() {
-                modifyEntry(number, {type: 'route', data: $('#prompt-route').val()})
+                modifyEntry({id: number, type: 'route', data: $('#prompt-route').val()})
                 closewindow()
             }
         }
@@ -166,49 +188,49 @@ function appendEntry(numindex) {
     }).appendTo(buttonholder);
 }
 
-function createEntry(information) {
+function createEntry(information, dnr) {
     if (dispatchTracker["E_" + information.Id]) return
     dispatchTracker["E_" + information.Id] = information
     appendEntry(information.Id)
+    if (!dnr) {
+        replicateEntry(information)
+    }
 }
 
-function modifyEntry(number, modifications) {
+function modifyEntry(modifications, dnr) {
     switch (modifications.type) {
         case 'route':
             // internal updates
-            const routeobj = $("#" + number).find('.route')
-            dispatchTracker["E_" + number].route = modifications.data
+            const routeobj = $("#" + modifications.id).find('.route')
+            dispatchTracker["E_" + modifications.id].route = modifications.data
             // visual updates
             routeobj.text(modifications.data)
             let color = routecolors[modifications.data]
             if (!color) {color = '#bc42f5'}
             routeobj.css('background-color', color)
-            const solvebutton = $("#" + number).find('.buttonholder').find('.solvebutton')
+            const solvebutton = $("#" + modifications.id).find('.buttonholder').find('.solvebutton')
             solvebutton.css('background-color', '#7e8f46')
             solvebutton.text('Re-Solve')
           break;
         case 'delete':
-            function yes_delete() {
-                $("#" + number).remove();
-                delete dispatchTracker["E_" + number]
-                closewindow()
-            }
-        
-            showCustom({
-                title: "Delete " + number + "?",
-                description: "Are you sure you want to delete bus " + number + " owned by " + dispatchTracker["E_" + number].username + "?",
-                buttons: [
-                    {text: "No", color: "#802c2c", function: closewindow},
-                    {text: "Yes", color: "#4CAF50", function: yes_delete}
-                ]
-            })
+            $("#" + modifications.id).remove();
+            delete dispatchTracker["E_" + modifications.id]
           break;
         case 'dead':
-            const obj = $("#" + number) 
-            obj.css("background-color","#E37979");
-            dispatchTracker["E_" + number].dead = true
+            let obj1 = $("#" + modifications.id) 
+            obj1.css("background-color","#E37979");
+            dispatchTracker["E_" + modifications.id].dead = true
+        break;
+        case 'checked':
+            let obj2 = $("#" + modifications.id + ' .checkbox') 
+            obj2.prop("checked", modifications.data)
+            dispatchTracker["E_" + modifications.id].assigned = modifications.data
         break;
     }
+
+    if (!dnr) {
+        replicateChange(modifications)
+    } 
 }
 
 function loadAll(list) {
@@ -234,7 +256,7 @@ function compare(current) {
         }
         
         if (found == false) {
-            modifyEntry(item.Id, {type: 'dead'})
+            modifyEntry({id: item.Id, type: 'dead'})
         }    
     }
 }
@@ -351,7 +373,8 @@ function solveAll() {
             const solvedroute = autoSolve(item)
             dispatchTracker[i].route = solvedroute
 
-            modifyEntry(item.Id, {
+            modifyEntry({
+                id: item.Id,
                 type : 'route', 
                 data : solvedroute
             })
