@@ -276,6 +276,49 @@ async function submit() {
     }
 }
 
+function connectButton() {
+
+    showCustom({
+        title: "Would you like to create a room or join a room",
+        description: "",
+        buttons: [
+            {text: "Join", color: "#af8c4c", function: join},
+            {text: "Create", color: "#4CAF50", function: create}
+        ]
+    })
+
+    function join() {
+        closewindow()
+        showCustom({
+            title: "Connect to a dispatching room",
+            description: "",
+            input: [
+                { title: 'Join code', id: 'prompt-data', textarea: false, focus: true }
+            ],
+            buttons: [
+                { text: "Cancel", color: "#802c2c", function: closewindow },
+                { text: "Connect", color: "#4CAF50", function: runConnect }
+            ]
+        })
+        function runConnect() {
+            connectRoom($('#prompt-data').val())
+            closewindow()
+        }
+    }
+
+    async function create() {
+        closewindow()
+        const roomid = await createRoom()
+        showCustom({
+            title: "Join code:",
+            description: roomid,
+            buttons: [
+                { text: "Ok", color: "#4CAF50", function: closewindow }
+            ]
+        })
+    }
+}
+
 
 function closewindow() {
     let item = $('#prompt-parent');
@@ -398,4 +441,13 @@ setInterval(function() {
     $('#bottombar .10').text("R10: " + routestatus['10'])
     $('#bottombar .14').text("R14: " + routestatus['14'])
     $('#bottombar .16').text("R16: " + routestatus['16'])
+
+    // set connection status
+    const connection = getConnectionStatus()
+    if (connection == true) {
+        $('#bottombar .connectionstatus').text('Connection stable')
+    } else {
+        $('#bottombar .connectionstatus').text('Connection lost')
+    }
+    
 }, 500);
