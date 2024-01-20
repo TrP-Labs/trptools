@@ -301,10 +301,11 @@ async function submit() {
 function connectButton() {
 
     showCustom({
-        title: "Would you like to create a room or join a room",
+        title: "Would you like to join or create a room?",
         description: "",
         buttons: [
             {text: "Join", color: "#af8c4c", function: join},
+            {text: "Cancel", color: "#802c2c", function: closewindow},
             {text: "Create", color: "#4CAF50", function: create}
         ]
     })

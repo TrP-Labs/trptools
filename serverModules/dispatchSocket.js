@@ -22,23 +22,24 @@ const socketIO = (server) => {
     }
 
     io.on('connection', (socket) => {
-        let currentjoin = null
-
         // Manage Joining
 
         socket.on('joinRoom', (roomId, callback) => {
-            if (currentjoin) {
+            if (socket.roomId) {
+                console.log('found')
                 callback({
                     status: "fail"
                 });
                 return
+            } else {
+                console.log(socket.pingCount)
             }
 
             let roominfo = data['ROOM_' + roomId]
             if (roominfo) {
                 socket.join(roomId);
                 roomUpdate(roomId)
-                currentjoin = roomId
+                socket.roomId = roomId
 
                 callback({
                     status: "success",
@@ -54,11 +55,14 @@ const socketIO = (server) => {
         });
 
         socket.on('createRoom', (currentData, callback) => {
-            if (currentjoin) {
+            if (socket.roomId) {
+                console.log('found')
                 callback({
                     status: "fail"
                 });
                 return
+            } else {
+                console.log(socket.pingCount)
             }
 
             let roomId = generateRandomString()
@@ -70,7 +74,7 @@ const socketIO = (server) => {
 
             socket.join(roomId);
             roomUpdate(roomId)
-            currentjoin = roomId
+            socket.roomId = roomId
 
             callback({
                 status: "success",
@@ -79,38 +83,41 @@ const socketIO = (server) => {
         });
 
         socket.on('entryAdd', (newitem) => {
-            data['ROOM_' + currentjoin].data["E_" + newitem.Id] = newitem
-            io.to(currentjoin).emit("entryAdd", newitem)
+            console.log(socket.roomId)
+            data['ROOM_' + socket.roomId].data["E_" + newitem.Id] = newitem
+            io.to(socket.roomId).emit("entryAdd", newitem)
         });
 
         socket.on('entryModify', (modifications) => {
             switch (modifications.type) {
                 case 'route':
-                    data['ROOM_' + currentjoin].data["E_" + modifications.id].route = modifications.data
+                    data['ROOM_' + socket.roomId].data["E_" + modifications.id].route = modifications.data
                   break;
                 case 'delete':
-                    delete data['ROOM_' + currentjoin].data["E_" + modifications.id]
+                    delete data['ROOM_' + socket.roomId].data["E_" + modifications.id]
                   break;
                 case 'dead':
-                    data['ROOM_' + currentjoin].data["E_" + modifications.id].dead = true
+                    data['ROOM_' + socket.roomId].data["E_" + modifications.id].dead = true
                 break;
                 case 'checked':
-                    data['ROOM_' + currentjoin].data["E_" + modifications.id].assigned = modifications.data
+                    data['ROOM_' + socket.roomId].data["E_" + modifications.id].assigned = modifications.data
                 break;
             }
 
-            io.to(currentjoin).emit("entryModify", modifications)
+            io.to(socket.roomId).emit("entryModify", modifications)
         });
 
         socket.on("ping", (callback) => {
+            if (!socket.pingCount) {socket.pingCount = 0}
+            console.log(socket.pingCount = socket.pingCount + 1)
             callback();
           });
 
         // Manage leaving
 
         socket.on("disconnect", () => {
-            if (!io.sockets.adapter.rooms.get(currentjoin)) return
-            roomUpdate(currentjoin)
+            if (!io.sockets.adapter.rooms.get(socket.roomId)) return
+            roomUpdate(socket.roomId)
         });
     });
 };
