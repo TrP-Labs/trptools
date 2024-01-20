@@ -83,7 +83,6 @@ const socketIO = (server) => {
         });
 
         socket.on('entryAdd', (newitem) => {
-            console.log(socket.roomId)
             data['ROOM_' + socket.roomId].data["E_" + newitem.Id] = newitem
             io.to(socket.roomId).emit("entryAdd", newitem)
         });
