@@ -323,22 +323,56 @@ function connectButton() {
                 { text: "Connect", color: "#4CAF50", function: runConnect }
             ]
         })
-        function runConnect() {
-            connectRoom($('#prompt-data').val())
-            closewindow()
+        function runConnect() {      
+           closewindow()
+           connectRoom($('#prompt-data').val()).then(
+            function() {
+                showCustom({
+                    title: "You have successfully joined the room:",
+                    description: '',
+                    buttons: [
+                        { text: "Ok", color: "#4CAF50", function: closewindow }
+                    ]
+                })
+            },
+            function(error) {
+                showCustom({
+                    title: "Room join failed",
+                    description: 'Error: ' + error,
+                    buttons: [
+                        { text: "Close", color: "#802c2c", function: closewindow }
+                    ]
+                })
+            }
+          );
         }
     }
 
     async function create() {
         closewindow()
-        const roomid = await createRoom()
-        showCustom({
-            title: "Join code:",
-            description: roomid,
-            buttons: [
-                { text: "Ok", color: "#4CAF50", function: closewindow }
-            ]
-        })
+
+        createRoom().then(
+
+            function(roomid) {
+                showCustom({
+                    title: "Join code:",
+                    description: roomid,
+                    buttons: [
+                        { text: "Ok", color: "#4CAF50", function: closewindow }
+                    ]
+                })
+            },
+
+            function(error) {
+                showCustom({
+                    title: "Room creation failed",
+                    description: 'Error: ' + error,
+                    buttons: [
+                        { text: "Close", color: "#802c2c", function: closewindow }
+                    ]
+                })
+            }
+        )
     }
 }
 

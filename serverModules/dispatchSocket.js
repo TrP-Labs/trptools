@@ -26,13 +26,10 @@ const socketIO = (server) => {
 
         socket.on('joinRoom', (roomId, callback) => {
             if (socket.roomId) {
-                console.log('found')
                 callback({
-                    status: "fail"
+                    status: "You are already in a room"
                 });
                 return
-            } else {
-                console.log(socket.pingCount)
             }
 
             let roominfo = data['ROOM_' + roomId]
@@ -48,7 +45,7 @@ const socketIO = (server) => {
                 });
             } else {
                 callback({
-                    status: "fail"
+                    status: "This room does not exist"
                 });
                 socket.disconnect() 
             }
@@ -56,13 +53,10 @@ const socketIO = (server) => {
 
         socket.on('createRoom', (currentData, callback) => {
             if (socket.roomId) {
-                console.log('found')
                 callback({
-                    status: "fail"
+                    status: "You are already in a room"
                 });
                 return
-            } else {
-                console.log(socket.pingCount)
             }
 
             let roomId = generateRandomString()
@@ -107,8 +101,6 @@ const socketIO = (server) => {
         });
 
         socket.on("ping", (callback) => {
-            if (!socket.pingCount) {socket.pingCount = 0}
-            console.log(socket.pingCount = socket.pingCount + 1)
             callback();
           });
 

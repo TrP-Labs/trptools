@@ -7,29 +7,38 @@ function getConnectionStatus() {
 }
 
 async function createRoom() {
-    const socket = io();
+    if (!currentsocket) {
+        currentsocket = io();
+    }
     return new Promise((resolve, reject) => {
-        socket.emit('createRoom', dispatchTracker, (response) => {
+        currentsocket.emit('createRoom', dispatchTracker, (response) => {
             if (response.status == 'success') {
                 resolve(response.code)
-                operateSocket(socket)
+                operateSocket(currentsocket)
             } else {
-                reject("denied")
+                reject(response.status)
             }
         })
     })
 }
 
 function connectRoom(roomId) {
-    const socket = io();
-    socket.emit('joinRoom', roomId, (response) => {
-        if (response.status == 'success') {
-            operateSocket(socket)
-            $('#bottombar .connected').text(response.roomSize + " Connected")
-            $('#bottombar .connectiontype').text('Peer')
-            importdata(response.data)
-        }
-    })
+    if (!currentsocket) {
+        currentsocket = io();
+    }
+    return new Promise((resolve, reject) => {
+        currentsocket.emit('joinRoom', roomId, (response) => {
+            if (response.status == 'success') {
+                operateSocket(currentsocket)
+                $('#bottombar .connected').text(response.roomSize + " Connected")
+                $('#bottombar .connectiontype').text('Peer')
+                importdata(response.data)
+                resolve('success')
+            } else {
+                reject(response.status)
+            }
+        })
+    });
 }
 
 function replicateEntry(entry) {
@@ -55,7 +64,6 @@ function getPing() {
 }
 
 function operateSocket(socket) {
-    currentsocket = socket
     $('#bottombar .network').show()
     socket.on('userCountChange', (newcount) => {
         $('#bottombar .connected').text(newcount + " Connected")
