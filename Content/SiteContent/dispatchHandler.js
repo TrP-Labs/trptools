@@ -323,9 +323,10 @@ function connectButton() {
                 { text: "Connect", color: "#4CAF50", function: runConnect }
             ]
         })
-        function runConnect() {      
-           closewindow()
-           connectRoom($('#prompt-data').val()).then(
+        function runConnect() {
+            const joincode = $('#prompt-data').val()
+            closewindow()      
+           connectRoom(joincode).then(
             function() {
                 showCustom({
                     title: "You have successfully joined the room:",
