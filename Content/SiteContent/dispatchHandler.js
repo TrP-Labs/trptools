@@ -474,3 +474,9 @@ setInterval(function() {
     }
     
 }, 500);
+
+setInterval(function() {
+    getPing().then((value) => {
+        $('#bottombar .connectionlatency').text("Ping: " + value + "ms")
+    })
+}, 2500);

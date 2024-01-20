@@ -42,6 +42,18 @@ function replicateChange(change) {
     currentsocket.emit('entryModify', change)
 }
 
+function getPing() {
+    return new Promise((resolve, reject) => {
+        if (!currentsocket) {reject(); return}
+        const start = Date.now();
+
+        currentsocket.emit("ping", () => {
+            const duration = Date.now() - start;
+            resolve(duration)
+        });
+    })
+}
+
 function operateSocket(socket) {
     currentsocket = socket
     $('#bottombar .network').show()

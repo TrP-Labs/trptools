@@ -54,7 +54,6 @@ const socketIO = (server) => {
         });
 
         socket.on('createRoom', (currentData, callback) => {
-            console.log(currentData)
             if (currentjoin) {
                 callback({
                     status: "fail"
@@ -102,6 +101,10 @@ const socketIO = (server) => {
 
             io.to(currentjoin).emit("entryModify", modifications)
         });
+
+        socket.on("ping", (callback) => {
+            callback();
+          });
 
         // Manage leaving
 
