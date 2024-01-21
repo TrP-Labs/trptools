@@ -4,6 +4,13 @@ body {
 
 .topnavholder {
     display: flex;
+    flex-shrink: 0;
+}
+
+.topnavsholder {
+    display: flex; 
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 
 .topnav {

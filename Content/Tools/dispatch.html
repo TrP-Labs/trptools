@@ -33,20 +33,21 @@
 
         <div id="overlay" class="overlay" style="display: none;"></div>
 
-        <div class="topnavholder">
-            <div class="topnav">
+        <div class="topnavsholder">
+            <div class="topnav topnavholder">
                 <a href="/">Tools</a>
                 <a href="/about">About</a>
                 <a href="https://github.com/Ticko-Grey/trptools">Open Source</a>
             </div>
     
-            <div class="topnav topnavholder nav-float">
+            <div class="topnav topnavholder nav-float" style="flex-wrap: wrap;">
                 <button class="inputbutton" style="background-color: #4CAF50;" onclick="solveAll()">Solve routes</button>
                 <button class="inputbutton" style="background-color: #4cacaf;" onclick="show()">Input JSON</button>
                 <button class="inputbutton" style="background-color: #af8c4c;" onclick="connectButton()">Connect</button>
+                <button class="inputbutton" style="background-color: #585858;" onclick="openSettings()">Settings</button>
             </div>
 
-            <div class="topnav nav-right">
+            <div class="topnav topnavholder nav-right">
                 <a class="nav-full" href="/login">Login</a>
             </div>
         </div>
