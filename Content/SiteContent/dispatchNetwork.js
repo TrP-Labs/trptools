@@ -1,6 +1,11 @@
 // Client code for dispatch socket
 let currentsocket = null
 
+const readableDisconnectionReasons = {
+    'io client disconnect' : 'Client disconnected',
+    'io server disconnect' : 'Room has closed',
+}
+
 function getConnectionStatus() {
     if (!currentsocket) return null
     return currentsocket.connected
@@ -87,5 +92,24 @@ function operateSocket(socket) {
 
     socket.on('entryModify', (change) => {
         modifyEntry(change, true)
+    });
+
+    socket.on("disconnect", (reason) => {
+        console.log(reason)
+        $('#bottombar .network').hide()
+        currentsocket = null
+
+        console.log(readableDisconnectionReasons[reason])
+
+        let readablename = readableDisconnectionReasons[reason] || reason
+
+
+        showCustom({
+            title: "Disconnected from server",
+            description: 'Reason: ' + readablename,
+            buttons: [
+                {text: "Close", color: "#802c2c", function: closewindow}
+            ]
+        })
     });
 }

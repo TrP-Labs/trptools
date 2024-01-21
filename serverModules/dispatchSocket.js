@@ -62,7 +62,7 @@ const socketIO = (server) => {
 
             let roomId = generateRandomString()
             data['ROOM_' + roomId] = {
-                masterId: socket.Id,
+                masterId: socket.id,
                 createdAt: Date.now(),
                 data: currentData
             }
@@ -107,9 +107,15 @@ const socketIO = (server) => {
 
         // Manage leaving
 
-        socket.on("disconnect", () => {
-            if (!io.sockets.adapter.rooms.get(socket.roomId)) return
-            roomUpdate(socket.roomId)
+        socket.on("disconnect", () => { 
+            if (!socket.roomId || !data['ROOM_' + socket.roomId]) return // check if the user is in a real room
+            
+            if (data['ROOM_' + socket.roomId].masterId == socket.id) {
+                delete data['ROOM_' + socket.roomId];
+                io.in(socket.roomId).disconnectSockets();
+            } else {
+                roomUpdate(socket.roomId)
+            }
         });
     });
 };
