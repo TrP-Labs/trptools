@@ -298,8 +298,7 @@ async function submit() {
     }
 }
 
-function connectButton() {
-
+function initializeConnection() {
     showCustom({
         title: "Would you like to join or create a room?",
         description: "",
@@ -329,7 +328,7 @@ function connectButton() {
            connectRoom(joincode).then(
             function() {
                 showCustom({
-                    title: "You have successfully joined the room:",
+                    title: "You have successfully joined the room",
                     description: '',
                     buttons: [
                         { text: "Ok", color: "#4CAF50", function: closewindow }
@@ -374,6 +373,55 @@ function connectButton() {
                 })
             }
         )
+    }
+}
+
+function manageConnection() {
+    showCustom({
+        title: "Manage or view connection info",
+        description: '',
+        buttons: [
+            {text: "Manage", color: "#af8c4c", function: manage},     
+            {text: "View", color: "#4cacaf", function: view},
+            {text: "Close", color: "#802c2c", function: closewindow}
+        ]
+    })
+
+    function manage() {
+        showCustom({
+            title: "Connection options",
+            description: '',
+            buttons: [
+                {text: "Disconnect", color: "#802c2c", function: function() {closewindow(); disconnect()}},
+                {text: "Close", color: "#802c2c", function: closewindow}
+            ]
+        })
+    }
+
+    function view() {
+        showCustom({
+            title: "Connection info",
+            description: `
+                <h3>Room</h3>
+                Room ID: ${currentsocket.roomId} <br>
+                Connection established since: ${currentsocket.established.getHours()}:${currentsocket.established.getMinutes()} <br>
+                Room created at: ${currentsocket.roomCreated.getHours()}:${currentsocket.roomCreated.getMinutes()}
+                <h3>Debug</h3>
+                Transport: ${currentsocket.io.engine.transport.name} <br>
+                Server location: US-WEST <br>
+            `,
+            buttons: [
+                { text: "Ok", color: "#4CAF50", function: closewindow }
+            ]
+        })
+    }
+}
+
+function connectButton() {
+    if (currentsocket) {
+        manageConnection()
+    } else {
+        initializeConnection() 
     }
 }
 

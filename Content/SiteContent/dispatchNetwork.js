@@ -15,6 +15,9 @@ async function createRoom() {
             if (response.status == 'success') {
                 resolve(response.code)
                 operateSocket(currentsocket)
+                currentsocket.roomId = response.code
+                currentsocket.established = new Date();
+                currentsocket.roomCreated = new Date();
             } else {
                 reject(response.status)
             }
@@ -30,6 +33,9 @@ function connectRoom(roomId) {
         currentsocket.emit('joinRoom', roomId, (response) => {
             if (response.status == 'success') {
                 operateSocket(currentsocket)
+                currentsocket.roomId = roomId
+                currentsocket.established = new Date();
+                currentsocket.roomCreated = new Date(response.createdAt);
                 $('#bottombar .connected').text(response.roomSize + " Connected")
                 $('#bottombar .connectiontype').text('Peer')
                 importdata(response.data)
@@ -61,6 +67,12 @@ function getPing() {
             resolve(duration)
         });
     })
+}
+
+function disconnect() {
+    $('#bottombar .network').hide()
+    currentsocket.disconnect()
+    currentsocket = null
 }
 
 function operateSocket(socket) {

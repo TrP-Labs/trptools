@@ -41,7 +41,8 @@ const socketIO = (server) => {
                 callback({
                     status: "success",
                     data: roominfo.data,
-                    roomSize: io.sockets.adapter.rooms.get(roomId).size
+                    roomSize: io.sockets.adapter.rooms.get(roomId).size,
+                    createdAt: roominfo.createdAt
                 });
             } else {
                 callback({
@@ -62,7 +63,7 @@ const socketIO = (server) => {
             let roomId = generateRandomString()
             data['ROOM_' + roomId] = {
                 masterId: socket.Id,
-                createdAt: Date.now() / 1000 | 0,
+                createdAt: Date.now(),
                 data: currentData
             }
 
