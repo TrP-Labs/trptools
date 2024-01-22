@@ -23,6 +23,7 @@ async function createRoom() {
                 currentsocket.roomId = response.code
                 currentsocket.established = new Date();
                 currentsocket.roomCreated = new Date();
+                currentsocket.isMaster = true
             } else {
                 reject(response.status)
             }
@@ -75,9 +76,24 @@ function getPing() {
 }
 
 function disconnect() {
-    $('#bottombar .network').hide()
-    currentsocket.disconnect()
-    currentsocket = null
+    if (currentsocket.isMaster == true) {
+        showCustom({
+            title: "Are you sure you want to disconnect?",
+            description: 'Since you are the master of this room, doing so will disconnect everyone else',
+            buttons: [
+                {text: "Disconnect", color: "#4CAF50", function: function() {directDisconnect(); closewindow()}},
+                {text: "Cancel", color: "#802c2c", function: closewindow}
+            ]
+        })
+    } else {
+        directDisconnect()
+    }
+
+    function directDisconnect() {
+        $('#bottombar .network').hide()
+        currentsocket.disconnect()
+        currentsocket = null
+    }
 }
 
 function operateSocket(socket) {
@@ -95,15 +111,10 @@ function operateSocket(socket) {
     });
 
     socket.on("disconnect", (reason) => {
-        console.log(reason)
         $('#bottombar .network').hide()
         currentsocket = null
 
-        console.log(readableDisconnectionReasons[reason])
-
         let readablename = readableDisconnectionReasons[reason] || reason
-
-
         showCustom({
             title: "Disconnected from server",
             description: 'Reason: ' + readablename,
