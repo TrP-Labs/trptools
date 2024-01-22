@@ -114,7 +114,7 @@ function appendEntry(numindex) {
         text: 'Solve',
         style: 'background-color: #4CAF50;',
         click: function() {
-            const solvedroute = autoSolve(info)
+            const solvedroute = autoSolve(info, routeobj.text())
 
             modifyEntry({
                 id : number,
@@ -203,6 +203,7 @@ function modifyEntry(modifications, dnr) {
             // internal updates
             const routeobj = $("#" + modifications.id).find('.route')
             dispatchTracker["E_" + modifications.id].route = modifications.data
+            routestatus[modifications.data.toString()]++
             // visual updates
             routeobj.text(modifications.data)
             let color = routecolors[modifications.data]
@@ -562,5 +563,7 @@ setInterval(function() {
 setInterval(function() {
     getPing().then((value) => {
         $('#bottombar .connectionlatency').text("Ping: " + value + "ms")
+    }).catch((err) => {
+        // this just exists to silence the uncaught promise error when you aren't connected
     })
 }, 2500);

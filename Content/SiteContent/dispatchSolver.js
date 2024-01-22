@@ -1,3 +1,6 @@
+let routeAPI = null
+const MAX_PEOPLE_PER_ROUTE = 6
+
 const spawnlocations = {
     "N/A": [
         6,
@@ -31,9 +34,39 @@ let routestatus = {
     ['16'] : 0,
 }
 
-// This is just a basic version, needs to account for the amount of vehicles on each route
+function scrambleObject(obj) {
+    return Object.fromEntries(Object.entries(obj).sort(() => Math.random() - 0.5));
+  }
 
-function autoSolve(data) {
+function getLowestNumber(obj) {
+    let minValue = Infinity;
+    let minIndex;
+  
+    for (const key in obj) {
+      const value = obj[key];
+      
+      if (value < minValue) {
+        minValue = value;
+        minIndex = key;
+      }
+    }
+  
+    return minIndex;
+  }
+
+  function filterObjectByIndexes(array, originalObject) {
+    const filteredObject = {};
+  
+    array.forEach(index => {
+      if (originalObject.hasOwnProperty(index)) {
+        filteredObject[index] = originalObject[index];
+      }
+    });
+  
+    return filteredObject;
+  }
+
+function autoSolve(data, exclude) {
     let route = null
 
     const depot = spawnlocations[data.Depot]
@@ -41,7 +74,14 @@ function autoSolve(data) {
 
     if (customroute) {route = customroute; return route}
 
-    route = depot[Math.floor(Math.random()*depot.length)]
+    let filteredObject = filterObjectByIndexes(depot, routestatus) // make an object where the index is the route and the value is the amount of vehicles on it
+    filteredObject = scrambleObject(filteredObject) // not sure if this does anything tbh
+
+    if (filteredObject[exclude]) { // prevent duplicates
+        delete filteredObject[exclude]
+    }
+
+    route = getLowestNumber(filteredObject)
 
     return route
 }
