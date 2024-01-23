@@ -24,6 +24,8 @@ async function createRoom() {
                 currentsocket.established = new Date();
                 currentsocket.roomCreated = new Date();
                 currentsocket.isMaster = true
+                $('#bottombar .connected').text("1 Connected")
+                $('#bottombar .connectiontype').text('Master')
             } else {
                 reject(response.status)
             }
