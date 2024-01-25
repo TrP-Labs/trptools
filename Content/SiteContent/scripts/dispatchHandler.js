@@ -138,12 +138,12 @@ function appendEntry(numindex) {
         text: 'Solve',
         style: 'background-color: #4CAF50;',
         click: function() {
-            const solvedroute = autoSolve(info, routeobj.text())
-
-            modifyEntry({
-                id : number,
-                type : 'route', 
-                data : solvedroute
+            autoSolve(info, routeobj.text()).then((solvedroute) => {
+                modifyEntry({
+                    id: number,
+                    type: 'route',
+                    data: solvedroute
+                })
             })
         }
     }).appendTo(buttonholder);
