@@ -101,8 +101,8 @@ function initializeConnection() { // Begin prompt tree for creating a room
         title: "Would you like to join or create a room?",
         description: "",
         buttons: [
-            {text: "Join", color: "#af8c4c", function: join},
             {text: "Cancel", color: "#802c2c", function: closewindow},
+            {text: "Join", color: "#af8c4c", function: join},
             {text: "Create", color: "#4CAF50", function: create}
         ]
     })
@@ -179,9 +179,9 @@ function manageConnection() { // Begin prompt tree managing your connection
         title: "Manage or view connection info",
         description: '',
         buttons: [
+            {text: "Close", color: "#802c2c", function: closewindow},
             {text: "Manage", color: "#af8c4c", function: manage},     
             {text: "View", color: "#4cacaf", function: view},
-            {text: "Close", color: "#802c2c", function: closewindow}
         ]
     })
 
@@ -190,8 +190,8 @@ function manageConnection() { // Begin prompt tree managing your connection
             title: "Connection options",
             description: '',
             buttons: [
+                {text: "Close", color: "#802c2c", function: closewindow},
                 {text: "Disconnect", color: "#802c2c", function: function() {closewindow(); disconnect()}},
-                {text: "Close", color: "#802c2c", function: closewindow}
             ]
         })
     }
@@ -212,6 +212,49 @@ function manageConnection() { // Begin prompt tree managing your connection
                 { text: "Ok", color: "#4CAF50", function: closewindow }
             ]
         })
+    }
+}
+
+function openSettings() {
+    showCustom({
+        title: "Settings",
+        description: "Configure how your portal will behave (currently does not save) <br> <sub> Please note advanced route assignment will not be available for custom routes </sub>",
+        input: [
+            {title: 'Custom route API', id: 'prompt-api', textarea: false},
+            {title: 'Custom route listings', id: 'prompt-routes', textarea: true}
+        ],
+        buttons: [
+            {text: "Close", color: "#802c2c", function: closewindow},
+            {text: "Save", color: "#4CAF50", function: function() {
+                const routeEntry = $('#prompt-routes').val()
+                const apiEntry = $('#prompt-api').val()
+                const canSet = canSetNewRoutes(routeEntry)
+                if (canSet) {
+                    routeAPI = apiEntry
+                    spawnlocations = JSON.parse(routeEntry)
+                    closewindow()
+                }
+            }},
+        ]
+    })
+    $('#prompt-routes').val(JSON.stringify(spawnlocations))
+}
+
+function canSetNewRoutes(data) {
+    try {
+        data = JSON.parse(data)
+
+        if (validate2(data)) {
+            return true
+        } else {
+            $('#alert-parent').show()
+            $('#alert-text').text("Invalid JSON")
+            return false;
+        }
+    } catch {
+        $('#alert-parent').show()
+        $('#alert-text').text("Could not parse JSON")
+        return false;
     }
 }
 

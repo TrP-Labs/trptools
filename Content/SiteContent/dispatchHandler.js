@@ -22,14 +22,39 @@ const schema = {
             "Name": { "type": "string" },
             "Depot": { "type": "string" }
         },
-        "required": ["Id", "OwnerId", "Name", "Depot"]
+        "required": ["Id", "OwnerId", "Name", "Depot"],
     }
 }
 
+const schema2 = {
+    "type": "object",
+    "properties": {
+      "N/A": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
+      },
+      "Hardbass Island Depot": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
+      },
+      "Main Island Depot": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
+      }
+    },
+    "required": ["N/A", "Hardbass Island Depot", "Main Island Depot"]
+  }
+
 const validate = ajv.compile(schema);
+const validate2 = ajv.compile(schema2);
 
 function importdata(data) {
-    console.log(data)
     $('#table').empty()
     dispatchTracker = {}
 
@@ -100,7 +125,6 @@ function appendEntry(numindex) {
     }).appendTo(checkboxholder);
 
     if (info.assigned == true) {
-        console.log('checked')
         checkbox.prop("checked", true)
     }
 
@@ -150,7 +174,6 @@ function appendEntry(numindex) {
         text: 'Edit',
         style: 'background-color: #81693d;',
         click: function() { 
-            console.log(number)
             showCustom({
                 title: "Apply edits for vehicle " + number,
                 description: "",
@@ -203,12 +226,18 @@ function modifyEntry(modifications, dnr) {
             // internal updates
             const routeobj = $("#" + modifications.id).find('.route')
             dispatchTracker["E_" + modifications.id].route = modifications.data
-            routestatus[modifications.data.toString()]++
+
+            if (routestatus[modifications.data.toString()] != null) { // check if it exists as to not create NAN custom route entries
+                routestatus[modifications.data.toString()]++
+            }
+
             // visual updates
             routeobj.text(modifications.data)
+
             let color = routecolors[modifications.data]
             if (!color) {color = '#bc42f5'}
             routeobj.css('background-color', color)
+
             const solvebutton = $("#" + modifications.id).find('.buttonholder').find('.solvebutton')
             solvebutton.css('background-color', '#7e8f46')
             solvebutton.text('Re-Solve')
@@ -298,8 +327,11 @@ setInterval(function() {
 
     for (const key in dispatchTracker) {
         let item = dispatchTracker[key].route
-        if (item) {
-            calcroutestatus[item.toString()] = calcroutestatus[item.toString()] + 1
+        if (item) { // Some items dont have a route yet!
+            if (calcroutestatus[item.toString()] != null) { // check if it exists as to not create NAN custom route entries
+                calcroutestatus[item.toString()] = calcroutestatus[item.toString()] + 1  
+            } else {
+            }
         }
     }
 
@@ -329,3 +361,11 @@ setInterval(function() {
         // this just exists to silence the uncaught promise error when you aren't connected
     })
 }, 2500);
+
+// Console warnings and information
+console.log('%c STOP!', 'color: red; font-size: 100px;');
+console.log('%c Sharing information found in this window can give people access to your TrPTools account or break the page!', 'color: #7CB9E8; font-size: 15px;');
+console.log('%c Unless you understand exactly what you are doing, close this window.', 'color: #7CB9E8; font-size: 15px;');
+console.log("%c If you know what you're doing, check out our open-for-contributions repo: https://github.com/Ticko-Grey/trptools", 'color: #7CB9E8; font-size: 12px;');
+console.log('\n \n');
+console.log("%c This output window should be error-free, If you spot any errors, open an issue on our github 🥺", 'color: #7CB9E8; font-size: 12px;');
