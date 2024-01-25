@@ -25,6 +25,7 @@ Client dependencies:
 - [AJV - MIT](https://ajv.js.org/license.html)
 - [jQuery - MIT](https://jquery.com/license/)
 - [Google material design icons - Apache 2.0](https://github.com/google/material-design-icons/blob/master/LICENSE)
+
 Server dependencies:
 - [Socket.IO - MIT](https://github.com/socketio/socket.io/blob/main/LICENSE)
 - [noblox.js - MIT](https://github.com/noblox/noblox.js/blob/master/LICENSE)
