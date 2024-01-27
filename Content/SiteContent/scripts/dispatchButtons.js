@@ -1,11 +1,3 @@
-function closewindow() { // Hides prompts
-    let item = $('#prompt-parent');
-    const input = $('#prompt-data')
-    $('#overlay').hide()
-    item.hide();
-    input.val("")
-}
-
 function solveAll() { // Solve all unsolved route entries
     let i = 0;
     for (const i in dispatchTracker) {

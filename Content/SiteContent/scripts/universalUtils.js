@@ -1,6 +1,12 @@
 function showCustom(info) { // Responsible for creating prompts
     $("#prompt-title").text(info.title)
-    $("#prompt-desc").html(info.description)
+    if (info.loading == true) {
+        $("#prompt-desc").html('<div class="lds-ring"><div></div><div></div><div></div><div></div></div>')
+    } else {
+        $("#prompt-desc").html('') 
+        $("#prompt-desc").html(info.description) 
+    }
+    
     let focusbox = null
 
     const ih = $("#prompt-inputholder")
@@ -33,19 +39,29 @@ function showCustom(info) { // Responsible for creating prompts
 
     const bh = $("#prompt-buttonholder")
     bh.empty()
-    info.buttons.forEach((button) => {
-        if (!button.width) {button.width = '25%'}
-        $('<button>', {
-            class: 'inputbutton',
-            text: button.text,
-            style: `background-color: ${button.color}; width: ${button.width};`,
-            click: button.function,
-        }).appendTo(bh);
-    });
+    if (info.buttons) {
+        info.buttons.forEach((button) => {
+            if (!button.width) { button.width = '25%' }
+            $('<button>', {
+                class: 'inputbutton',
+                text: button.text,
+                style: `background-color: ${button.color}; width: ${button.width};`,
+                click: button.function,
+            }).appendTo(bh);
+        });
+    }
 
     $('#prompt-parent').show();
     $('#overlay').show()
     if (focusbox) {focusbox.focus()}
+}
+
+function closewindow() { // Hides prompts
+    let item = $('#prompt-parent');
+    const input = $('#prompt-data')
+    $('#overlay').hide()
+    item.hide();
+    input.val("")
 }
 
 // Console warnings and information

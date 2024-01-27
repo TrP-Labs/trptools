@@ -17,6 +17,7 @@
         <meta property="og:image" content="/SiteContent/icon.png"/>
  
         <script src="/SiteContent/scripts/stageButtons.js"></script>  
+        <script src="/SiteContent/scripts/stageHandler.js"></script>  
         <script src="/SiteContent/scripts/universalUtils.js"></script>
         <script src="https://unpkg.com/wavesurfer.js"></script>    
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -25,6 +26,7 @@
     <body>
         <!--System stuff-->
         <audio id="audioPlayer" type="audio/mp3"></audio>
+        <input type="file" id="fileInput" style="display:none">
 
         <!--Prompt system-->
         <div class="promptdiv" id="prompt-parent" style="display: none; z-index: 3;">
@@ -56,8 +58,8 @@
             </div>
     
             <div class="topnav topnavholder nav-float" style="flex-wrap: wrap;">
-                <button class="inputbutton" style="background-color: #4cacaf;" onclick="input('file')">Select file</button>
-                <button class="inputbutton" style="background-color: #af704c;" onclick="input('sound')">Input Roblox sound ID</button>
+                <button class="inputbutton" style="background-color: #4cacaf;" onclick="promptContent('file')">Select file</button>
+                <button class="inputbutton" style="background-color: #af704c;" onclick="promptContent('sound')">Input Roblox sound ID</button>
             </div>
 
             <div class="topnav topnavholder nav-right">
