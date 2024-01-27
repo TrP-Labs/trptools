@@ -20,13 +20,14 @@ async function promptContent(type) {
                     loading: true
                 })
                 const res = await input('sound', id)
-                if (res == true) {
+                if (res) {
                     showCustom({
                         title: "Successfully downloaded sound",
                         buttons: [
                             {text: "Ok", color: "#4CAF50", function: closewindow},
                         ]
                     })
+                    insertFile(res)
                 } else {
                     showCustom({
                         title: "Failed to downloaded sound",
@@ -44,13 +45,14 @@ async function promptContent(type) {
                 loading: true
             })
             const res = await input('file')
-            if (res == true) {
+            if (res) {
                 showCustom({
                     title: "Successfully loaded file",
                     buttons: [
                         { text: "Ok", color: "#4CAF50", function: closewindow },
                     ]
                 })
+                insertFile(res)
             } else {
                 showCustom({
                     title: "Failed to load file",
@@ -60,5 +62,16 @@ async function promptContent(type) {
                 })
             }
         break;
+    }
+}
+
+function playPause() {
+    if (!surfer) return 
+    if (surfer.isPlaying()) {
+        surfer.pause()
+        $('#select-play').text('Play')
+    } else {
+        surfer.play()
+        $('#select-play').text('Pause')
     }
 }

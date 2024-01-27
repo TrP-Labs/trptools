@@ -58,8 +58,10 @@
             </div>
     
             <div class="topnav topnavholder nav-float" style="flex-wrap: wrap;">
-                <button class="inputbutton" style="background-color: #4cacaf;" onclick="promptContent('file')">Select file</button>
-                <button class="inputbutton" style="background-color: #af704c;" onclick="promptContent('sound')">Input Roblox sound ID</button>
+                <button class="inputbutton" id="select-file" style="background-color: #4cacaf;" onclick="promptContent('file')">Select file</button>
+                <button class="inputbutton" id="select-id" style="background-color: #af704c;" onclick="promptContent('sound')">Input Roblox sound ID</button>
+                <button class="inputbutton" id="select-play" style="background-color: #5caf4c; display: none;" onclick='playPause()'>Play</button>
+                <button class="inputbutton" id="select-export" style="background-color: #be637a; display: none;">Export</button>
             </div>
 
             <div class="topnav topnavholder nav-right">
@@ -68,6 +70,6 @@
         </div>
 
         <!--Content-->
-        <h1>Stage music light programmer</h1>
+        <div id="waveform"></div>
     </body>
 </html>

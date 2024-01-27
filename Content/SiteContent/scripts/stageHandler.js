@@ -1,4 +1,5 @@
 const audioendpoint = 'https://api.hyra.io/audio/'
+let surfer = null
 
 async function handleFileSelect() {
     let promise = new Promise(function(resolve){
@@ -35,10 +36,7 @@ async function input(type, data) {
                 var blob = new Blob([reader], { type: 'audio/mp3' });
                 var url = window.URL.createObjectURL(blob)
 
-                audioPlayer.src = url;
-                audioPlayer.play();
-
-                return true
+                return url
             } catch {
                 return false
             }
@@ -48,11 +46,23 @@ async function input(type, data) {
             if (res) {
                 const audioPlayer = $('#audioPlayer')[0]
                 const url = window.URL.createObjectURL(res);
-                audioPlayer.src = url;
-                audioPlayer.play();
-                return true  
+
+                return url  
             } else {
                 return false
             } 
     }
+}
+
+function insertFile(url) {
+    $('#select-file').hide()
+    $('#select-id').hide()
+    $('#select-play').show()
+    $('#select-export').show()
+    surfer = WaveSurfer.create({
+        container: '#waveform',
+        waveColor: '#4F4A85',
+        progressColor: '#383351',
+        url: url,
+    })
 }
