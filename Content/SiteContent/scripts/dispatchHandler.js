@@ -361,11 +361,3 @@ setInterval(function() {
         // this just exists to silence the uncaught promise error when you aren't connected
     })
 }, 2500);
-
-// Console warnings and information
-console.log('%c STOP!', 'color: red; font-size: 100px;');
-console.log('%c Sharing information found in this window can give people access to your TrPTools account or break the page!', 'color: #7CB9E8; font-size: 15px;');
-console.log('%c Unless you understand exactly what you are doing, close this window.', 'color: #7CB9E8; font-size: 15px;');
-console.log("%c If you know what you're doing, check out our open-for-contributions repo: https://github.com/Ticko-Grey/trptools", 'color: #7CB9E8; font-size: 12px;');
-console.log('\n \n');
-console.log("%c This output window should be error-free, If you spot any errors, open an issue on our github 🥺", 'color: #7CB9E8; font-size: 12px;');
