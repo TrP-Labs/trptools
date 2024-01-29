@@ -84,6 +84,7 @@ body {
   border: none;
   border-radius: 35px;
   align-self: center;
+  text-align: center;
   color: white;
   font-size: 1em;
   transition: 0.25s;
