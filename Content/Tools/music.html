@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <link rel="stylesheet" type="text/css" href="/SiteContent/stylesheets/style.css">
+        <link rel="stylesheet" type="text/css" href="/SiteContent/stylesheets/musicStyle.css">
         <link rel="icon" type="image/png" href="/SiteContent/favicon.ico">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
@@ -19,8 +20,12 @@
         <script src="/SiteContent/scripts/stageButtons.js"></script>  
         <script src="/SiteContent/scripts/stageHandler.js"></script>  
         <script src="/SiteContent/scripts/universalUtils.js"></script>
-        <script src="https://unpkg.com/wavesurfer.js"></script>    
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/7.7.1/wavesurfer.min.js"></script>    
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/7.7.1/plugins/hover.min.js"></script>    
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/7.7.1/plugins/timeline.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/7.7.1/plugins/zoom.min.js"></script>
     </head>
 
     <body>
@@ -29,7 +34,7 @@
         <input type="file" id="fileInput" style="display:none">
 
         <!--Prompt system-->
-        <div class="promptdiv" id="prompt-parent" style="display: none; z-index: 3;">
+        <div class="promptdiv" id="prompt-parent" style="display: none;">
             <h1 id="prompt-title"></h1>
             <p id="prompt-desc">
                 
@@ -70,6 +75,12 @@
         </div>
 
         <!--Content-->
-        <div id="waveform"></div>
+        <label>
+            Zoom: <input type="range" min="0" max="400" value="0" />
+        </label>
+        <div class="musicobject"> 
+            <div id="waveform"></div>
+            <div class="timeline" id="timeline"></div>
+        </div>
     </body>
 </html>

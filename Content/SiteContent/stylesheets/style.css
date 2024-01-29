@@ -92,6 +92,7 @@ body {
     color: white;
     border-radius: 25px;
     padding: 15px;
+    z-index: 9;
 }
 
 .promptdiv input {
@@ -142,6 +143,7 @@ textarea {
     left: 0;
     height: 100%;
     width: 100%;
+    z-index: 8;
   }
 
   /* Misc stuff (front page flex and about-us text holder) */

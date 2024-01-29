@@ -59,10 +59,25 @@ function insertFile(url) {
     $('#select-id').hide()
     $('#select-play').show()
     $('#select-export').show()
-    surfer = WaveSurfer.create({
+    const wavesurfer = window.WaveSurfer
+    surfer = wavesurfer.create({
         container: '#waveform',
-        waveColor: '#4F4A85',
-        progressColor: '#383351',
+        waveColor: '#628FC4',
+        progressColor: '#718093',
         url: url,
+        dragToSeek: true,
+        plugins: [wavesurfer.Timeline.create({
+            style: "color: white;",
+            container: '#timeline'
+        }), wavesurfer.Hover.create(), wavesurfer.Zoom.create()],
     })
+
+    surfer.once('decode', () => {
+        const slider = document.querySelector('input[type="range"]')
+      
+        slider.addEventListener('input', (e) => {
+          const px = e.target.valueAsNumber / 2
+          surfer.zoom(px)
+        })
+      })
 }
