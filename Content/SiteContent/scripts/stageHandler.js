@@ -31,7 +31,6 @@ async function input(type, data) {
                 const netRes = await fetch(audioendpoint + data)
                 if (netRes.status != 200) {return false}
                 const reader = await netRes.arrayBuffer();
-                const audioPlayer = $('#audioPlayer')[0]
 
                 var blob = new Blob([reader], { type: 'audio/mp3' });
                 var url = window.URL.createObjectURL(blob)
@@ -44,7 +43,6 @@ async function input(type, data) {
             $('#fileInput').click();
             const res = await handleFileSelect()
             if (res) {
-                const audioPlayer = $('#audioPlayer')[0]
                 const url = window.URL.createObjectURL(res);
 
                 return url  
@@ -57,8 +55,11 @@ async function input(type, data) {
 function insertFile(url) {
     $('#select-file').hide()
     $('#select-id').hide()
+
     $('#select-play').show()
     $('#select-export').show()
+    $('#select-slider').show()
+
     const wavesurfer = window.WaveSurfer
     surfer = wavesurfer.create({
         container: '#waveform',
@@ -77,6 +78,13 @@ function insertFile(url) {
       
         slider.addEventListener('input', (e) => {
           const px = e.target.valueAsNumber / 2
+
+          if (px == 0) {
+            $('#timeline').show()
+          } else {
+            $('#timeline').hide()
+          }
+
           surfer.zoom(px)
         })
       })
