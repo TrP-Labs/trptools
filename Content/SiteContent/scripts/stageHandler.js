@@ -52,6 +52,19 @@ async function input(type, data) {
     }
 }
 
+function createMarker(surfer, hoverpos) { // this is where the prompt tree for what type of marker you want will exist, refer to legacy for option listings
+    const duration = surfer.getDuration()
+    const time = hoverpos * duration
+    const markersize = duration / 200
+
+    regions.addRegion({
+        start: time - markersize,
+        end: time + markersize,
+        drag: true,
+        resize: false
+    })
+}
+
 function insertFile(url) {
     $('#select-file').hide()
     $('#select-id').hide()
@@ -61,6 +74,8 @@ function insertFile(url) {
     $('#select-slider').show()
 
     const wavesurfer = window.WaveSurfer
+    const hover = wavesurfer.Hover.create()
+    const regions = wavesurfer.Regions.create()
     surfer = wavesurfer.create({
         container: '#waveform',
         waveColor: '#628FC4',
@@ -70,7 +85,7 @@ function insertFile(url) {
         plugins: [wavesurfer.Timeline.create({
             style: "color: white;",
             container: '#timeline'
-        }), wavesurfer.Hover.create(), wavesurfer.Zoom.create()],
+        }), hover, wavesurfer.Zoom.create(), regions],
     })
 
     surfer.once('decode', () => {
@@ -88,4 +103,15 @@ function insertFile(url) {
           surfer.zoom(px)
         })
       })
+
+
+    let lasthover = 0
+    hover.on('hover', function (e) {
+        lasthover = e
+    });
+
+      $('#waveform').bind('contextmenu', function(e) {
+        e.preventDefault();
+        createMarker(surfer, lasthover)
+   });
 }
