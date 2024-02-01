@@ -46,7 +46,7 @@ function showCustom(info) { // Responsible for creating prompts
                 class: 'inputbutton',
                 text: button.text,
                 style: `background-color: ${button.color}; width: ${button.width};`,
-                click: button.function,
+                click: function() {button.function(button.functionParam)},
             }).appendTo(bh);
         });
     }

@@ -1,6 +1,28 @@
 const audioendpoint = 'https://api.hyra.io/audio/'
 let surfer = null
 
+const markerTypeColors = {
+    lights: "#a5a5a5",
+    color: "#cb5f7e",
+    action: "#bbab7d",
+    other: "#92bb7d"
+}
+
+function timeFormat(duration) { // Creates formatted time from seconds
+    const hrs = ~~(duration / 3600);
+    const mins = ~~((duration % 3600) / 60);
+    const secs = ~~duration % 60;
+
+    let ret = "";
+    if (hrs > 0) {
+      ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+    }
+    ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+    ret += "" + secs;
+  
+    return ret;
+  }
+
 async function handleFileSelect() {
     let promise = new Promise(function(resolve){
         document.body.onfocus = function() {
@@ -52,10 +74,37 @@ async function input(type, data) {
     }
 }
 
-function createMarker(surfer, hoverpos) { // this is where the prompt tree for what type of marker you want will exist, refer to legacy for option listings
+function createMarker(surfer, hoverpos, regions) { // this is where the prompt tree for what type of marker you want will exist, refer to legacy for option listings
+    // Establish current values for the marker
     const duration = surfer.getDuration()
     const time = hoverpos * duration
     const markersize = duration / 200
+
+    // Prompt the user for the type of marker that will be added
+    showCustom({
+        title: "What would you like to add at " + timeFormat(time),
+        buttons: [
+            { text: "Lights", color: markerTypeColors.lights, function: makeMarkerOfType, functionParam: 'lights' },
+            { text: "Color", color: markerTypeColors.color, function: makeMarkerOfType, functionParam: 'colors' },
+            { text: "Action", color: markerTypeColors.action, function: makeMarkerOfType, functionParam: 'action' },
+            { text: "Other", color: markerTypeColors.other, function: makeMarkerOfType, functionParam: 'other' },
+        ]
+    })
+
+    // Called once the user decides the marker type, this switch statement simply collects the details before the regions code is ran
+    function makeMarkerOfType(type) {
+        closewindow()
+        switch(type) {
+            case 'lights':
+            break;
+            case 'colors':
+            break;
+            case 'action':
+            break;
+            case 'other':  
+            break;
+        }
+    }
 
     regions.addRegion({
         start: time - markersize,
@@ -112,6 +161,6 @@ function insertFile(url) {
 
       $('#waveform').bind('contextmenu', function(e) {
         e.preventDefault();
-        createMarker(surfer, lasthover)
+        createMarker(surfer, lasthover, regions)
    });
 }
