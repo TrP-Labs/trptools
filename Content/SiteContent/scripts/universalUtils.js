@@ -54,7 +54,8 @@ function showCustom(info) { // Responsible for creating prompts
                     name: "prompt",
                     class: 'checkbox',
                     checked: cb.default,
-                    id: 'pi_' + lid
+                    id: 'pi_' + lid,
+                    'data-label': cb.label
                 }).appendTo(dv);
                 $('<label>', {
                     for: 'pi_' + lid,
@@ -73,7 +74,8 @@ function showCustom(info) { // Responsible for creating prompts
                     name: "prompt",
                     class: 'checkbox',
                     checked: cb.default,
-                    id: 'pi_' + lid
+                    id: 'pi_' + lid,
+                    'data-label': cb.label
                 }).appendTo(dv);
                 $('<label>', {
                     for: 'pi_' + lid,
@@ -105,6 +107,19 @@ function showCustom(info) { // Responsible for creating prompts
     $('#prompt-parent').show();
     $('#overlay').show()
     if (focusbox) {focusbox.focus()}
+}
+
+function getChoicesInput() {
+    const checkboxResults = $('input[name="prompt"]:checked').map(function () {
+        return { value: this.value, label: $(this).data('label') };
+    }).get();
+
+    const radioButtonResult = {
+        value: $('input[name="prompt"]:checked').val(),
+        label: $('input[name="prompt"]:checked').data('label')
+    };
+
+    return {checkboxes: checkboxResults, radiobuttons: radioButtonResult}
 }
 
 function closewindow() { // Hides prompts

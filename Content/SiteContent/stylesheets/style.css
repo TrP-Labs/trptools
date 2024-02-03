@@ -139,12 +139,13 @@ textarea {
 }
 
 .choicediv {
-  max-width: 25%;
+  max-width: 50%;
   margin: auto;
   text-align: left;
 }
 
 .choicelabel {
+  position: fixed;
   vertical-align: top;
   font-size: 30px;
 }

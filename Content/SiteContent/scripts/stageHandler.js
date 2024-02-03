@@ -8,6 +8,56 @@ const markerTypeColors = {
     other: "#92bb7d"
 }
 
+const data = {
+    lights: [
+        'DecorativeRoof',
+        'DecorativeFront',
+        'Default',
+        'Static',
+        'DecorativeDiagonal',
+        'Background',
+        'Tracking',
+        'Audience'
+    ],
+    colors: [
+        'Random',
+        'Red',
+        'Green',
+        'Blue',
+        'Cyan',
+        'Magenta',
+        'Yellow',
+        'White',
+        'Orange'
+    ]
+}
+
+function convertObject(arr) { // Utility function to convert data to checkbox inputs
+    return arr.map(value => ({ label: value }));
+}
+
+let isConditionMet = false;
+
+function promptYield() {
+  isConditionMet = true;
+}
+
+function waitForPrompt() {
+  return new Promise(resolve => {
+
+    function checkCondition() {
+      if (isConditionMet == true) {
+        resolve();
+        isConditionMet = false
+      } else {
+        setTimeout(checkCondition, 100); // Adjust the timeout as needed
+      }
+    }
+
+    checkCondition();
+  });
+}
+
 function timeFormat(duration) { // Creates formatted time from seconds
     const hrs = ~~(duration / 3600);
     const mins = ~~((duration % 3600) / 60);
@@ -92,29 +142,39 @@ function createMarker(surfer, hoverpos, regions) { // this is where the prompt t
     })
 
     // Called once the user decides the marker type, this switch statement simply collects the details before the regions code is ran
-    function makeMarkerOfType(type) {
+    async function makeMarkerOfType(type) {
         closewindow()
         switch(type) {
             case 'lights':
                 showCustom({
-                    title: "Which lights would you like to modify",
+                    title: "Would you like to turn the lights on or off",
                     choices: {
                         type: 'radiobuttons',
-                        data: [
-                            {
-                                checked: true,
-                                label: 'test'
-                            },
-                            {
-                                checked: false,
-                                label: 'test2'
-                            },
-                        ]
+                        data: [{label: 'On'}, {label: 'Off'}]
                     },
                     buttons: [
-                        { text: "Ok", color: "#4CAF50", function: closewindow},
+                        { text: "Ok", color: "#4CAF50", function: promptYield},
                     ]
                 })
+
+                await waitForPrompt()
+                console.log(getChoicesInput())
+
+                showCustom({
+                    title: "Which lights would you like to modify",
+                    choices: {
+                        type: 'checkboxes',
+                        data: convertObject(data.lights)
+                    },
+                    buttons: [
+                        { text: "Ok", color: "#4CAF50", function: promptYield},
+                    ]
+                })
+
+                await waitForPrompt()
+                console.log(getChoicesInput())
+
+                closewindow()
             break;
             case 'colors':
             break;
