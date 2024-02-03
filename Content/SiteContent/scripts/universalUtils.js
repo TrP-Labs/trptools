@@ -1,5 +1,7 @@
 function showCustom(info) { // Responsible for creating prompts
     $("#prompt-title").text(info.title)
+
+    // Set description or loading box
     if (info.loading == true) {
         $("#prompt-desc").html('<div class="lds-ring"><div></div><div></div><div></div><div></div></div>')
     } else {
@@ -9,6 +11,7 @@ function showCustom(info) { // Responsible for creating prompts
     
     let focusbox = null
 
+    // Add input
     const ih = $("#prompt-inputholder")
     ih.empty()
     if (info.input) {
@@ -37,6 +40,42 @@ function showCustom(info) { // Responsible for creating prompts
         });
     }
 
+    // Add checkboxes or radio buttons
+    const ch = $("#prompt-choiceholder")
+    ch.empty()
+    if (info.choices) {
+        if (info.choices.type == 'checkboxes') {
+            info.choices.data.forEach((cb) => {
+                let dv = $('<div>', {class: 'choicediv'}).appendTo(ch);
+
+                $('<input>', {
+                    type: 'checkbox',
+                    class: 'checkbox',
+                    checked: cb.default
+                }).appendTo(dv);
+
+                $('<label>', {
+                    text: cb.label
+                }).appendTo(dv);
+            });
+        } else if (info.choices.type == 'radiobuttons') {
+            info.choices.data.forEach((cb) => {
+                let dv = $('<div>', {class: 'choicediv'}).appendTo(ch);
+
+                $('<input>', {
+                    type: 'radio',
+                    name: "prompt",
+                    class: 'checkbox',
+                    checked: cb.default
+                }).appendTo(dv);
+                $('<label>', {
+                    text: cb.label
+                }).appendTo(dv);
+            });
+        }
+    }
+
+    // Add buttons
     const bh = $("#prompt-buttonholder")
     bh.empty()
     if (info.buttons) {
@@ -51,6 +90,7 @@ function showCustom(info) { // Responsible for creating prompts
         });
     }
 
+    // Make the prompt visible
     $('#prompt-parent').show();
     $('#overlay').show()
     if (focusbox) {focusbox.focus()}

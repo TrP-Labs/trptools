@@ -96,6 +96,25 @@ function createMarker(surfer, hoverpos, regions) { // this is where the prompt t
         closewindow()
         switch(type) {
             case 'lights':
+                showCustom({
+                    title: "Which lights would you like to modify",
+                    choices: {
+                        type: 'checkboxes',
+                        data: [
+                            {
+                                checked: true,
+                                label: 'test'
+                            },
+                            {
+                                checked: false,
+                                label: 'test2'
+                            },
+                        ]
+                    },
+                    buttons: [
+                        { text: "Ok", color: "#4CAF50", function: closewindow},
+                    ]
+                })
             break;
             case 'colors':
             break;
