@@ -138,6 +138,17 @@ textarea {
   width: 25px;
 }
 
+.choicediv {
+  max-width: 25%;
+  margin: auto;
+  text-align: left;
+}
+
+.choicelabel {
+  vertical-align: top;
+  font-size: 30px;
+}
+
 /* Styles the X button on alerts */
 .closebtn {
   margin-left: 15px;

@@ -44,19 +44,25 @@ function showCustom(info) { // Responsible for creating prompts
     const ch = $("#prompt-choiceholder")
     ch.empty()
     if (info.choices) {
-        if (info.choices.type == 'checkboxes') {
+        let lid = 0
+        if (info.choices.type == 'checkboxes') {    
             info.choices.data.forEach((cb) => {
                 let dv = $('<div>', {class: 'choicediv'}).appendTo(ch);
 
                 $('<input>', {
                     type: 'checkbox',
+                    name: "prompt",
                     class: 'checkbox',
-                    checked: cb.default
+                    checked: cb.default,
+                    id: 'pi_' + lid
                 }).appendTo(dv);
-
                 $('<label>', {
+                    for: 'pi_' + lid,
+                    class: "choicelabel",
                     text: cb.label
                 }).appendTo(dv);
+
+                lid = lid + 1
             });
         } else if (info.choices.type == 'radiobuttons') {
             info.choices.data.forEach((cb) => {
@@ -66,11 +72,16 @@ function showCustom(info) { // Responsible for creating prompts
                     type: 'radio',
                     name: "prompt",
                     class: 'checkbox',
-                    checked: cb.default
+                    checked: cb.default,
+                    id: 'pi_' + lid
                 }).appendTo(dv);
                 $('<label>', {
+                    for: 'pi_' + lid,
+                    class: "choicelabel",
                     text: cb.label
                 }).appendTo(dv);
+
+                lid = lid + 1
             });
         }
     }

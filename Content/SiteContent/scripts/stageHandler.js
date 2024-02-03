@@ -99,7 +99,7 @@ function createMarker(surfer, hoverpos, regions) { // this is where the prompt t
                 showCustom({
                     title: "Which lights would you like to modify",
                     choices: {
-                        type: 'checkboxes',
+                        type: 'radiobuttons',
                         data: [
                             {
                                 checked: true,
