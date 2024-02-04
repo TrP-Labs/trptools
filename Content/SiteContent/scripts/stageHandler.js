@@ -1,13 +1,14 @@
 const audioendpoint = 'https://api.hyra.io/audio/'
 let surfer = null
+let regions
 
 let stateTracker = {}
 
 const markerTypeColors = {
-    lights: "#40a5a5a5",
-    colors: "#40cb5f7e",
-    action: "#40bbab7d",
-    other: "#4092bb7d"
+    lights: "#a5a5a599",
+    colors: "#cb5f7e99",
+    action: "#bbab7d99",
+    other: "#92bb7d99"
 }
 
 const data = {
@@ -119,7 +120,7 @@ async function createMarker(surfer, hoverpos, regions) { // this is where the pr
     // Establish current values for the marker
     const duration = surfer.getDuration()
     const time = hoverpos * duration
-    const markersize = duration / 400
+    const markersize = duration / 500
 
     // Prompt the user for the type of marker that will be added
     let type = await radioForceSelect({
@@ -257,7 +258,7 @@ function insertFile(url) {
 
     const wavesurfer = window.WaveSurfer
     const hover = wavesurfer.Hover.create()
-    const regions = wavesurfer.Regions.create()
+    regions = wavesurfer.Regions.create()
     surfer = wavesurfer.create({
         container: '#waveform',
         waveColor: '#628FC4',
