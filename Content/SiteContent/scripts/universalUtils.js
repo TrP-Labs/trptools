@@ -1,4 +1,5 @@
 function showCustom(info) { // Responsible for creating prompts
+    closewindow()
     $("#prompt-title").text(info.title)
 
     // Set description or loading box
@@ -111,13 +112,10 @@ function showCustom(info) { // Responsible for creating prompts
 
 function getChoicesInput() {
     const checkboxResults = $('input[name="prompt"]:checked').map(function () {
-        return { value: this.value, label: $(this).data('label') };
+        return $(this).data('label');
     }).get();
 
-    const radioButtonResult = {
-        value: $('input[name="prompt"]:checked').val(),
-        label: $('input[name="prompt"]:checked').data('label')
-    };
+    const radioButtonResult = $('input[name="prompt"]:checked').data('label')
 
     return {checkboxes: checkboxResults, radiobuttons: radioButtonResult}
 }
@@ -128,6 +126,44 @@ function closewindow() { // Hides prompts
     $('#overlay').hide()
     item.hide();
     input.val("")
+}
+
+// Async prompt system
+let isConditionMet = false;
+
+function promptYield() {
+    isConditionMet = true;
+}
+
+function waitForPrompt() {
+    return new Promise(resolve => {
+
+        function checkCondition() {
+            if (isConditionMet == true) {
+                resolve();
+                isConditionMet = false
+            } else {
+                setTimeout(checkCondition, 100);
+            }
+        }
+
+        checkCondition();
+    });
+}
+
+// Wrapper for forcing radio button selection
+async function radioForceSelect(data) {
+        showCustom(data)
+
+        await waitForPrompt()
+        let type = getChoicesInput().radiobuttons
+        if (type) {
+            return type.toLowerCase();
+        } else {
+            $('#alert-parent').show()
+            $('#alert-text').text("You must select an option")
+            return await radioForceSelect(data)
+        }
 }
 
 // Console warnings and information

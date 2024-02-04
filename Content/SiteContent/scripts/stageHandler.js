@@ -3,7 +3,7 @@ let surfer = null
 
 const markerTypeColors = {
     lights: "#a5a5a5",
-    color: "#cb5f7e",
+    colors: "#cb5f7e",
     action: "#bbab7d",
     other: "#92bb7d"
 }
@@ -34,28 +34,6 @@ const data = {
 
 function convertObject(arr) { // Utility function to convert data to checkbox inputs
     return arr.map(value => ({ label: value }));
-}
-
-let isConditionMet = false;
-
-function promptYield() {
-  isConditionMet = true;
-}
-
-function waitForPrompt() {
-  return new Promise(resolve => {
-
-    function checkCondition() {
-      if (isConditionMet == true) {
-        resolve();
-        isConditionMet = false
-      } else {
-        setTimeout(checkCondition, 100); // Adjust the timeout as needed
-      }
-    }
-
-    checkCondition();
-  });
 }
 
 function timeFormat(duration) { // Creates formatted time from seconds
@@ -124,72 +102,72 @@ async function input(type, data) {
     }
 }
 
-function createMarker(surfer, hoverpos, regions) { // this is where the prompt tree for what type of marker you want will exist, refer to legacy for option listings
+async function createMarker(surfer, hoverpos, regions) { // this is where the prompt tree for what type of marker you want will exist, refer to legacy for option listings
     // Establish current values for the marker
     const duration = surfer.getDuration()
     const time = hoverpos * duration
     const markersize = duration / 200
 
     // Prompt the user for the type of marker that will be added
-    showCustom({
-        title: "What would you like to add at " + timeFormat(time),
-        buttons: [
-            { text: "Lights", color: markerTypeColors.lights, function: makeMarkerOfType, functionParam: 'lights' },
-            { text: "Color", color: markerTypeColors.color, function: makeMarkerOfType, functionParam: 'colors' },
-            { text: "Action", color: markerTypeColors.action, function: makeMarkerOfType, functionParam: 'action' },
-            { text: "Other", color: markerTypeColors.other, function: makeMarkerOfType, functionParam: 'other' },
-        ]
-    })
+    const type = await radioForceSelect({
+            title: "What would you like to add at " + timeFormat(time),
+            choices: {
+                type: 'radiobuttons',
+                data: [
+                    { label: 'Lights' },
+                    { label: 'Color' },
+                    { label: 'Action' },
+                    { label: 'Other' }
+                ]
+            },
+            buttons: [
+                { text: "Ok", color: "#4CAF50", function: promptYield }
+            ]
+        })
 
-    // Called once the user decides the marker type, this switch statement simply collects the details before the regions code is ran
-    async function makeMarkerOfType(type) {
-        closewindow()
-        switch(type) {
-            case 'lights':
-                showCustom({
-                    title: "Would you like to turn the lights on or off",
-                    choices: {
-                        type: 'radiobuttons',
-                        data: [{label: 'On'}, {label: 'Off'}]
-                    },
-                    buttons: [
-                        { text: "Ok", color: "#4CAF50", function: promptYield},
-                    ]
-                })
+    switch (type) {
+        case 'lights':
+            const onoff = await radioForceSelect({
+                title: "Would you like to turn the lights on or off",
+                choices: {
+                    type: 'radiobuttons',
+                    data: [{ label: 'On' }, { label: 'Off' }]
+                },
+                buttons: [
+                    { text: "Ok", color: "#4CAF50", function: promptYield },
+                ]
+            })
 
-                await waitForPrompt()
-                console.log(getChoicesInput())
+            showCustom({
+                title: "Which lights would you like to modify",
+                choices: {
+                    type: 'checkboxes',
+                    data: convertObject(data.lights)
+                },
+                buttons: [
+                    { text: "Ok", color: "#4CAF50", function: promptYield },
+                ]
+            })
 
-                showCustom({
-                    title: "Which lights would you like to modify",
-                    choices: {
-                        type: 'checkboxes',
-                        data: convertObject(data.lights)
-                    },
-                    buttons: [
-                        { text: "Ok", color: "#4CAF50", function: promptYield},
-                    ]
-                })
+            await waitForPrompt()
+            console.log(getChoicesInput())
 
-                await waitForPrompt()
-                console.log(getChoicesInput())
-
-                closewindow()
+            closewindow()
             break;
-            case 'colors':
+        case 'colors':
             break;
-            case 'action':
+        case 'action':
             break;
-            case 'other':  
+        case 'other':
             break;
-        }
     }
 
     regions.addRegion({
         start: time - markersize,
         end: time + markersize,
         drag: true,
-        resize: false
+        resize: false,
+        color: markerTypeColors[type]
     })
 }
 
