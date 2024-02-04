@@ -158,13 +158,20 @@ async function radioForceSelect(data) {
         await waitForPrompt()
         let type = getChoicesInput().radiobuttons
         if (type) {
-            return type.toLowerCase();
+            return type;
         } else {
             $('#alert-parent').show()
             $('#alert-text').text("You must select an option")
             return await radioForceSelect(data)
         }
 }
+
+// uuidv4 generator
+function uuidv4() {
+    return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    );
+  }
 
 // Console warnings and information
 console.log('%c STOP!', 'color: red; font-size: 100px;');

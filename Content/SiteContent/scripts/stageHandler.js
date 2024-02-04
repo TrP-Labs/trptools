@@ -1,11 +1,13 @@
 const audioendpoint = 'https://api.hyra.io/audio/'
 let surfer = null
 
+let stateTracker = {}
+
 const markerTypeColors = {
-    lights: "#a5a5a5",
-    colors: "#cb5f7e",
-    action: "#bbab7d",
-    other: "#92bb7d"
+    lights: "#40a5a5a5",
+    colors: "#40cb5f7e",
+    action: "#40bbab7d",
+    other: "#4092bb7d"
 }
 
 const data = {
@@ -29,6 +31,17 @@ const data = {
         'Yellow',
         'White',
         'Orange'
+    ],
+    actions: [
+        "Light throw",
+        "Small flash",
+        "Big flash",
+    ],
+    other: [
+        "Tracking Disable",
+        "Tracking Enable",
+        "Animated background Disable",
+        "Animated background Enable"
     ]
 }
 
@@ -43,17 +56,17 @@ function timeFormat(duration) { // Creates formatted time from seconds
 
     let ret = "";
     if (hrs > 0) {
-      ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+        ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
     }
     ret += "" + mins + ":" + (secs < 10 ? "0" : "");
     ret += "" + secs;
-  
+
     return ret;
-  }
+}
 
 async function handleFileSelect() {
-    let promise = new Promise(function(resolve){
-        document.body.onfocus = function() {
+    let promise = new Promise(function (resolve) {
+        document.body.onfocus = function () {
             let files = $('#fileInput').prop('files');
             if (!files[0]) {
 
@@ -67,19 +80,19 @@ async function handleFileSelect() {
                 }, 500);
 
             } else {
-                resolve(files[0]) 
-            }  
+                resolve(files[0])
+            }
         }
     });
     return promise
 }
 
 async function input(type, data) {
-    switch(type) {
+    switch (type) {
         case 'sound':
             try {
                 const netRes = await fetch(audioendpoint + data)
-                if (netRes.status != 200) {return false}
+                if (netRes.status != 200) { return false }
                 const reader = await netRes.arrayBuffer();
 
                 var blob = new Blob([reader], { type: 'audio/mp3' });
@@ -95,10 +108,10 @@ async function input(type, data) {
             if (res) {
                 const url = window.URL.createObjectURL(res);
 
-                return url  
+                return url
             } else {
                 return false
-            } 
+            }
     }
 }
 
@@ -106,32 +119,35 @@ async function createMarker(surfer, hoverpos, regions) { // this is where the pr
     // Establish current values for the marker
     const duration = surfer.getDuration()
     const time = hoverpos * duration
-    const markersize = duration / 200
+    const markersize = duration / 400
 
     // Prompt the user for the type of marker that will be added
-    const type = await radioForceSelect({
-            title: "What would you like to add at " + timeFormat(time),
-            choices: {
-                type: 'radiobuttons',
-                data: [
-                    { label: 'Lights' },
-                    { label: 'Color' },
-                    { label: 'Action' },
-                    { label: 'Other' }
-                ]
-            },
-            buttons: [
-                { text: "Ok", color: "#4CAF50", function: promptYield }
+    let type = await radioForceSelect({
+        title: "What would you like to add at " + timeFormat(time),
+        choices: {
+            type: 'radiobuttons',
+            data: [
+                { label: 'Lights' },
+                { label: 'Colors' },
+                { label: 'Action' },
+                { label: 'Other' }
             ]
-        })
+        },
+        buttons: [
+            { text: "Ok", color: "#4CAF50", function: promptYield }
+        ]
+    })
+    type = type.toLowerCase()
 
-    switch (type) {
+    const markerid = uuidv4()
+
+    switch (type) { // Switch to handle different types of data
         case 'lights':
             const onoff = await radioForceSelect({
-                title: "Would you like to turn the lights on or off",
+                title: "What would you like to do to the lights",
                 choices: {
                     type: 'radiobuttons',
-                    data: [{ label: 'On' }, { label: 'Off' }]
+                    data: [{ label: 'Enable' }, { label: 'Disable' }]
                 },
                 buttons: [
                     { text: "Ok", color: "#4CAF50", function: promptYield },
@@ -150,19 +166,79 @@ async function createMarker(surfer, hoverpos, regions) { // this is where the pr
             })
 
             await waitForPrompt()
-            console.log(getChoicesInput())
+            const lightsToModify = getChoicesInput().checkboxes
+
+            stateTracker[markerid] = [onoff, lightsToModify]
 
             closewindow()
             break;
         case 'colors':
+            const colors = await radioForceSelect({
+                title: "What color would you like to set the lights to",
+                choices: {
+                    type: 'radiobuttons',
+                    data: convertObject(data.colors)
+                },
+                buttons: [
+                    { text: "Ok", color: "#4CAF50", function: promptYield },
+                ]
+            })
+
+            showCustom({
+                title: "Which lights would you like to set to " + colors.toLowerCase(),
+                choices: {
+                    type: 'checkboxes',
+                    data: convertObject(data.lights)
+                },
+                buttons: [
+                    { text: "Ok", color: "#4CAF50", function: promptYield },
+                ]
+            })
+
+            await waitForPrompt()
+            const lightsToColor = getChoicesInput().checkboxes
+
+            stateTracker[markerid] = ['Color ' + colors, lightsToColor]
+
+            closewindow()
             break;
         case 'action':
+            const action = await radioForceSelect({
+                title: "Which action would you like to perform",
+                choices: {
+                    type: 'radiobuttons',
+                    data: convertObject(data.actions)
+                },
+                buttons: [
+                    { text: "Ok", color: "#4CAF50", function: promptYield },
+                ]
+            })
+
+            stateTracker[markerid] = [action]
+
+            closewindow()
             break;
         case 'other':
+            const otheraction = await radioForceSelect({
+                title: "What would you like to do",
+                choices: {
+                    type: 'radiobuttons',
+                    data: convertObject(data.other)
+                },
+                buttons: [
+                    { text: "Ok", color: "#4CAF50", function: promptYield },
+                ]
+            })
+
+            stateTracker[markerid] = [otheraction]
+
+            closewindow()
+            break;
             break;
     }
 
     regions.addRegion({
+        id: markerid,
         start: time - markersize,
         end: time + markersize,
         drag: true,
@@ -196,19 +272,19 @@ function insertFile(url) {
 
     surfer.once('decode', () => {
         const slider = document.querySelector('input[type="range"]')
-      
+
         slider.addEventListener('input', (e) => {
-          const px = e.target.valueAsNumber / 2
+            const px = e.target.valueAsNumber / 2
 
-          if (px == 0) {
-            $('#timeline').show()
-          } else {
-            $('#timeline').hide()
-          }
+            if (px == 0) {
+                $('#timeline').show()
+            } else {
+                $('#timeline').hide()
+            }
 
-          surfer.zoom(px)
+            surfer.zoom(px)
         })
-      })
+    })
 
 
     let lasthover = 0
@@ -216,8 +292,8 @@ function insertFile(url) {
         lasthover = e
     });
 
-      $('#waveform').bind('contextmenu', function(e) {
+    $('#waveform').bind('contextmenu', function (e) {
         e.preventDefault();
         createMarker(surfer, lasthover, regions)
-   });
+    });
 }
