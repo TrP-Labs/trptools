@@ -1,6 +1,6 @@
 const audioendpoint = 'https://api.hyra.io/audio/'
 let surfer = null
-let regions
+let regions = null
 
 let stateTracker = {}
 
@@ -8,7 +8,8 @@ const markerTypeColors = {
     lights: "#a5a5a599",
     colors: "#cb5f7e99",
     action: "#bbab7d99",
-    other: "#92bb7d99"
+    other: "#92bb7d99",
+    notFound: "#80808099"
 }
 
 const data = {
@@ -44,6 +45,27 @@ const data = {
         "Animated background Disable",
         "Animated background Enable"
     ]
+}
+
+const commandToColor = {
+    Color : 'colors',
+    Disable: 'lights',
+    Enable: 'lights',
+    Light : 'action',
+    Small : 'action',
+    Big :'action',
+    Tracking :'other',
+    Animated :'other',
+}
+
+function getChoiceFromCommand(command) {
+    const split = command.split(" ")[0]
+    const res = commandToColor[split]
+    if (res) {
+        return res
+    } else {
+        return 'notFound'
+    }
 }
 
 function convertObject(arr) { // Utility function to convert data to checkbox inputs
@@ -116,11 +138,49 @@ async function input(type, data) {
     }
 }
 
-async function createMarker(surfer, hoverpos, regions) { // this is where the prompt tree for what type of marker you want will exist, refer to legacy for option listings
+function insertMarker(regions, info) {
+    $('#select-data').hide()
+    $('#select-export').show()
+
+    const markersize = info.duration / 500
+
+    const reg = regions.addRegion({
+        id: info.markerid,
+        start: info.time - markersize,
+        end: info.time + markersize,
+        drag: true,
+        resize: false,
+        color: markerTypeColors[info.type]
+    })
+
+    reg.on('dblclick', function (e) {
+        const data = stateTracker[reg.id]
+        const time = timeFormat(reg.start + (reg.end - reg.start) / 2)
+
+        showCustom({
+            title: "Information for marker at " + time,
+            description: `
+                Command: <span style="color: #696969; overflow-wrap: anywhere;"> ${JSON.stringify(data)} </span> <br> <br>
+                ID: ${reg.id}
+            `,
+            buttons: [
+                { text: "Ok", color: "#4CAF50", function: closewindow },
+                { text: "Delete", color: "#802c2c", function: deleteMarker }
+            ]
+        })
+    });
+
+    function deleteMarker() {
+        closewindow()
+        stateTracker[reg.id] = null
+        reg.remove()
+    }
+}
+
+async function createMarker(surfer, hoverpos, regions) { // this is where the prompt tree for what type of marker you want will exist
     // Establish current values for the marker
     const duration = surfer.getDuration()
     const time = hoverpos * duration
-    const markersize = duration / 500
 
     // Prompt the user for the type of marker that will be added
     let type = await radioForceSelect({
@@ -238,38 +298,28 @@ async function createMarker(surfer, hoverpos, regions) { // this is where the pr
             break;
     }
 
-    const reg = regions.addRegion({
-        id: markerid,
-        start: time - markersize,
-        end: time + markersize,
-        drag: true,
-        resize: false,
-        color: markerTypeColors[type]
+    insertMarker(regions, {
+        markerid: markerid,
+        time: time,
+        duration: duration,
+        type: type
     })
+}
 
-    reg.on('dblclick', function (e) {
-        const data = stateTracker[reg.id]
-        console.log(reg)
-        const time = timeFormat(reg.start + (reg.end - reg.start) / 2)
+function insertMarkers() {
+    dataToImport.forEach(function (item) {
+        const markerid = uuidv4()
+        let noTimeCopy = item.slice()
+        noTimeCopy.shift()
+        stateTracker[markerid] = noTimeCopy
 
-        showCustom({
-            title: "Information for marker at " + time,
-            description: `
-                Command: <span style="color: #696969; overflow-wrap: anywhere;"> ${JSON.stringify(data)} </span> <br> <br>
-                ID: ${reg.id}
-            `,
-            buttons: [
-                { text: "Ok", color: "#4CAF50", function: closewindow },
-                { text: "Delete", color: "#802c2c", function: deleteMarker }
-            ]
+        insertMarker(regions, {
+            markerid: markerid,
+            time: item[0],
+            duration: surfer.getDuration(),
+            type: getChoiceFromCommand(item[1])
         })
     });
-
-    function deleteMarker() {
-        closewindow()
-        stateTracker[reg.id] = null
-        reg.remove()
-    }
 }
 
 function insertFile(url) {
@@ -277,7 +327,6 @@ function insertFile(url) {
     $('#select-id').hide()
 
     $('#select-play').show()
-    $('#select-export').show()
     $('#select-slider').show()
 
     const wavesurfer = window.WaveSurfer
@@ -320,5 +369,12 @@ function insertFile(url) {
     $('#waveform').bind('contextmenu', function (e) {
         e.preventDefault();
         createMarker(surfer, lasthover, regions)
+    });
+
+
+    surfer.on('ready', function (e) {
+        if (dataToImport) {
+            insertMarkers()
+        } 
     });
 }

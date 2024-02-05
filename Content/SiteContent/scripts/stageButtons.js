@@ -1,3 +1,48 @@
+const Ajv = window.ajv7
+const ajv = new Ajv();
+
+const programSchema = {
+    "type": "array",
+    "items": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 3,
+        "items": [
+            { "type": "number" },
+            { "type": "string" },
+            {
+                "type": "array",
+                "items": [
+                    { "type": "string" }
+                ],
+                "minItems": 0
+            }
+        ]
+    }
+}
+
+const validate = ajv.compile(programSchema);
+
+let dataToImport = []
+
+function validateContent(data) {
+    try {
+        data = JSON.parse(data)
+
+        if (validate(data)) {
+            return true
+        } else {
+            $('#alert-parent').show()
+            $('#alert-text').text("Invalid JSON")
+            return false;
+        }
+    } catch {
+        $('#alert-parent').show()
+        $('#alert-text').text("Could not parse JSON")
+        return false;
+    }
+}
+
 async function promptContent(type) {
     switch(type) {
         case 'sound':
@@ -60,6 +105,33 @@ async function promptContent(type) {
                         { text: "Close", color: "#802c2c", function: closewindow },
                     ]
                 })
+            }
+        break;
+        case 'data':
+            showCustom({
+                title: "Import data",
+                description: "Import a stage program",
+                input: [
+                    {title: '', id: 'prompt-data', textarea: true, focus: true}
+                ],
+                buttons: [
+                    {text: "Cancel", color: "#802c2c", function: closewindow},
+                    {text: "Submit", color: "#4CAF50", function: importBegin}
+                ]
+            })
+
+            function importBegin() {
+                const data = $('#prompt-data').val()
+                const validation = validateContent(data)
+                if (!validation) return
+
+                dataToImport = JSON.parse(data)
+                $('#select-data').hide()
+                closewindow()
+
+                if (surfer) {
+                    insertMarkers()
+                }
             }
         break;
     }
