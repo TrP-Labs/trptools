@@ -238,7 +238,7 @@ async function createMarker(surfer, hoverpos, regions) { // this is where the pr
             break;
     }
 
-    regions.addRegion({
+    const reg = regions.addRegion({
         id: markerid,
         start: time - markersize,
         end: time + markersize,
@@ -246,6 +246,30 @@ async function createMarker(surfer, hoverpos, regions) { // this is where the pr
         resize: false,
         color: markerTypeColors[type]
     })
+
+    reg.on('dblclick', function (e) {
+        const data = stateTracker[reg.id]
+        console.log(reg)
+        const time = timeFormat(reg.start + (reg.end - reg.start) / 2)
+
+        showCustom({
+            title: "Information for marker at " + time,
+            description: `
+                Command: <span style="color: #696969; overflow-wrap: anywhere;"> ${JSON.stringify(data)} </span> <br> <br>
+                ID: ${reg.id}
+            `,
+            buttons: [
+                { text: "Ok", color: "#4CAF50", function: closewindow },
+                { text: "Delete", color: "#802c2c", function: deleteMarker }
+            ]
+        })
+    });
+
+    function deleteMarker() {
+        closewindow()
+        stateTracker[reg.id] = null
+        reg.remove()
+    }
 }
 
 function insertFile(url) {

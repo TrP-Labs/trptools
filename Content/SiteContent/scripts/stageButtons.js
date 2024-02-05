@@ -1,5 +1,3 @@
-const { json } = require("express")
-
 async function promptContent(type) {
     switch(type) {
         case 'sound':
@@ -82,10 +80,11 @@ function exportTimeline() {
     const regionCollection = regions.getRegions()
     let newarray = []
     regionCollection.forEach(function (item) {
-        let thisMarker = stateTracker[item.id]
-        thisMarker.unshift(item.start + item.totalDuration / 2)
+        const thisMarker = stateTracker[item.id].slice()
+        thisMarker.unshift(item.start + (item.end - item.start) / 2)
         newarray.push(thisMarker)
     });
+    newarray.sort((a, b) => a[0] - b[0]);
     const jsonarray = JSON.stringify(newarray)
 
     navigator.clipboard.writeText(jsonarray);
