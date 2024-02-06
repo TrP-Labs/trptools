@@ -1,15 +1,14 @@
-function solveAll() { // Solve all unsolved route entries
+async function solveAll() { // Solve all unsolved route entries
     let i = 0;
     for (const i in dispatchTracker) {
         const item = dispatchTracker[i];
         if (item && !item.route) {
-            const solvedroute = autoSolve(item)
+            const solvedroute = await autoSolve(item)
             dispatchTracker[i].route = solvedroute
-
             modifyEntry({
                 id: item.Id,
-                type : 'route', 
-                data : solvedroute
+                type: 'route',
+                data: solvedroute
             })
         }
     }
