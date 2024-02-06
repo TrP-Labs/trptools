@@ -3,6 +3,7 @@
 <html>
     <head>
         <link rel="stylesheet" type="text/css" href="/SiteContent/stylesheets/style.css">
+        <link rel="stylesheet" type="text/css" href="/SiteContent/stylesheets/dispatchStyle.css">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ajv/8.12.0/ajv7.min.js"></script>
@@ -11,6 +12,7 @@
         <script src="/SiteContent/scripts/dispatchSolver.js"></script>
         <script src="/SiteContent/scripts/dispatchNetwork.js"></script>
         <script src="/SiteContent/scripts/dispatchButtons.js"></script>
+        <script src="/SiteContent/scripts/universalUtils.js"></script>
 
         <title>TrP Tools - Dispatch</title>
         <link rel="icon" type="image/png" href="/SiteContent/favicon.ico">
@@ -23,7 +25,7 @@
     </head>
 
     <body>
-        <div class="promptdiv" id="prompt-parent" style="display: none; z-index: 3;">
+        <div class="promptdiv" id="prompt-parent" style="display: none;">
             <h1 id="prompt-title"></h1>
             <p id="prompt-desc">
                 
@@ -31,6 +33,9 @@
             
             <div id="prompt-inputholder"> 
             </div>     
+
+            <div id="prompt-choiceholder"> 
+            </div>  
 
             <div class="alert" id="alert-parent" style="display: none;">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>

@@ -1,0 +1,30 @@
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.styled-table th,
+.styled-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    font-weight: 200;
+}
+
+.styled-table th {
+    background-color: #3a3a3a;
+    color: white;
+}
+
+  .bottombar {
+    position: fixed;
+    background-color: #3a3a3a;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    white-space: nowrap;
+    color: white;
+    vertical-align: middle;
+    padding: 3px;
+  }

@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const http = require('http').createServer(app);
+require('dotenv').config();
 
 app.use(express.static(path.join(__dirname, 'Content'), {
     extensions: ['html'],
@@ -18,4 +19,4 @@ app.use(function(req, res) {
     res.status(404).send('404 not found');
 });
 
-http.listen(444);
+http.listen(process.env.PORT);

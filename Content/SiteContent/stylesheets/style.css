@@ -1,207 +1,247 @@
 body {
-    font-family: Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Code for the top bar*/
 .topnavholder {
-    display: flex;
-    flex-shrink: 0;
+  display: flex;
+  flex-shrink: 0;
 }
 
 .topnavsholder {
-    display: flex; 
-    overflow-x: auto;
-    overflow-y: hidden;
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .topnav {
-    background-color: #3a3a3a;
-    overflow: hidden;
-    border-radius: 25px;
-    width: fit-content;
-    max-height: 100%;
+  background-color: #3a3a3a;
+  overflow: hidden;
+  border-radius: 25px;
+  width: fit-content;
+  max-height: 100%;
 }
 
 .topnav a {
-    float: left;
-    color: #f2f2f2;
-    text-align: center;
-    padding: 20px 16px;
-    text-decoration: none;
-    font-size: 17px;
-    transition: 0.25s;
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 20px 16px;
+  text-decoration: none;
+  font-size: 17px;
+  transition: 0.25s;
 }
 
 .nav-right {
-    margin-left: auto;
+  margin-left: auto;
 }
 
 .nav-float {
-    margin-left: 5px;
-    margin-right: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .nav-fill {
-    flex-grow: 1; 
-    margin-left: 5px; 
-    margin-right: 5px;
+  flex-grow: 1;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .topnav a:hover {
-    background-color: rgb(184, 184, 184);
+  background-color: rgb(184, 184, 184);
 }
 
 .topnav a:active {
-    background-color: rgb(216, 216, 216);
+  background-color: rgb(216, 216, 216);
 }
 
-.textcontainer {
-    text-align: left;
-    margin: auto;
-    font-size: 1.25em;
-}
+/* Code for the standard button */
 
 .inputbutton {
-    padding: 10px;
-    margin: 10px;
-    border: none;
-    border-radius: 35px;
-    align-self: center;
-    color: white;
-    font-size: 1em;
-    cursor: pointer;
-    transition: 0.25s;
+  padding: 10px;
+  margin: 10px;
+  border: none;
+  border-radius: 35px;
+  align-self: center;
+  color: white;
+  font-size: 1em;
+  cursor: pointer;
+  transition: 0.25s;
 }
 
 .inputbutton:hover {
-    background-color: rgb(184, 184, 184) !important;
+  background-color: rgb(184, 184, 184) !important;
 }
 
 .inputbutton:active {
-    background-color: rgb(216, 216, 216) !important;
-    transform: scale(0.75);
+  background-color: rgb(216, 216, 216) !important;
+  transform: scale(0.75);
 }
 
-.centerbar {
-    flex-direction: row;
-    justify-content: center;
+.inputbuttonunclickable {
+  padding: 10px;
+  margin: 10px;
+  border: none;
+  border-radius: 35px;
+  align-self: center;
+  text-align: center;
+  color: white;
+  font-size: 1em;
+  transition: 0.25s;
 }
 
-.styled-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-.styled-table th,
-.styled-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
-    font-weight: 200;
-}
-
-.styled-table th {
-    background-color: #3a3a3a;
-    color: white;
-}
+/* Code for the showCustom() prompt system */
 
 .promptdiv {
-    position: absolute;
-    text-align: center;
-    transform: translate(-50%, -50%); 
-    left: 50%;
-    top: 50%;
-    min-width: 450px;
-    max-width: 25%;
-    background-color: #3a3a3a;
-    color: white;
-    border-radius: 25px;
-    padding: 15px;
+  position: absolute;
+  text-align: center;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 50%;
+  min-width: 450px;
+  max-width: 25%;
+  background-color: #3a3a3a;
+  color: white;
+  border-radius: 25px;
+  padding: 15px;
+  z-index: 9;
 }
 
 .promptdiv input {
-    text-align: left;
-    margin: 5px;
+  text-align: left;
+  margin: 5px;
 }
+
 .promptdiv button {
-    width: 25%;
-    margin: 10px;
+  width: 25%;
+  margin: 10px;
 }
 
 textarea {
-    resize: vertical; 
-    max-height: 400px;
+  resize: vertical;
+  max-height: 400px;
 }
 
 .alert {
-    padding: 20px;
-    background-color: #993932;
-    color: white;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    max-width: 65%; 
-  }
-  
-  /* The close button */
-  .closebtn {
-    margin-left: 15px;
-    color: white;
-    font-weight: bold;
-    float: right;
-    font-size: 22px;
-    line-height: 20px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  
-  /* When moving the mouse over the close button */
-  .closebtn:hover {
-    color: black;
+  padding: 20px;
+  background-color: #993932;
+  color: white;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  max-width: 65%;
+}
+
+.checkbox {
+  height: 25px;
+  width: 25px;
+}
+
+.choicediv {
+  max-width: 75%;
+  min-width: 25%;
+  width: auto;
+  margin: auto;
+  text-align: left;
+}
+
+.choicelabel {
+  vertical-align: top;
+  font-size: 30px;
+}
+
+/* Styles the X button on alerts */
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.closebtn:hover {
+  color: black;
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 8;
+}
+
+/* Misc stuff (front page flex and about-us text holder) */
+
+.frontboxholder {
+  padding-top: 25px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.frontboxholder div {
+  margin: 25px;
+  max-width: 500px;
+}
+
+.textcontainer {
+  text-align: left;
+  margin: auto;
+  font-size: 1.25em;
+}
+
+a {
+  color: black;
+  text-decoration: none;
+}
+
+/* LDS loading animation (https://loading.io/css/) */
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border: 8px solid #fff;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #fff transparent transparent transparent;
+}
+
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
   }
 
-  .overlay {
-    background-color: rgba(0,0,0,0.5);
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
+  100% {
+    transform: rotate(360deg);
   }
-
-  .frontboxholder {
-    padding-top: 25px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .frontboxholder div {
-    margin: 25px;
-    max-width: 500px;
-  }
-
-  /* remove link style */
-  a {
-    color: black;
-    text-decoration: none; 
-  }
-
-  .bottombar {
-    position: fixed;
-    background-color: #3a3a3a;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    white-space: nowrap;
-    color: white;
-    vertical-align: middle;
-    padding: 3px;
-  }
-
-  .checkbox {
-    height: 25px;
-    width: 25px;
-  }
+}
