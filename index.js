@@ -10,6 +10,7 @@ app.use(express.static(path.join(__dirname, 'Content'), {
 
 // Require module systems
 app.use('/proxy', require(__dirname + '/serverModules/proxy.js'));
+app.use('/auth', require(__dirname + '/serverModules/auth.js'));
 
 const socketIO = require(__dirname + '/serverModules/dispatchSocket.js');
 socketIO(http);
