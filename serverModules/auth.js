@@ -3,6 +3,7 @@ const router = express.Router();
 require('dotenv').config();
 const db = require(__dirname + '/db.js');
 const crypto = require('crypto');
+const noblox = require('noblox.js');
 
 // uuidv4 compliant generator
 function uuidv4() {
@@ -17,7 +18,7 @@ router.get('/login', async (req, res) => {
         res.redirect('/')
         return
     }
-    
+
     res.redirect(
         `https://apis.roblox.com/oauth/v1/authorize?client_id=${process.env.OAUTH_CID}&redirect_uri=${process.env.OAUTH_REDIRECT}&scope=openid&response_type=code`
     );
@@ -73,6 +74,21 @@ router.get('/redirect', async (req, res) => {
 
     res.cookie('token', token)
     res.redirect('/')
+});
+
+router.get('/info', async (req, res) => {
+    const info = await db.getId(req.cookies.token)
+    if (!info) {res.status(404).send({'error':'account not found'}); return}
+
+    const username = await noblox.getUsernameFromId(info.id)
+    let url = await noblox.getPlayerThumbnail(info.id, 420, "png", true, "Headshot")
+    url = url[0].imageUrl
+
+    res.status(200).send({
+        id: info.id,
+        username: username,
+        imageUrl: url
+    })
 });
 
 module.exports = router;

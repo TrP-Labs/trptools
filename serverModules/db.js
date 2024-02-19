@@ -29,4 +29,12 @@ function addId(id, token) {
     });
 }
 
-module.exports = {addId: addId};
+async function getId(token) {
+    const query = await client.db("test").collection('test').findOne({
+        token: token,
+    });
+
+    return query
+}
+
+module.exports = {addId: addId, getId: getId};
