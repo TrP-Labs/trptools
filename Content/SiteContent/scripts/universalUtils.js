@@ -171,7 +171,33 @@ function uuidv4() {
     return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
       (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
     );
-  }
+}
+
+async function loadLogin() {
+    let info
+
+    try {
+        info = await fetch('/auth/info')
+        if (info.status != 200) {return}
+        info = await info.json()
+    } catch {}
+
+    let element = document.getElementById('loginAccount')
+    const par = element.parentElement
+    element.remove()
+    element = document.createElement('span')
+    par.append(element)
+    
+    const img = document.createElement('img')
+    img.style.height = '50px';
+    img.style.width = 'auto';
+    img.src = info.imageUrl
+    element.style.height = '100%'
+    element.append(img)
+    element.append(info.username)
+}
+
+loadLogin()
 
 // Console warnings and information
 console.log('%c STOP!', 'color: red; font-size: 100px;');

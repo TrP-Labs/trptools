@@ -32,6 +32,17 @@ body {
   transition: 0.25s;
 }
 
+.topnav span {
+  color: #f2f2f2;
+  text-align: center;
+  font-size: 17px;
+  padding: 0px 7px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .nav-right {
   margin-left: auto;
 }
