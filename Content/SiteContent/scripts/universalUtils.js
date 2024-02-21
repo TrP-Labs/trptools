@@ -1,3 +1,5 @@
+let loggedInUser = 0
+
 function showCustom(info) { // Responsible for creating prompts
     closewindow()
     $("#prompt-title").text(info.title)
@@ -181,6 +183,8 @@ async function loadLogin() {
         if (info.status != 200) {return}
         info = await info.json()
     } catch {}
+
+    loggedInUser = info.id
 
     let element = document.getElementById('loginAccount')
     const par = element.parentElement
