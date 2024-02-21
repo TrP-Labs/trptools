@@ -309,6 +309,62 @@ function validateString(data) {
     }
 }
 
+async function generateConnectedTable() {
+    function getUsersAsync() {
+        const myPromise = new Promise((resolve, reject) => {
+            currentsocket.emit('getUsers', (response) => {
+                resolve(response)
+            })
+        });
+        return myPromise
+    }
+
+    const socketResponse = await getUsersAsync()
+
+    const table = $('<table>', {
+        html: `<tr>
+        <th>User</th>
+        <th>Joined</th>
+        <th>Action</th>
+        </tr>`,
+    })
+
+    table.addClass("styled-table");
+    table.css('margin', 'auto')
+
+    console.log(table)
+    let i = 0
+
+    while (i < socketResponse.data.length) {
+        const entry = socketResponse.data[i] // currently errors if you have a null proprety (example being someone leaving)
+
+        let userData = await fetch('/proxy/profile?id=' + entry.id)
+        userData = await userData.json()
+
+        const tr = $('<tr>')
+        const name = $('<td>', {
+            text: userData.username
+        }).appendTo(tr)
+
+        name.prepend($('<img>', {
+            src: userData.imageUrl,
+            style: 'height: 20px; width: auto;'
+        }))
+
+        $('<td>', {
+            text: entry.joined
+        }).appendTo(tr)
+        $('<td>', {
+            text: 'kick'
+        }).appendTo(tr)
+
+        tr.appendTo(table)
+        i++;
+    }
+
+    return table
+}
+
 // bottombar updates
 
 setInterval(function() {

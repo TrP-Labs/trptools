@@ -125,7 +125,7 @@ const socketIO = (server) => {
 
         socket.on("getUsers", (callback) => {
             const room = data['ROOM_' + socket.roomId].connectedIds
-            callback(room);
+            callback({'data' : room});
         });
 
         // Manage leaving
