@@ -11,7 +11,16 @@ function generateRandomString() {
     }
   
     return randomString;
-  }
+}
+
+function findIndexByName(array, name) {
+    for (let i = 0; i < array.length; i++) {
+        if (array[i].socketId === name) {
+            return i; // Return the index if the name matches
+        }
+    }
+    return -1; // Return -1 if the name is not found in the array
+}
 
 const socketIO = (server) => {
     const io = require('socket.io')(server);
@@ -37,6 +46,10 @@ const socketIO = (server) => {
                 socket.join(roomId);
                 roomUpdate(roomId)
                 socket.roomId = roomId
+
+                roominfo.connectedIds.push(
+                    {id: socket.handshake.query.id, socketId: socket.id, role: 'Peer', joined: Date.now()}
+                )
 
                 callback({
                     status: "success",
@@ -64,7 +77,10 @@ const socketIO = (server) => {
             data['ROOM_' + roomId] = {
                 masterId: socket.id,
                 createdAt: Date.now(),
-                data: currentData
+                data: currentData,
+                connectedIds: [
+                    {id: socket.handshake.query.id, socketId: socket.id, role: 'Master', joined: Date.now()}
+                ]
             }
 
             socket.join(roomId);
@@ -76,6 +92,8 @@ const socketIO = (server) => {
                 code: roomId
             });
         });
+
+        // Manage data
 
         socket.on('entryAdd', (newitem) => {
             data['ROOM_' + socket.roomId].data["E_" + newitem.Id] = newitem
@@ -103,7 +121,12 @@ const socketIO = (server) => {
 
         socket.on("ping", (callback) => {
             callback();
-          });
+        });
+
+        socket.on("getUsers", (callback) => {
+            const room = data['ROOM_' + socket.roomId].connectedIds
+            callback(room);
+        });
 
         // Manage leaving
 
@@ -114,6 +137,11 @@ const socketIO = (server) => {
                 delete data['ROOM_' + socket.roomId];
                 io.in(socket.roomId).disconnectSockets();
             } else {
+                const room = data['ROOM_' + socket.roomId].connectedIds
+                const userindex = findIndexByName(room, socket.id)
+                if (userindex != -1) {
+                    delete room[userindex]
+                }
                 roomUpdate(socket.roomId)
             }
         });
