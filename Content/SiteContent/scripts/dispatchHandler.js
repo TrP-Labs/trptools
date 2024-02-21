@@ -337,13 +337,22 @@ async function generateConnectedTable() {
 
     while (i < socketResponse.data.length) {
         const entry = socketResponse.data[i] // currently errors if you have a null proprety (example being someone leaving)
+        let suffix = ''
+
+        if (currentsocket.id == entry.socketId) {
+            suffix = ' [YOU]'
+        }
+
+        if (entry.role == 'Master') {
+            suffix = suffix + ' [MASTER]'
+        }
 
         let userData = await fetch('/proxy/profile?id=' + entry.id)
         userData = await userData.json()
 
         const tr = $('<tr>')
         const name = $('<td>', {
-            text: userData.username
+            text: userData.username + suffix
         }).appendTo(tr)
 
         name.prepend($('<img>', {
@@ -351,8 +360,10 @@ async function generateConnectedTable() {
             style: 'height: 20px; width: auto;'
         }))
 
+        entry.joined = new Date(entry.joined);
+
         $('<td>', {
-            text: entry.joined
+            text: `${entry.joined.getHours()}:${entry.joined.getMinutes()}`
         }).appendTo(tr)
         $('<td>', {
             text: 'kick'
