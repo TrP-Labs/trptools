@@ -347,8 +347,16 @@ async function generateConnectedTable() {
             suffix = suffix + ' [MASTER]'
         }
 
-        let userData = await fetch('/proxy/profile?id=' + entry.id)
-        userData = await userData.json()
+        let userData
+        try {
+            userData = await fetch('/proxy/profile?id=' + entry.id)
+            userData = await userData.json()
+        } catch {
+            userData = {
+                username: 'Anonymous User',
+                imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png"
+            }
+        }
 
         const tr = $('<tr>')
         const name = $('<td>', {
