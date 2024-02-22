@@ -9,7 +9,7 @@ async function run() {
   try {
     // Connect to and ping database
     await client.connect();
-    await client.db("test").command({ ping: 1 });
+    await client.db(process.env.DB_ID).command({ ping: 1 });
 
     console.log("Successfully connected to MongoDB");
   } catch (er) {
@@ -22,16 +22,33 @@ async function run() {
 
 run(); // Call initialization function 
 
-function addId(id, token) {
-    client.db("test").collection('test').insertOne({
-        token: token,
-        id: id
+async function addId(id, token) {
+  // check if account already exists
+  const query = await client.db(process.env.DB_ID).collection('userAccounts').findOne({
+    id: id,
+  });
+
+  if (query) {
+    // an accounts already exists, run an update using the query _id as the index
+    client.db(process.env.DB_ID).collection('userAccounts').updateOne(
+      {_id: query._id},
+      {$set: {token:token}}
+    );
+  } else {
+    // no account exists for this id, create a new one
+    client.db(process.env.DB_ID).collection('userAccounts').insertOne({
+      token: token,
+      id: id,
+      createdAt: Date.now()
     });
+  }
+
+
 }
 
-async function getId(token) {
-    const query = await client.db("test").collection('test').findOne({
-        token: token,
+async function getId(token) { // Simply find and return the document that matches the token
+    const query = await client.db(process.env.DB_ID).collection('userAccounts').findOne({
+      token: token,
     });
 
     return query
