@@ -309,6 +309,86 @@ function validateString(data) {
     }
 }
 
+async function generateConnectedTable() {
+    function getUsersAsync() {
+        const myPromise = new Promise((resolve, reject) => {
+            currentsocket.emit('getUsers', (response) => {
+                resolve(response)
+            })
+        });
+        return myPromise
+    }
+
+    const socketResponse = await getUsersAsync()
+
+    const table = $('<table>', {
+        html: `<tr>
+        <th>User</th>
+        <th>Joined</th>
+        </tr>`,
+    })
+
+    table.addClass("styled-table");
+    table.css('margin', 'auto')
+
+    console.log(table)
+    let i = 0
+
+    while (i < socketResponse.data.length) {
+        const entry = socketResponse.data[i]
+        let suffix = ''
+
+        if (entry) {
+
+            if (currentsocket.id == entry.socketId) {
+                suffix = ' [YOU]'
+            }
+
+            if (entry.role == 'Master') {
+                suffix = suffix + ' [MASTER]'
+            }
+
+            let userData
+            try {
+                userData = await fetch('/proxy/profile?id=' + entry.id)
+                userData = await userData.json()
+            } catch {
+                userData = {
+                    username: 'Anonymous User',
+                    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png"
+                }
+            }
+
+            const tr = $('<tr>')
+            const name = $('<td>', {
+                text: userData.username + suffix
+            }).appendTo(tr)
+
+            name.prepend($('<img>', {
+                src: userData.imageUrl,
+                style: 'height: 20px; width: auto;'
+            }))
+
+            entry.joined = new Date(entry.joined);
+
+            $('<td>', {
+                text: `${entry.joined.getHours()}:${entry.joined.getMinutes()}`
+            }).appendTo(tr)
+
+            /*
+            $('<td>', {
+                text: 'kick'
+            }).appendTo(tr)
+            */
+
+            tr.appendTo(table)
+        }
+        i++;
+    }
+
+    return table
+}
+
 // bottombar updates
 
 setInterval(function() {

@@ -137,7 +137,10 @@ function manageConnection() { // Begin prompt tree managing your connection
         })
     }
 
-    function view() {
+    async function view() {
+
+        const connectedTable = await generateConnectedTable()
+
         showCustom({
             title: "Connection info",
             description: `
@@ -145,6 +148,8 @@ function manageConnection() { // Begin prompt tree managing your connection
                 Room ID: ${currentsocket.roomId} <br>
                 Connection established since: ${currentsocket.established.getHours()}:${currentsocket.established.getMinutes()} <br>
                 Room created at: ${currentsocket.roomCreated.getHours()}:${currentsocket.roomCreated.getMinutes()}
+                <h3>Connected users</h3>
+                ${connectedTable.prop('outerHTML')}
                 <h3>Debug</h3>
                 Transport: ${currentsocket.io.engine.transport.name} <br>
                 Server location: US-WEST <br>

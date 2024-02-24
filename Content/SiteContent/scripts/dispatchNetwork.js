@@ -13,7 +13,11 @@ function getConnectionStatus() {
 
 async function createRoom() {
     if (!currentsocket) {
-        currentsocket = io();
+        currentsocket = io({
+            query: {
+              id: loggedInUser
+            }
+        });
     }
     return new Promise((resolve, reject) => {
         currentsocket.emit('createRoom', dispatchTracker, (response) => {
@@ -35,7 +39,11 @@ async function createRoom() {
 
 function connectRoom(roomId) {
     if (!currentsocket) {
-        currentsocket = io();
+        currentsocket = io({
+            query: {
+              id: loggedInUser
+            }
+        });
     }
     return new Promise((resolve, reject) => {
         currentsocket.emit('joinRoom', roomId, (response) => {
