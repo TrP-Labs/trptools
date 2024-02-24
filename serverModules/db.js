@@ -11,7 +11,6 @@ async function run() {
     await client.connect();
     await client.db(process.env.DB_ID).command({ ping: 1 });
 
-    console.log("Successfully connected to MongoDB");
   } catch (er) {
     console.log("MongoDB connection failed");
     console.log(er)
