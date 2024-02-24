@@ -325,7 +325,6 @@ async function generateConnectedTable() {
         html: `<tr>
         <th>User</th>
         <th>Joined</th>
-        <th>Action</th>
         </tr>`,
     })
 
@@ -336,48 +335,54 @@ async function generateConnectedTable() {
     let i = 0
 
     while (i < socketResponse.data.length) {
-        const entry = socketResponse.data[i] // currently errors if you have a null proprety (example being someone leaving)
+        const entry = socketResponse.data[i]
         let suffix = ''
 
-        if (currentsocket.id == entry.socketId) {
-            suffix = ' [YOU]'
-        }
+        if (entry) {
 
-        if (entry.role == 'Master') {
-            suffix = suffix + ' [MASTER]'
-        }
-
-        let userData
-        try {
-            userData = await fetch('/proxy/profile?id=' + entry.id)
-            userData = await userData.json()
-        } catch {
-            userData = {
-                username: 'Anonymous User',
-                imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png"
+            if (currentsocket.id == entry.socketId) {
+                suffix = ' [YOU]'
             }
+
+            if (entry.role == 'Master') {
+                suffix = suffix + ' [MASTER]'
+            }
+
+            let userData
+            try {
+                userData = await fetch('/proxy/profile?id=' + entry.id)
+                userData = await userData.json()
+            } catch {
+                userData = {
+                    username: 'Anonymous User',
+                    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png"
+                }
+            }
+
+            const tr = $('<tr>')
+            const name = $('<td>', {
+                text: userData.username + suffix
+            }).appendTo(tr)
+
+            name.prepend($('<img>', {
+                src: userData.imageUrl,
+                style: 'height: 20px; width: auto;'
+            }))
+
+            entry.joined = new Date(entry.joined);
+
+            $('<td>', {
+                text: `${entry.joined.getHours()}:${entry.joined.getMinutes()}`
+            }).appendTo(tr)
+
+            /*
+            $('<td>', {
+                text: 'kick'
+            }).appendTo(tr)
+            */
+
+            tr.appendTo(table)
         }
-
-        const tr = $('<tr>')
-        const name = $('<td>', {
-            text: userData.username + suffix
-        }).appendTo(tr)
-
-        name.prepend($('<img>', {
-            src: userData.imageUrl,
-            style: 'height: 20px; width: auto;'
-        }))
-
-        entry.joined = new Date(entry.joined);
-
-        $('<td>', {
-            text: `${entry.joined.getHours()}:${entry.joined.getMinutes()}`
-        }).appendTo(tr)
-        $('<td>', {
-            text: 'kick'
-        }).appendTo(tr)
-
-        tr.appendTo(table)
         i++;
     }
 
