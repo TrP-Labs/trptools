@@ -53,4 +53,25 @@ async function getId(token) { // Simply find and return the document that matche
     return query
 }
 
-module.exports = {addId: addId, getId: getId};
+async function createArticle(info) {
+  const count = await client.db(process.env.DB_ID).collection('articles').countDocuments();
+
+  client.db(process.env.DB_ID).collection('articles').insertOne({
+    id: count + 1,
+    ownerId: info.owner,
+    title: info.title,
+    body: info.body,
+    createdAt: Date.now()
+  });
+}
+
+async function getArticle(id) {
+  console.log(typeof id)
+  const query = await client.db(process.env.DB_ID).collection('articles').findOne({
+    id: id,
+  });
+
+  return query
+}
+
+module.exports = {addId: addId, getId: getId, getArticle: getArticle, createArticle: createArticle};
