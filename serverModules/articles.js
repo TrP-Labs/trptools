@@ -8,7 +8,7 @@ const path = require('path');
 const noblox = require('noblox.js');
 
 router.get('/:id', async (req, res) => {
-    const article = await db.getArticle(Number(req.params.id))
+    const article = await db.getArticle(req.params.id)
 
     if (!article) {
         res.sendFile(path.join(__dirname, '..', 'Content/404.html'))

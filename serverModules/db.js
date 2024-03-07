@@ -57,7 +57,7 @@ async function createArticle(info) {
   const count = await client.db(process.env.DB_ID).collection('articles').countDocuments();
 
   client.db(process.env.DB_ID).collection('articles').insertOne({
-    id: count + 1,
+    id: (count + 1).toString(),
     ownerId: info.owner,
     title: info.title,
     body: info.body,
