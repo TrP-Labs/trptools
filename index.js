@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser')
 require('dotenv').config();
 
 app.use(cookieParser())
+app.set('view engine', 'ejs');
 
 app.use(express.static(path.join(__dirname, 'Content'), {
     extensions: ['html'],
@@ -14,13 +15,14 @@ app.use(express.static(path.join(__dirname, 'Content'), {
 // Require module systems
 app.use('/proxy', require(__dirname + '/serverModules/proxy.js'));
 app.use('/auth', require(__dirname + '/serverModules/auth.js'));
+app.use('/articles', require(__dirname + '/serverModules/articles.js'));
 
 const socketIO = require(__dirname + '/serverModules/dispatchSocket.js');
 socketIO(http);
 
 // 404 Handler - This must come last
 app.use(function(req, res) {
-    res.status(404).send('404 not found');
+    res.status(404).sendFile(__dirname + '/Content/404.html');
 });
 
 http.listen(process.env.PORT);
