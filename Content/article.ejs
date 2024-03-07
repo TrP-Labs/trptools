@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="/SiteContent/stylesheets/style.css">
+    <link rel="icon" type="image/png" href="/SiteContent/favicon.ico">
+
+    <style>
+        a {
+            color: rgb(44, 47, 94);
+            text-decoration: underline;
+        }
+
+        .centerdiv {
+            display: block;
+            margin: auto;
+            margin-bottom: 25px;
+            text-align: center;
+            width: 500px;
+            height: auto;
+        }
+    </style>
+
+    <script src="/SiteContent/scripts/universalUtils.js"></script>
+</head>
+
+<body>
+    <div class="topnavholder">
+        <div class="topnav">
+            <a href="/">Tools</a>
+            <a class="active" href="/about">About</a>
+            <a href="https://github.com/Ticko-Grey/trptools">Open Source</a>
+        </div>
+
+        <div class="topnav nav-right">
+            <a id="loginAccount" href="/auth/login">Login</a>
+        </div>
+    </div>
+
+    <div class="centerdiv">
+        <h1><%= title %></h1>
+        <p>
+            <%- body %>
+        </p>
+    </div>
+
+</body>
+
+</html>

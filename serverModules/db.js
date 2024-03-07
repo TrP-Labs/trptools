@@ -66,7 +66,6 @@ async function createArticle(info) {
 }
 
 async function getArticle(id) {
-  console.log(typeof id)
   const query = await client.db(process.env.DB_ID).collection('articles').findOne({
     id: id,
   });
