@@ -1,3 +1,9 @@
+/*
+    TrP Tools is an unofficial open source web service which aims to provide easy to use tools to the TrP community 
+    Copyright (C) 2024 TickoGrey
+    You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+*/
+
 const express = require('express');
 const app = express();
 const path = require('path');

@@ -16,6 +16,7 @@ Steps to host your own instance:
 3) [Install mongodb](https://www.mongodb.com/docs/manual/installation/) (not strictly required but many features will not work without it)
 4) Create a .env file in the project directory (you can read an example under .env.example)
 5) Run the server with ``node .``
+
 Please note that the database is not included with this repository and your instance will not have data from the trptools.com instance
 it's also suggested you use [nginx](https://nginx.org/en/docs/install.html) if you want ssl on your server, here's a config example:
 ```
