@@ -19,9 +19,15 @@ router.get('/:id', async (req, res) => {
     const sanitizedbody = sanitizeHtml(rawbody)
     const mdbody = marked.parse(sanitizedbody)
 
+    const username = await noblox.getUsernameFromId(article.ownerId)
+    let profileSource = await noblox.getPlayerThumbnail(article.ownerId, 420, "png", true, "Headshot")
+    profileSource = profileSource[0].imageUrl
+
     res.render(path.join(__dirname, '..', 'Content/article.ejs'), {
         title: article.title,
-        body: mdbody
+        body: mdbody,
+        username: username,
+        profileSource: profileSource
       });
 });
 
