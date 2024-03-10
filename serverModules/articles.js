@@ -7,7 +7,31 @@ const db = require(__dirname + '/db.js');
 const path = require('path');
 const noblox = require('noblox.js');
 
+router.get('/get', async (req, res) => {
+    const type = req.query.type
+    const query = req.query.query
+    let result 
+
+    if (query) {
+        result = await db.findArticle(query, type)
+    } else {
+        result = await db.findAllArticles(type)
+    }
+
+    let queryResult = []
+
+    await result.forEach(document => {
+        queryResult.push({
+            id: document.id,
+            title: document.title,
+        })
+    });
+
+    res.status(200).send(queryResult)
+});
+
 router.get('/:id', async (req, res) => {
+    console.log('returning article')
     const article = await db.getArticle(req.params.id)
 
     if (!article) {

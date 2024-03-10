@@ -79,4 +79,29 @@ async function getArticle(id) {
   return query
 }
 
-module.exports = {addId: addId, getId: getId, getArticle: getArticle, createArticle: createArticle};
+async function findArticle(query, type) {
+  const dbquery = client.db(process.env.DB_ID).collection('articles').find({
+    title: { $regex: new RegExp(query, 'i') }, // Case-insensitive partial match for title
+    type: { $eq: type } // Exact match for type
+  });
+
+  return dbquery
+}
+
+async function findAllArticles(type) {
+  const dbquery = client.db(process.env.DB_ID).collection('articles').find({
+    type: type
+  });
+
+  return dbquery
+}
+
+
+module.exports = {
+  addId, 
+  getId, 
+  getArticle, 
+  createArticle,
+  findArticle,
+  findAllArticles
+};
