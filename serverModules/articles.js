@@ -27,7 +27,8 @@ router.get('/:id', async (req, res) => {
         title: article.title,
         body: mdbody,
         username: username,
-        profileSource: profileSource
+        profileSource: profileSource,
+        views: article.views
       });
 });
 
