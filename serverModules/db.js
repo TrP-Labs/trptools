@@ -38,11 +38,10 @@ async function addId(id, token) {
     client.db(process.env.DB_ID).collection('userAccounts').insertOne({
       token: token,
       id: id,
-      createdAt: Date.now()
+      createdAt: Date.now(),   
+      sitePermissionLevel: 1
     });
   }
-
-
 }
 
 async function getId(token) { // Simply find and return the document that matches the token
@@ -61,7 +60,9 @@ async function createArticle(info) {
     ownerId: info.owner,
     title: info.title,
     body: info.body,
-    createdAt: Date.now()
+    createdAt: Date.now(),
+    type: info.articleType,
+    views: 0
   });
 }
 
@@ -69,6 +70,11 @@ async function getArticle(id) {
   const query = await client.db(process.env.DB_ID).collection('articles').findOne({
     id: id,
   });
+
+  client.db(process.env.DB_ID).collection('articles').updateOne(
+    {_id: query._id},
+    {$set: {views:query.views + 1}}
+  );
 
   return query
 }
