@@ -190,6 +190,12 @@ textarea {
 
 /* Misc stuff (front page flex and about-us text holder) */
 
+.frontbox {
+  background-color: #3a3a3a; 
+  padding: 25px; 
+  border-radius: 25px;
+}
+
 .frontboxholder {
   padding-top: 25px;
   display: flex;
