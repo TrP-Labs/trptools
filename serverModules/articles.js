@@ -24,6 +24,7 @@ router.get('/get', async (req, res) => {
         queryResult.push({
             id: document.id,
             title: document.title,
+            ownerId: document.ownerId
         })
     });
 

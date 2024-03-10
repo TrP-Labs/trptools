@@ -25,13 +25,15 @@
                 fetch('/articles/get?type=officialDoc').then(response => {
                     return response.json()
                 }).then(json => {
-                    json.forEach(mdbdocument => {
-                        console.log(mdbdocument)
+                    json.forEach(async mdbdocument => {
+                        let name = await fetch('/proxy/name?id=' + mdbdocument.ownerId)
+                        name = await name.json()
+
                         let data = `
                             <a href="/articles/${mdbdocument.id}">
                                 <div class="frontbox">
                                     <h1 style="color: white;">${mdbdocument.title}</h1>
-                                    <p style="color: white;">By TickoGrey</p>
+                                    <p style="color: white;">By ${name.username}</p>
                                 </div>
                             </a>
                         `
