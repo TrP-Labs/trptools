@@ -14,9 +14,17 @@ require('dotenv').config();
 app.use(cookieParser())
 app.set('view engine', 'ejs');
 
-app.use(express.static(path.join(__dirname, '/content/public'), {
+app.use('/public', express.static(__dirname + '/content/public', {
     extensions: ['html'],
 }));
+
+app.use('/tools', express.static(__dirname + '/content/tools', {
+    extensions: ['html'],
+}));
+
+app.get('/', function(req, res){
+    res.sendFile(__dirname + '/content/index.html');
+}); 
 
 // Require module systems
 app.use('/proxy', require(__dirname + '/serverModules/proxy.js'));
