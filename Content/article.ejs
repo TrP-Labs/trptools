@@ -100,6 +100,11 @@
             <%= views %> Views
         </div>
 
+        <div id='adminActions' style="display: none;">
+            <button class="inputbutton" style="background-color: #d5a55d;" onclick="editPost()">Edit post</button>
+            <button class="inputbutton" style="background-color: #c86a6a;" onclick="deletePost()">Delete post</button>
+        </div>
+
         <hr>
 
         <p>
@@ -111,31 +116,45 @@
 
 <script>
     const copyButtonLabel = "Copy";
+    const ownsPage = <%- ownsPage %>
+    const id = "<%- articleId %>"
 
-// use a class selector if available
-let blocks = document.querySelectorAll("pre");
+    let blocks = document.querySelectorAll("pre");
 
-blocks.forEach((block) => {
-  // only add button if browser supports Clipboard API
-  if (navigator.clipboard) {
-    let button = document.createElement("button");
+    blocks.forEach((block) => {
+        // only add button if browser supports Clipboard API
+        if (navigator.clipboard) {
+            let button = document.createElement("button");
 
-    button.innerText = copyButtonLabel;
-    block.prepend(button);
-    button.className = 'codeButton'
+            button.innerText = copyButtonLabel;
+            block.prepend(button);
+            button.className = 'codeButton'
 
-    button.addEventListener("click", async () => {
-      await copyCode(block);
+            button.addEventListener("click", async () => {
+                await copyCode(block);
+            });
+        }
     });
-  }
-});
 
-async function copyCode(block) {
-  let code = block.querySelector("code");
-  let text = code.innerText;
+    async function copyCode(block) {
+        let code = block.querySelector("code");
+        let text = code.innerText;
 
-  await navigator.clipboard.writeText(text);
-}
+        await navigator.clipboard.writeText(text);
+    }
+
+    if (ownsPage == true) {
+        document.getElementById('adminActions').style = 'display: block;'
+    }
+
+    function editPost() {
+        window.location = '/articles/edit/' + id
+    }
+
+    async function deletePost() {
+        await fetch('/articles/delete/' + id, {method:'POST'})
+        window.location.reload();
+    }
 </script>
 
 </html>

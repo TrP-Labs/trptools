@@ -71,10 +71,12 @@ async function getArticle(id) {
     id: id,
   });
 
-  client.db(process.env.DB_ID).collection('articles').updateOne(
-    {_id: query._id},
-    {$set: {views:query.views + 1}}
-  );
+  if (query) {
+    client.db(process.env.DB_ID).collection('articles').updateOne(
+      { _id: query._id },
+      { $set: { views: query.views + 1 } }
+    );
+  }
 
   return query
 }
@@ -96,6 +98,16 @@ async function findAllArticles(type) {
   return dbquery
 }
 
+async function deleteArticle(id) {
+  const dbquery = await client.db(process.env.DB_ID).collection('articles').deleteOne({id: id})
+
+  if (dbquery.deletedCount === 1) {
+    return true
+  } else {
+    return false
+  }
+}
+
 
 module.exports = {
   addId, 
@@ -103,5 +115,6 @@ module.exports = {
   getArticle, 
   createArticle,
   findArticle,
-  findAllArticles
+  findAllArticles,
+  deleteArticle
 };
