@@ -9,5 +9,8 @@
     "noblox.js": "^4.15.1",
     "sanitize-html": "^2.12.1",
     "socket.io": "^4.7.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.2"
   }
 }
