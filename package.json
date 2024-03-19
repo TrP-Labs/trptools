@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "@types/cookie-parser": "^1.4.7",
+    "@types/express": "^4.17.21",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.1",
     "ejs": "^3.1.9",
@@ -8,9 +10,7 @@
     "mongodb": "^6.3.0",
     "noblox.js": "^4.15.1",
     "sanitize-html": "^2.12.1",
-    "socket.io": "^4.7.4"
-  },
-  "devDependencies": {
+    "socket.io": "^4.7.4",
     "typescript": "^5.4.2"
   }
 }

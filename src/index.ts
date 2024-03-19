@@ -4,12 +4,15 @@
     You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
-const express = require('express');
+import express from 'express';
+import path from 'path';
+import http from 'http';
+import cookieParser from 'cookie-parser';
+import dotenv from 'dotenv';
+
 const app = express();
-const path = require('path');
-const http = require('http').createServer(app);
-var cookieParser = require('cookie-parser')
-require('dotenv').config();
+const server = http.createServer(app);
+dotenv.config();
 
 app.use(cookieParser())
 app.set('view engine', 'ejs');
@@ -32,11 +35,11 @@ app.use('/auth', require(__dirname + '/serverModules/auth.js'));
 app.use('/articles', require(__dirname + '/serverModules/articles.js'));
 
 const socketIO = require(__dirname + '/serverModules/dispatchSocket.js');
-socketIO(http);
+socketIO(server);
 
 // 404 Handler - This must come last
 app.use(function(req, res) {
     res.status(404).sendFile(__dirname + '/Content/404.html');
 });
 
-http.listen(process.env.PORT);
+server.listen(process.env.PORT);
