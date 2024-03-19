@@ -1,13 +1,15 @@
-const express = require('express');
-const marked = require('marked')
-const sanitizeHtml = require('sanitize-html');
-const router = express.Router();
-require('dotenv').config();
-const db = require(__dirname + '/db.js');
-const path = require('path');
-const noblox = require('noblox.js');
+import express from 'express';
+import marked from 'marked';
+import sanitizeHtml from 'sanitize-html';
+import path from 'path';
+import noblox from 'noblox.js';
+import dotenv from 'dotenv';
 
-const articleEditPermissions = {
+dotenv.config();
+const router = express.Router();
+const db = require(__dirname + '/db.js');
+
+const articleEditPermissions : ArticleEditPermissions = {
     'articles':4,
     'officialDoc':3
 }
@@ -23,13 +25,15 @@ router.get('/get', async (req, res) => {
         result = await db.findAllArticles(type)
     }
 
-    let queryResult = []
+    if (!result) {res.status(500); return}
 
-    await result.forEach(document => {
+    let queryResult : Array<publicArticleObject> = []
+
+    await result.forEach((document : publicArticleObject) => {
         queryResult.push({
             id: document.id,
             title: document.title,
-            ownerId: document.ownerId
+            owner: document.owner
         })
     });
 
@@ -38,7 +42,7 @@ router.get('/get', async (req, res) => {
 
 router.post('/delete/:id', async (req, res) => {
     const loggedInUser = await db.getId(req.cookies.token)
-    const article = await db.getArticle(req.params.id)
+    const article : articleObject = await db.getArticle(req.params.id)
 
     if (!article) {
         res.status(404).send('Article not found')
@@ -48,7 +52,7 @@ router.post('/delete/:id', async (req, res) => {
     let ownsPage = false
 
     if (loggedInUser) {
-        if (loggedInUser.id == article.ownerId) {ownsPage = true}
+        if (loggedInUser.id == article.owner) {ownsPage = true}
         if (loggedInUser.sitePermissionLevel >= articleEditPermissions[article.type]) {ownsPage = true}
     } else {
         res.status(403).send('Access denied')
@@ -97,7 +101,7 @@ router.get('/edit/:id', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-    const article = await db.getArticle(req.params.id)
+    const article : articleObject = await db.getArticle(req.params.id)
 
     if (!article) {
         res.sendFile(path.join(__dirname, '..', 'Content/404.html'))
@@ -108,7 +112,7 @@ router.get('/:id', async (req, res) => {
     const loggedInUser = await db.getId(req.cookies.token)
 
     if (loggedInUser) {
-        if (loggedInUser.id == article.ownerId) {ownsPage = true}
+        if (loggedInUser.id == article.owner) {ownsPage = true}
         if (loggedInUser.sitePermissionLevel >= articleEditPermissions[article.type]) {ownsPage = true}
     }
 
@@ -116,15 +120,16 @@ router.get('/:id', async (req, res) => {
     const sanitizedbody = sanitizeHtml(rawbody)
     const mdbody = marked.parse(sanitizedbody)
 
-    const username = await noblox.getUsernameFromId(article.ownerId)
-    let profileSource = await noblox.getPlayerThumbnail(article.ownerId, 420, "png", true, "Headshot")
-    profileSource = profileSource[0].imageUrl
+    const username = await noblox.getUsernameFromId(article.owner)
+
+    const userImage = await noblox.getPlayerThumbnail(article.owner, 420, "png", true, "headshot")
+    const imageUrl = userImage[0].imageUrl
 
     res.render(path.join(__dirname, '..', 'Content/article.ejs'), {
         title: article.title,
         body: mdbody,
         username: username,
-        profileSource: profileSource,
+        profileSource: imageUrl,
         views: article.views,
         ownsPage: ownsPage,
         articleId: article.id

@@ -22,7 +22,7 @@ async function run() {
 
 run(); // Call initialization function 
 
-async function addId(id, token) {
+async function addId(id : string, token : string) {
   // check if account already exists
   const query = await client.db(process.env.DB_ID).collection('userAccounts').findOne({
     id: id,
@@ -45,7 +45,7 @@ async function addId(id, token) {
   }
 }
 
-async function getId(token) { // Simply find and return the document that matches the token
+async function getId(token : string) { // Simply find and return the document that matches the token
     const query = await client.db(process.env.DB_ID).collection('userAccounts').findOne({
       token: token,
     });
@@ -53,21 +53,21 @@ async function getId(token) { // Simply find and return the document that matche
     return query
 }
 
-async function createArticle(info) {
-  const count = await client.db(process.env.DB_ID).collection('articles').countDocuments();
+async function createArticle(info : baseArticleObject) {
+  const count : number = await client.db(process.env.DB_ID).collection('articles').countDocuments();
 
   client.db(process.env.DB_ID).collection('articles').insertOne({
     id: (count + 1).toString(),
-    ownerId: info.owner,
+    owner: info.owner,
     title: info.title,
     body: info.body,
     createdAt: Date.now(),
-    type: info.articleType,
+    type: info.type,
     views: 0
   });
 }
 
-async function getArticle(id) {
+async function getArticle(id : string) : Promise<articleObject | null> {
   const query = await client.db(process.env.DB_ID).collection('articles').findOne({
     id: id,
   });
@@ -77,12 +77,16 @@ async function getArticle(id) {
       { _id: query._id },
       { $set: { views: query.views + 1 } }
     );
-  }
 
-  return query
+    const result : articleObject = JSON.parse(JSON.stringify(query))
+    return result
+
+  } else {
+    return null
+  }
 }
 
-async function findArticle(query, type) {
+async function findArticle(query : string, type : string) {
   const dbquery = client.db(process.env.DB_ID).collection('articles').find({
     title: { $regex: new RegExp(query, 'i') }, // Case-insensitive partial match for title
     type: { $eq: type } // Exact match for type
@@ -91,7 +95,7 @@ async function findArticle(query, type) {
   return dbquery
 }
 
-async function findAllArticles(type) {
+async function findAllArticles(type : string) {
   const dbquery = client.db(process.env.DB_ID).collection('articles').find({
     type: type
   });
@@ -99,7 +103,7 @@ async function findAllArticles(type) {
   return dbquery
 }
 
-async function deleteArticle(id) {
+async function deleteArticle(id : string) {
   const dbquery = await client.db(process.env.DB_ID).collection('articles').deleteOne({id: id})
 
   if (dbquery.deletedCount === 1) {
@@ -108,7 +112,6 @@ async function deleteArticle(id) {
     return false
   }
 }
-
 
 module.exports = {
   addId, 
