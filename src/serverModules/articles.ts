@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 const router = express.Router();
 const db = require(__dirname + '/db.js');
+const rootDir : string = path.resolve(__dirname, '..');
 
 const articleEditPermissions : ArticleEditPermissions = {
     'articles':4,
@@ -104,7 +105,7 @@ router.get('/:id', async (req, res) => {
     const article : articleObject = await db.getArticle(req.params.id)
 
     if (!article) {
-        res.sendFile(path.join(__dirname, '..', 'Content/404.html'))
+        res.sendFile(path.join(rootDir, 'Content/404.html'))
         return
     }
 
@@ -125,7 +126,7 @@ router.get('/:id', async (req, res) => {
     const userImage = await noblox.getPlayerThumbnail(article.owner, 420, "png", true, "headshot")
     const imageUrl = userImage[0].imageUrl
 
-    res.render(path.join(__dirname, '..', 'Content/article.ejs'), {
+    res.render(path.join(rootDir, 'Content/article.ejs'), {
         title: article.title,
         body: mdbody,
         username: username,

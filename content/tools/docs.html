@@ -26,10 +26,8 @@
                     return response.json()
                 }).then(json => {
                     json.forEach(async mdbdocument => {
-                        let name = await fetch('/proxy/name?id=' + mdbdocument.ownerId)
+                        let name = await fetch('/proxy/name?id=' + mdbdocument.owner)
                         name = await name.json()
-
-                        console.log(name)
 
                         let data = `
                             <a href="/articles/${mdbdocument.id}">
