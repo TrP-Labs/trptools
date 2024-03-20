@@ -42,7 +42,7 @@ socketIO(server);
 
 // 404 Handler - This must come last
 app.use(function(req, res) {
-    res.status(404).sendFile(rootDir + '/Content/404.html');
+    res.status(404).sendFile(rootDir + '/content/404.html');
 });
 
 server.listen(process.env.PORT);
