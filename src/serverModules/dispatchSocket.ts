@@ -1,5 +1,8 @@
+import { Server } from "http";
+import { Socket } from "socket.io";
+
 // Server code for dispatch socket
-const data = {}
+const data : data = {}
 
 function generateRandomString() {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -13,7 +16,7 @@ function generateRandomString() {
     return randomString;
 }
 
-function findIndexByName(array, name) {
+function findIndexByName(array : any, name : string) {
     for (let i = 0; i < array.length; i++) {
         if (array[i].socketId === name) {
             return i; // Return the index if the name matches
@@ -22,18 +25,18 @@ function findIndexByName(array, name) {
     return -1; // Return -1 if the name is not found in the array
 }
 
-const socketIO = (server) => {
+const socketIO = (server : Server) => {
     const io = require('socket.io')(server);
 
-    function roomUpdate(roomName) {
+    function roomUpdate(roomName : string) {
         const count = io.sockets.adapter.rooms.get(roomName).size
         io.to(roomName).emit('userCountChange', count)
     }
 
-    io.on('connection', (socket) => {
+    io.on('connection', (socket : any) => {
         // Manage Joining
 
-        socket.on('joinRoom', (roomId, callback) => {
+        socket.on('joinRoom', (roomId : string, callback : Function) => {
             if (socket.roomId) {
                 callback({
                     status: "You are already in a room"
@@ -65,7 +68,7 @@ const socketIO = (server) => {
             }
         });
 
-        socket.on('createRoom', (currentData, callback) => {
+        socket.on('createRoom', (currentData : Array<roomData>, callback : Function) => {
             if (socket.roomId) {
                 callback({
                     status: "You are already in a room"
@@ -95,12 +98,12 @@ const socketIO = (server) => {
 
         // Manage data
 
-        socket.on('entryAdd', (newitem) => {
+        socket.on('entryAdd', (newitem : roomData) => {
             data['ROOM_' + socket.roomId].data["E_" + newitem.Id] = newitem
             io.to(socket.roomId).emit("entryAdd", newitem)
         });
 
-        socket.on('entryModify', (modifications) => {
+        socket.on('entryModify', (modifications : any) => {
             switch (modifications.type) {
                 case 'route':
                     data['ROOM_' + socket.roomId].data["E_" + modifications.id].route = modifications.data
@@ -119,11 +122,11 @@ const socketIO = (server) => {
             io.to(socket.roomId).emit("entryModify", modifications)
         });
 
-        socket.on("ping", (callback) => {
+        socket.on("ping", (callback : Function) => {
             callback();
         });
 
-        socket.on("getUsers", (callback) => {
+        socket.on("getUsers", (callback : Function) => {
             const room = data['ROOM_' + socket.roomId].connectedIds
             callback({'data' : room});
         });

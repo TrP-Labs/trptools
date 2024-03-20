@@ -1,14 +1,17 @@
-const express = require('express');
+import express from 'express';
+import dotenv from 'dotenv'
+import crypto from 'crypto';
+import noblox from 'noblox.js';
+
 const router = express.Router();
-require('dotenv').config();
+dotenv.config();
 const db = require(__dirname + '/db.js');
-const crypto = require('crypto');
-const noblox = require('noblox.js');
+
 
 // uuidv4 compliant generator
-function uuidv4() {
-    return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
-      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+function uuidv4(): string {
+    return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c: string) =>
+      (parseInt(c) ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> parseInt(c) / 4).toString(16)
     );
 }
 
@@ -27,7 +30,12 @@ router.get('/login', async (req, res) => {
 // Account creation handler
 router.get('/redirect', async (req, res) => {
     // Validate request cookies & params
-    const code = req.query.code
+    if (!req.query.code || typeof req.query.code !== 'string') {
+        res.status(403)
+        return
+    }
+    
+    const code : string = req.query.code
 
     // Construct request
     const params = new URLSearchParams();
@@ -81,13 +89,14 @@ router.get('/info', async (req, res) => {
     if (!info) {res.status(404).send({'error':'account not found'}); return}
 
     const username = await noblox.getUsernameFromId(info.id)
-    let url = await noblox.getPlayerThumbnail(info.id, 420, "png", true, "Headshot")
-    url = url[0].imageUrl
+
+    const userImage = await noblox.getPlayerThumbnail(info.id, 420, "png", true, "headshot")
+    const imageUrl = userImage[0].imageUrl
 
     res.status(200).send({
         id: info.id,
         username: username,
-        imageUrl: url
+        imageUrl: imageUrl
     })
 });
 

@@ -14,5 +14,8 @@
     "sanitize-html": "^2.12.1",
     "socket.io": "^4.7.4",
     "typescript": "^5.4.2"
+  },
+  "scripts": {
+    "build":"tsc"
   }
 }

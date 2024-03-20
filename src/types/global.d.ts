@@ -16,12 +16,41 @@ declare global {
 
   interface articleObject extends baseArticleObject {
     id: string;
-    createdAt: Date;
+    createdAt: Number;
     views: number;
   }
 
   interface ArticleEditPermissions {
     [key: string]: number;
+  }
+
+  type user = {
+    id: string; 
+    socketId: string; 
+    role: string;
+    joined: Number;
+  }
+
+  type roomData = {
+    // TrP Assigned types
+    Id: Number;
+    Depot: String;
+    VehicleName: String;
+    // Internally assigned types
+    route: string;
+    dead: boolean;
+    assigned: boolean;
+  }
+
+  type room = {
+    masterId: string;
+    createdAt: Number;
+    data: Object<roomData>;
+    connectedIds: Array<user>;
+  }
+
+  interface data {
+    [key: string]: room;
   }
 
   namespace NodeJS {
@@ -30,7 +59,7 @@ declare global {
           DB_URI: string;
           DB_ID: string;
           OAUTH_REDIRECT: string;
-          OAUTH_CID: number;
+          OAUTH_CID: string;
           OAUTH_SECRET: string;
       }
   }
