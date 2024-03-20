@@ -13,20 +13,21 @@ import dotenv from 'dotenv';
 const app = express();
 const server = http.createServer(app);
 dotenv.config();
+const rootDir : string = path.resolve(__dirname, '..');
 
 app.use(cookieParser())
 app.set('view engine', 'ejs');
 
-app.use('/public', express.static(__dirname + '/content/public', {
+app.use('/public', express.static(rootDir + '/content/public', {
     extensions: ['html'],
 }));
 
-app.use('/tools', express.static(__dirname + '/content/tools', {
+app.use('/tools', express.static(rootDir + '/content/tools', {
     extensions: ['html'],
 }));
 
 app.get('/', function(req, res){
-    res.sendFile(__dirname + '/content/index.html');
+    res.sendFile(rootDir + '/content/index.html');
 }); 
 
 // Require module systems
@@ -39,7 +40,7 @@ socketIO(server);
 
 // 404 Handler - This must come last
 app.use(function(req, res) {
-    res.status(404).sendFile(__dirname + '/Content/404.html');
+    res.status(404).sendFile(rootDir + '/Content/404.html');
 });
 
 server.listen(process.env.PORT);

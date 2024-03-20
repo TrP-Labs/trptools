@@ -34,8 +34,8 @@ declare global {
   type roomData = {
     // TrP Assigned types
     Id: Number;
-    Depot: String;
-    VehicleName: String;
+    Depot: string;
+    VehicleName: string;
     // Internally assigned types
     route: string;
     dead: boolean;

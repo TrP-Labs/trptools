@@ -3,7 +3,7 @@ import noblox from 'noblox.js';
 const router = express.Router();
 
 router.get('/name', async (req, res) => {
-    if (!req.query.id || typeof req.query.id !== "number") {
+    if (!req.query.id || typeof req.query.id !== "string") {
         res.status(400).send()
         return
     }
@@ -20,7 +20,7 @@ router.get('/name', async (req, res) => {
 });
 
 router.get('/profile', async (req, res) => {
-    if (!req.query.id || typeof req.query.id !== "number") {
+    if (!req.query.id || typeof req.query.id !== "string") {
         res.status(400).send()
         return
     }
