@@ -16,6 +16,8 @@ dotenv.config();
 const rootDir : string = path.resolve(__dirname, '..');
 
 app.use(cookieParser())
+
+app.set('views', rootDir + '/content');
 app.set('view engine', 'ejs');
 
 app.use('/public', express.static(rootDir + '/content/public', {

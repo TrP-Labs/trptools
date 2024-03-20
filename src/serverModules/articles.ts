@@ -126,7 +126,7 @@ router.get('/:id', async (req, res) => {
     const userImage = await noblox.getPlayerThumbnail(article.owner, 420, "png", true, "headshot")
     const imageUrl = userImage[0].imageUrl
 
-    res.render(path.join(rootDir, 'Content/article.ejs'), {
+    res.render(path.join(rootDir, 'article'), {
         title: article.title,
         body: mdbody,
         username: username,
