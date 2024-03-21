@@ -4,6 +4,7 @@
 
 <head>
     <link rel="stylesheet" type="text/css" href="/public/stylesheets/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link rel="icon" type="image/png" href="/public/favicon.ico">
 
     <style>
@@ -19,9 +20,11 @@
             /*text-align: center;*/
             width: 700px;
             height: auto;
-            background-color: rgb(241, 241, 241);
+            background-color: #3a3a3a;
+            color: white;
             padding: 15px;
             border-radius: 30px;
+            position: relative;
         }
 
         pre {
@@ -70,6 +73,31 @@
             border: 0px;
             border-top: 3px solid #bbb;
         }
+
+        h1, h2, h3 {
+            display: inline-block;
+        }
+
+        .linkanchor {
+            padding-left: 10px;
+            cursor: pointer;
+            display: inline-block;
+            user-select: none;
+            transition-duration: 100ms;
+        }
+
+        .linkanchor:hover {
+            color: rgb(144, 145, 179);
+        }
+
+        .linkanchor:active {
+            transform: scale(0.8);
+        }
+
+        .adminActions {
+            position: absolute;
+            right: 0px;
+        }
     </style>
 
     <script src="/public/scripts/universalUtils.js"></script>
@@ -89,7 +117,13 @@
     </div>
 
     <div class="centerdiv">
-        <h1><%= title %></h1>
+        <h1 id="title"><%= title %></h1>
+
+        <div id='adminActions' class="adminActions" style="display: none;">
+            <button class="inputbutton" style="background-color: #d5a55d;" onclick="editPost()">Edit post</button>
+            <button class="inputbutton" style="background-color: #c86a6a;" onclick="deletePost()">Delete post</button>
+        </div>
+
         <div style="font-size: 25px;">
             Posted by
             <img src=<%- profileSource %> class="profilepicture">
@@ -98,11 +132,6 @@
 
         <div style="font-size: 15px;">
             <%= views %> Views
-        </div>
-
-        <div id='adminActions' style="display: none;">
-            <button class="inputbutton" style="background-color: #d5a55d;" onclick="editPost()">Edit post</button>
-            <button class="inputbutton" style="background-color: #c86a6a;" onclick="deletePost()">Delete post</button>
         </div>
 
         <hr>
@@ -123,17 +152,49 @@
 
     blocks.forEach((block) => {
         // only add button if browser supports Clipboard API
-        if (navigator.clipboard) {
-            let button = document.createElement("button");
+        if (!navigator.clipboard) { return }
 
-            button.innerText = copyButtonLabel;
-            block.prepend(button);
-            button.className = 'codeButton'
+        let button = document.createElement("button");
 
-            button.addEventListener("click", async () => {
-                await copyCode(block);
-            });
-        }
+        button.innerText = copyButtonLabel;
+        block.prepend(button);
+        button.className = 'codeButton'
+
+        button.addEventListener("click", async () => {
+            await copyCode(block);
+        });
+    });
+
+    let headings = document.querySelectorAll("h1, h2, h3");
+    let hid = 1
+
+    headings.forEach((header) => {
+        if (!navigator.clipboard) { return }
+        if (header.id) { return }
+
+        let temp = document.createElement('span');
+        temp.className = "material-symbols-outlined"
+        temp.innerHTML = `
+        \n link \n
+        `;
+
+        const tempdiv = document.createElement('div')
+        tempdiv.className = "linkanchor"
+
+        const currentHeader = hid
+
+        header.id = "header_" + currentHeader
+        
+        tempdiv.appendChild(temp)
+
+        const url = location.protocol + '//' + location.host + location.pathname
+
+        tempdiv.addEventListener("click", function() {
+            navigator.clipboard.writeText(url + "#header_" + currentHeader);
+        })
+
+        hid += 1
+        header.parentNode.insertBefore(tempdiv, header.nextSibling);
     });
 
     async function copyCode(block) {
@@ -144,7 +205,7 @@
     }
 
     if (ownsPage == true) {
-        document.getElementById('adminActions').style = 'display: block;'
+        document.getElementById('adminActions').style = 'display: inline-block;'
     }
 
     function editPost() {
