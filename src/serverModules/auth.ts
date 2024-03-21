@@ -96,7 +96,8 @@ router.get('/info', async (req, res) => {
     res.status(200).send({
         id: info.id,
         username: username,
-        imageUrl: imageUrl
+        imageUrl: imageUrl,
+        settings: info.settings
     })
 });
 

@@ -207,13 +207,27 @@ function uuidv4() {
     );
 }
 
+let settingsLoaded = false
+
+function loadSettings(settings) {
+    settingsLoaded = true
+
+    if (settings) {
+        // Dark Mode
+        if (settings.darkMode == true) {
+            let body = document.body
+            body.className = "darkbody"
+        }
+    }
+}
+
 async function loadLogin() {
+
     let info
 
     try {
         info = await fetch('/auth/info')
         if (info.status != 200) {
-            console.log('fail')
             eraseCookie('token')
             return
         }
@@ -224,6 +238,17 @@ async function loadLogin() {
     }
 
     loggedInUser = info.id
+
+
+    if (info.settings) {
+        localStorage.setItem('settings', JSON.stringify(info.settings))
+        if (settingsLoaded == false) {
+            console.log('<universalUtils.js> loading settings from web')
+            loadSettings(info.settings)
+        }
+    } else {
+        localStorage.setItem('settings', "")
+    }
 
     let element = document.getElementById('loginAccount')
     const par = element.parentElement
@@ -241,6 +266,16 @@ async function loadLogin() {
 }
 
 loadLogin()
+
+window.onload = function () {
+    let settings = localStorage.getItem('settings')
+
+    if (settings) {
+        settings = JSON.parse(settings)
+        console.log('<universalUtils.js> loading settings from cache')
+        loadSettings(settings)
+    }
+}
 
 // Console warnings and information
 console.log('%c STOP!', 'color: red; font-size: 100px;');

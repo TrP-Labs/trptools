@@ -2,6 +2,11 @@ body {
   font-family: sans-serif;
 }
 
+.darkbody {
+  background-color: rgb(29, 29, 29);
+  color: white;
+}
+
 /* Code for the top bar*/
 .topnavholder {
   display: flex;

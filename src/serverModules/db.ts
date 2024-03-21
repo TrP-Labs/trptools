@@ -40,7 +40,10 @@ async function addId(id : string, token : string) {
       token: token,
       id: id,
       createdAt: Date.now(),   
-      sitePermissionLevel: 1
+      sitePermissionLevel: 1,
+      settings: {
+        darkMode: true
+      }
     });
   }
 }
