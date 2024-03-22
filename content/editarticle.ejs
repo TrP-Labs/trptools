@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="/public/stylesheets/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="icon" type="image/png" href="/public/favicon.ico">
+
+    <style>
+        a {
+            color: rgb(44, 47, 94);
+            text-decoration: underline;
+        }
+
+        .centerdiv {
+            display: block;
+            margin: auto;
+            margin-bottom: 25px;
+            /*text-align: center;*/
+            width: 700px;
+            height: auto;
+            background-color: #3a3a3a;
+            color: white;
+            padding: 15px;
+            border-radius: 30px;
+            position: relative;
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            padding-bottom: 5px;
+        }
+
+        .formfield {
+            display: flex;
+            align-items:normal;
+        }
+
+        .formfield label {
+            padding-right: 10px;
+        }
+
+        .formfield input {
+            margin-left: 5px;
+            padding: 0px;
+        }
+    </style>
+
+    <script src="/public/scripts/universalUtils.js"></script>
+</head>
+
+<body>
+    <div class="topnavholder">
+        <div class="topnav">
+            <a href="/">Tools</a>
+            <a class="active" href="/articles/about">About</a>
+            <a href="https://github.com/Ticko-Grey/trptools">Open Source</a>
+        </div>
+
+        <div class="topnav nav-right">
+            <a id="loginAccount" href="/auth/login">Login</a>
+        </div>
+    </div>
+
+    <div class="centerdiv">
+        <div class="formfield">
+            <label for="title">Title: </label>
+            <input value=<%- title %> id="title">            
+        </div>
+
+        <br>
+
+        <div class="formfield">
+            <label for="body">Body: </label>
+            <textarea style="height: 200px; width: 100%; resize: vertical;" id="body"><%- body %></textarea> 
+        </div>
+
+        <div>
+            <button class="inputbutton" style="background-color: #802c2c;" onclick="Cancel()">Cancel</button>
+            <button class="inputbutton" style="background-color: #4CAF50;" onclick="Submit()">Submit</button>
+        </div>
+    </div>
+
+</body>
+
+<script>
+    const id = "<%- articleId %>"
+
+    async function Submit() {
+        const title = document.getElementById('title').value
+        let body = document.getElementById('body').value
+        body = body.replace(/(?:\r\n|\r|\n)/g, '<br>');
+
+        await fetch(`/articles/edit/${id}?title=${title}&body=${body}`, {
+            method: 'POST'
+        })
+
+        window.location = '/articles/' + id
+    }
+
+    async function Cancel() {
+        window.location = '/articles/' + id
+    }
+</script>
+
+</html>

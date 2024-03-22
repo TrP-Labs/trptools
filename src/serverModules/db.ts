@@ -89,6 +89,22 @@ async function getArticle(id : string) : Promise<articleObject | null> {
   }
 }
 
+async function editArticle(id : string, title: string, body : string) {
+  const query = await client.db(process.env.DB_ID).collection('articles').findOne({
+    id: id,
+  });
+
+  if (query) {
+    client.db(process.env.DB_ID).collection('articles').updateOne(
+      { _id: query._id },
+      { $set: {
+        title: title,
+        body: body 
+      } }
+    );
+  }
+}
+
 async function findArticle(query : string, type : string) {
   const dbquery = client.db(process.env.DB_ID).collection('articles').find({
     title: { $regex: new RegExp(query, 'i') }, // Case-insensitive partial match for title
@@ -123,5 +139,6 @@ module.exports = {
   createArticle,
   findArticle,
   findAllArticles,
-  deleteArticle
+  deleteArticle,
+  editArticle
 };

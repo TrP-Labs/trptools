@@ -76,7 +76,7 @@ router.post('/delete/:id', async (req, res) => {
 
 router.get('/edit/:id', async (req, res) => {
     const loggedInUser = await db.getId(req.cookies.token)
-    const article = await db.getArticle(req.params.id)
+    const article : articleObject = await db.getArticle(req.params.id)
 
     if (!article) {
         res.status(404).send('Article not found')
@@ -86,7 +86,7 @@ router.get('/edit/:id', async (req, res) => {
     let ownsPage = false
 
     if (loggedInUser) {
-        if (loggedInUser.id == article.ownerId) {ownsPage = true}
+        if (loggedInUser.id == article.owner) {ownsPage = true}
         if (loggedInUser.sitePermissionLevel >= articleEditPermissions[article.type]) {ownsPage = true}
     } else {
         res.status(403).send('Access denied')
@@ -98,7 +98,52 @@ router.get('/edit/:id', async (req, res) => {
         return        
     }
 
-    res.status(415).send('not implemented')
+    const body : string = article.body.replace(/<br\s*\/?>/gi, '\n');
+
+    res.render('editarticle.ejs', {
+        title: article.title,
+        body: body,
+        articleId: article.id
+    });
+});
+
+router.post('/edit/:id', async (req, res) => {
+    // run database queries
+    const loggedInUser = await db.getId(req.cookies.token)
+    const article : articleObject = await db.getArticle(req.params.id)
+
+    // get values to edit
+    if (!req.query.title || typeof req.query.title !== "string") {return}
+    if (!req.query.body || typeof req.query.body !== "string") {return}
+
+    const title : string = req.query.title
+    const body : string = req.query.body
+
+    // run permission checks
+    if (!article) {
+        res.status(404).send('Article not found')
+        return
+    }
+
+    let ownsPage = false
+
+    if (loggedInUser) {
+        if (loggedInUser.id == article.owner) {ownsPage = true}
+        if (loggedInUser.sitePermissionLevel >= articleEditPermissions[article.type]) {ownsPage = true}
+    } else {
+        res.status(403).send('Access denied')
+        return
+    }
+
+    if (ownsPage == false) {
+        res.status(403).send('Access denied')
+        return        
+    }
+
+    // run the command
+    await db.editArticle(req.params.id, title, body)
+
+    res.status(200).send("updated article")
 });
 
 router.get('/:id', async (req, res) => {
