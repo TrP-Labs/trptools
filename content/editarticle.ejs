@@ -90,9 +90,11 @@
     const id = "<%- articleId %>"
 
     async function Submit() {
-        const title = document.getElementById('title').value
+        let title = document.getElementById('title').value
+        title = encodeURIComponent(title)
         let body = document.getElementById('body').value
-        body = body.replace(/(?:\r\n|\r|\n)/g, '<br>');
+        body = body.replace(/(?:\r\n|\r|\n)/g, '\n');
+        body = encodeURIComponent(body)
 
         await fetch(`/articles/edit/${id}?title=${title}&body=${body}`, {
             method: 'POST'
