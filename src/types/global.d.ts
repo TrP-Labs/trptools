@@ -33,19 +33,24 @@ declare global {
 
   type roomData = {
     // TrP Assigned types
-    Id: Number;
+    Id: number;
     Depot: string;
     VehicleName: string;
     // Internally assigned types
     route: string;
     dead: boolean;
     assigned: boolean;
+    // Optional tow types
+    towing?: number;
+    available?: boolean;
+    location?: string;
   }
 
   type room = {
     masterId: string;
     createdAt: Number;
     data: Object<roomData>;
+    towQueue: Array<number>
     connectedIds: Array<user>;
   }
 
