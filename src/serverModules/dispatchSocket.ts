@@ -117,6 +117,9 @@ const socketIO = (server : Server) => {
                 case 'checked':
                     data['ROOM_' + socket.roomId].data["E_" + modifications.id].assigned = modifications.data
                 break;
+                case 'towing':
+                    data['ROOM_' + socket.roomId].data["E_" + modifications.id].towing = modifications.data
+                break;
             }
 
             io.to(socket.roomId).emit("entryModify", modifications)

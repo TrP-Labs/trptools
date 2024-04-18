@@ -1,5 +1,6 @@
 let dispatchTracker = {}
 let loadeddispatchstring = ""
+let SVEnabled = true;
 
 const Ajv = window.ajv7
 const ajv = new Ajv();
@@ -49,7 +50,7 @@ const schema2 = {
       }
     },
     "required": ["N/A", "Hardbass Island Depot", "Main Island Depot"]
-  }
+}
 
 const validate = ajv.compile(schema);
 const validate2 = ajv.compile(schema2);
@@ -68,7 +69,13 @@ function appendEntry(numindex) {
     // Create entry parent
     const entry = $('<tr>', {
         id: number,
-    }).appendTo('#table');
+    });
+
+    if (info.Name == "ZiU-682 (ZiU-9) Service vehicle" && SVEnabled == true) {
+        entry.appendTo("#SVtable");
+    } else {
+        entry.appendTo('#table');
+    }
 
     if (info.dead == true) {
         entry.css("background-color","#E37979");
@@ -128,27 +135,37 @@ function appendEntry(numindex) {
         checkbox.prop("checked", true)
     }
 
+    // Towing holder
+    if (info.Name == "ZiU-682 (ZiU-9) Service vehicle" && SVEnabled == true) {
+        const towHolder = $('<td>', {
+            text: info.towing,
+            class: 'towing',
+        }).appendTo(entry);
+    } 
+
+    // Button holder
     const buttonholder = $('<td>', {
         class: 'buttonholder',
     }).appendTo(entry);
 
     // Add buttons
-    $('<button>', {
-        class: 'inputbutton solvebutton',
-        text: 'Solve',
-        style: 'background-color: #4CAF50;',
-        click: function() {
-            autoSolve(info, routeobj.text()).then((solvedroute) => {
-                modifyEntry({
-                    id: number,
-                    type: 'route',
-                    data: solvedroute
+    if (info.Name != "ZiU-682 (ZiU-9) Service vehicle") {
+        $('<button>', { // Solve button
+            class: 'inputbutton solvebutton',
+            text: 'Solve',
+            style: 'background-color: #4CAF50;',
+            click: function () {
+                autoSolve(info, routeobj.text()).then((solvedroute) => {
+                    modifyEntry({
+                        id: number,
+                        type: 'route',
+                        data: solvedroute
+                    })
                 })
-            })
-        }
-    }).appendTo(buttonholder);
-
-    $('<button>', {
+            }
+        }).appendTo(buttonholder);
+    }
+    $('<button>', { // Delete button
         class: 'inputbutton',
         text: 'Delete',
         style: 'background-color: #802c2c;',
@@ -169,7 +186,8 @@ function appendEntry(numindex) {
         }
     }).appendTo(buttonholder);
 
-    $('<button>', {
+    if (info.Name != "ZiU-682 (ZiU-9) Service vehicle") {
+        $('<button>', { // Route Edit button
         class: 'inputbutton',
         text: 'Edit',
         style: 'background-color: #81693d;',
@@ -193,9 +211,39 @@ function appendEntry(numindex) {
                 closewindow()
             }
         }
-    }).appendTo(buttonholder);
+        }).appendTo(buttonholder);
+    } else {
+        $('<button>', { // Tow Edit button
+            class: 'inputbutton',
+            text: 'Edit',
+            style: 'background-color: #81693d;',
+            click: function() { 
+                showCustom({
+                    title: "Apply edits for vehicle " + number,
+                    description: "",
+                    input: [
+                        {title: "Location", id: "prompt-location", focus: false},
+                        {title: "Towing", id: "prompt-towing", focus: false},
+                    ],
+                    buttons: [
+                        {text: "Cancel", color: "#802c2c", function: closewindow},
+                        {text: "Apply", color: "#4CAF50", function: apply}
+                    ]
+                })
+    
+                $('#prompt-location').val(info.route)
+                $('#prompt-towing').val(info.towing)
+    
+                function apply() {
+                    modifyEntry({id: number, type: 'route', data: $('#prompt-location').val()})
+                    modifyEntry({id: number, type: 'towing', data: $('#prompt-towing').val()})
+                    closewindow()
+                }
+            }
+        }).appendTo(buttonholder);
+    }
 
-    $('<button>', {
+    $('<button>', { // Info button
         class: 'inputbutton',
         text: 'Information',
         style: 'background-color: #326da8;',
@@ -234,13 +282,15 @@ function modifyEntry(modifications, dnr) {
             // visual updates
             routeobj.text(modifications.data)
 
-            let color = routecolors[modifications.data]
-            if (!color) {color = '#bc42f5'}
-            routeobj.css('background-color', color)
+            if (dispatchTracker["E_" + modifications.id].Name != "ZiU-682 (ZiU-9) Service vehicle") {
+                let color = routecolors[modifications.data]
+                if (!color) {color = '#bc42f5'}
+                routeobj.css('background-color', color)
 
-            const solvebutton = $("#" + modifications.id).find('.buttonholder').find('.solvebutton')
-            solvebutton.css('background-color', '#7e8f46')
-            solvebutton.text('Re-Solve')
+                const solvebutton = $("#" + modifications.id).find('.buttonholder').find('.solvebutton')
+                solvebutton.css('background-color', '#7e8f46')
+                solvebutton.text('Re-Solve')
+            }
           break;
         case 'delete':
             $("#" + modifications.id).remove();
@@ -255,6 +305,12 @@ function modifyEntry(modifications, dnr) {
             let obj2 = $("#" + modifications.id + ' .checkbox') 
             obj2.prop("checked", modifications.data)
             dispatchTracker["E_" + modifications.id].assigned = modifications.data
+        break;
+        case 'towing':
+            const towobj = $("#" + modifications.id).find('.towing');
+            if (!towobj) return
+            dispatchTracker["E_" + modifications.id].towing = modifications.data
+            towobj.text(modifications.data);
         break;
     }
 
@@ -387,6 +443,27 @@ async function generateConnectedTable() {
     }
 
     return table
+}
+
+function reload() {
+    $('#table').empty()
+    $('#SVtable').empty()
+
+    for (const [_, value] of Object.entries(dispatchTracker)) {
+        appendEntry(value.Id);
+    }
+}
+
+function toggleSV() {
+    if (SVEnabled == false) {
+        SVEnabled = true
+        $(".svmodeonly").css('display', '')
+    } else {
+        SVEnabled = false
+        $(".svmodeonly").css('display', 'none')
+    }
+
+    reload()
 }
 
 // bottombar updates

@@ -2,7 +2,7 @@ async function solveAll() { // Solve all unsolved route entries
     let i = 0;
     for (const i in dispatchTracker) {
         const item = dispatchTracker[i];
-        if (item && !item.route) {
+        if (item && !item.route && item.Name != "ZiU-682 (ZiU-9) Service vehicle") {
             const solvedroute = await autoSolve(item)
             dispatchTracker[i].route = solvedroute
             modifyEntry({

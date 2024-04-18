@@ -42,15 +42,12 @@ declare global {
     assigned: boolean;
     // Optional tow types
     towing?: number;
-    available?: boolean;
-    location?: string;
   }
 
   type room = {
     masterId: string;
     createdAt: Number;
     data: Object<roomData>;
-    towQueue: Array<number>
     connectedIds: Array<user>;
   }
 

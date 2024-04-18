@@ -59,6 +59,7 @@
                 <button class="inputbutton" style="background-color: #4CAF50;" onclick="solveAll()">Solve routes</button>
                 <button class="inputbutton" style="background-color: #4cacaf;" onclick="showInput()">Input JSON</button>
                 <button class="inputbutton" style="background-color: #af8c4c;" onclick="connectButton()">Connect</button>
+                <button class="inputbutton" style="background-color: #5b4caf;" onclick="toggleSV()">Toggle SV manager</button>
                 <button class="inputbutton" style="background-color: #585858;" onclick="openSettings()">Settings</button>
             </div>
 
@@ -67,6 +68,24 @@
             </div>
         </div>
 
+        <h2 class="svmodeonly">Service vehicles</h2>
+        <table class="styled-table svmodeonly">
+            <thead>
+                <tr>
+                    <th>Vehicle Number</th>
+                    <th>Owner</th>
+                    <th>Location</th>
+                    <th>Available</th>
+                    <th>Towing</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="SVtable">
+
+            </tbody>
+        </table>
+
+        <h2 class="svmodeonly">Trolleybuses</h2>
         <table class="styled-table">
             <thead>
                 <tr>
