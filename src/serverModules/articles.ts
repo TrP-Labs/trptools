@@ -174,6 +174,7 @@ router.get('/:id', async (req, res) => {
     res.render('article.ejs', {
         title: article.title,
         body: mdbody,
+        shortbody: sanitizedbody.substring(0,150),
         username: username,
         profileSource: imageUrl,
         views: article.views,
