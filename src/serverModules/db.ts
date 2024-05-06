@@ -58,9 +58,10 @@ async function getId(token : string) { // Simply find and return the document th
 
 async function createArticle(info : baseArticleObject) {
   const count : number = await client.db(process.env.DB_ID).collection('articles').countDocuments();
+  const id = (count + 1).toString()
 
-  client.db(process.env.DB_ID).collection('articles').insertOne({
-    id: (count + 1).toString(),
+  await client.db(process.env.DB_ID).collection('articles').insertOne({
+    id: id,
     owner: info.owner,
     title: info.title,
     body: info.body,
@@ -68,6 +69,8 @@ async function createArticle(info : baseArticleObject) {
     type: info.type,
     views: 0
   });
+
+  return id
 }
 
 async function getArticle(id : string) : Promise<articleObject | null> {

@@ -68,7 +68,7 @@
     <div class="centerdiv">
         <div class="formfield">
             <label for="title">Title: </label>
-            <input value=<%- title %> id="title">            
+            <input value="<%- title %>" id="title">            
         </div>
 
         <br>
@@ -96,11 +96,24 @@
         body = body.replace(/(?:\r\n|\r|\n)/g, '\n');
         body = encodeURIComponent(body)
 
-        await fetch(`/articles/edit/${id}?title=${title}&body=${body}`, {
-            method: 'POST'
-        })
+        const thisUrl = new URLSearchParams(window.location.search);
+        const articleType = thisUrl.get('articleType');
 
-        window.location = '/articles/' + id
+        if (id) {
+            await fetch(`/articles/edit/${id}?title=${title}&body=${body}`, {
+                method: 'POST'
+            })
+            window.location = '/articles/' + id
+        } else {
+            let response = await fetch(`/articles/post?title=${title}&body=${body}&articleType=${articleType}`, {
+                method: 'POST'
+            })
+
+            if (response.status == 200) {
+                response = await response.json()
+                window.location = '/articles/' + response.data
+            }
+        }        
     }
 
     async function Cancel() {

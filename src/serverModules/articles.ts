@@ -101,7 +101,7 @@ router.get('/edit/:id', async (req, res) => {
     const body : string = article.body.replace(/<br\s*\/?>/gi, '\n');
 
     res.render('editarticle.ejs', {
-        title: article.title,
+        title: article.title.replace(/"/g, "&quot;"),
         body: body,
         articleId: article.id
     });
@@ -144,6 +144,78 @@ router.post('/edit/:id', async (req, res) => {
     await db.editArticle(req.params.id, title, body)
 
     res.status(200).send("updated article")
+});
+
+router.post('/post', async (req, res) => {
+    // run database queries
+    const loggedInUser = await db.getId(req.cookies.token)
+
+    // get values to edit
+    if (!req.query.title || typeof req.query.title !== "string") {return}
+    if (!req.query.body || typeof req.query.body !== "string") {return}
+    if (!req.query.articleType || typeof req.query.articleType !== "string") {return}
+
+    const title : string = req.query.title
+    const body : string = req.query.body
+    const articleType : string = req.query.articleType
+
+    // run permission checks
+    let hasPermission = false
+
+    if (loggedInUser) {
+        if (loggedInUser.sitePermissionLevel >= articleEditPermissions[articleType]) {hasPermission = true}
+    } else {
+        res.status(403).send('Access denied')
+        return
+    }
+
+    if (hasPermission == false) {
+        res.status(403).send('Access denied')
+        return        
+    }
+
+    // run the command
+    const info : baseArticleObject = {
+        owner: loggedInUser.id,
+        title: title,
+        body: body,
+        type: articleType
+    }
+
+    const id = await db.createArticle(info)
+
+    res.status(200).send({response: "Created Article", data: id})
+});
+
+router.get('/post', async (req, res) => {
+    // run database queries
+    const loggedInUser = await db.getId(req.cookies.token)
+
+    // get values to edit
+    if (!req.query.articleType || typeof req.query.articleType !== "string") {return}
+
+    const articleType : string = req.query.articleType
+
+    // run permission checks
+    let hasPermission = false
+
+    if (loggedInUser) {
+        if (loggedInUser.sitePermissionLevel >= articleEditPermissions[articleType]) {hasPermission = true}
+    } else {
+        res.status(403).send('Access denied')
+        return
+    }
+
+    if (hasPermission == false) {
+        res.status(403).send('Access denied')
+        return        
+    }
+
+    res.render('editarticle.ejs', {
+        title: "",
+        body: "",
+        articleId: ""
+    });
 });
 
 router.get('/:id', async (req, res) => {
