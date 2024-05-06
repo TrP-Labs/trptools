@@ -60,7 +60,7 @@
                 <a href="https://github.com/Ticko-Grey/trptools">Open Source</a>
             </div>
 
-            <div class="topnav topnavholder nav-float" style="flex-wrap: wrap;">
+            <div class="topnav topnavholder nav-float" id="docsbuttonbar" style="flex-wrap: wrap;">
                 <button class="inputbutton" style="background-color: #4CAF50;" onclick="postArticle()">Post Article</button>
             </div>
 
@@ -74,4 +74,19 @@
         </div>
         
     </body>
+
+    <script>
+        function check() {
+            if (loggedInUserSitePermissionLevel === null) { // basically repeat wait until 
+                setTimeout(check, 50);
+                return;
+            }
+
+            if (loggedInUserSitePermissionLevel <= 2) {
+                document.getElementById('docsbuttonbar').remove();
+            }
+        }
+
+        check()
+    </script>
 </html>

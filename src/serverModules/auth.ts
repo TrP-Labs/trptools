@@ -97,7 +97,8 @@ router.get('/info', async (req, res) => {
         id: info.id,
         username: username,
         imageUrl: imageUrl,
-        settings: info.settings
+        settings: info.settings,
+        sitePermissionLevel: info.sitePermissionLevel,
     })
 });
 

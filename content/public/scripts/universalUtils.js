@@ -1,4 +1,5 @@
 let loggedInUser = 0
+let loggedInUserSitePermissionLevel = null
 
 // Cookie things
 
@@ -229,6 +230,7 @@ async function loadLogin() {
         info = await fetch('/auth/info')
         if (info.status != 200) {
             eraseCookie('token')
+            loggedInUserSitePermissionLevel = 0
             return
         }
         info = await info.json()
@@ -238,6 +240,11 @@ async function loadLogin() {
     }
 
     loggedInUser = info.id
+    if (info.sitePermissionLevel) {
+        loggedInUserSitePermissionLevel = info.sitePermissionLevel
+    } else {
+        loggedInUserSitePermissionLevel = 0
+    }
 
 
     if (info.settings) {
