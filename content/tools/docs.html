@@ -44,6 +44,10 @@
                 })
     
             });
+
+            function postArticle() {
+                window.location.href = "/articles/post?articleType=officialDoc"
+            }
         </script>
     </head>
 
@@ -54,6 +58,10 @@
                 <a href="/">Tools</a>
                 <a href="/articles/about">About</a>
                 <a href="https://github.com/Ticko-Grey/trptools">Open Source</a>
+            </div>
+
+            <div class="topnav topnavholder nav-float" style="flex-wrap: wrap;">
+                <button class="inputbutton" style="background-color: #4CAF50;" onclick="postArticle()">Post Article</button>
             </div>
 
             <div class="topnav topnavholder nav-right">
