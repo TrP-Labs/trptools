@@ -18,6 +18,7 @@ declare global {
     id: string;
     createdAt: Number;
     views: number;
+    tags: Array<string>;
   }
 
   interface ArticleEditPermissions {

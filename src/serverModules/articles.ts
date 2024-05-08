@@ -251,7 +251,8 @@ router.get('/:id', async (req, res) => {
         profileSource: imageUrl,
         views: article.views,
         ownsPage: ownsPage,
-        articleId: article.id
+        articleId: article.id,
+        tags: JSON.stringify(article.tags)
       });
 });
 

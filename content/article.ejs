@@ -80,6 +80,16 @@
 
         h1, h2, h3 {
             display: inline-block;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        
+        h1:target, h2:target, h3:target {
+            background-color: rgba(255, 255, 0, 0.308);
+            border-radius: 10px;
+            padding: 5px;
+            transition-duration: 1s;
         }
 
         .linkanchor {
@@ -101,6 +111,13 @@
         .adminActions {
             position: absolute;
             right: 0px;
+        }
+
+        .tag {
+            background-color: #585858;
+            border-radius: 25px;
+            padding: 10px;
+            margin-right: 5px;
         }
     </style>
 
@@ -138,6 +155,9 @@
             <%= views %> Views
         </div>
 
+        <div style="display: flex; margin-top: 5px;" id="tagholder">
+        </div>
+
         <hr>
 
         <p>
@@ -152,8 +172,20 @@
     const ownsPage = <%- ownsPage %>
     const id = "<%- articleId %>"
 
-    let blocks = document.querySelectorAll("pre");
+    let tags = `<%- tags %>`
+    if (tags) {
+        tags = JSON.parse(tags);
 
+        const tagholder = document.getElementById('tagholder')
+        tags.forEach((tag) => {
+            let tagobj = document.createElement("div");
+            tagobj.className = "tag"
+            tagobj.innerHTML = tag
+            tagholder.appendChild(tagobj);
+        });
+    }
+
+    let blocks = document.querySelectorAll("pre");
     blocks.forEach((block) => {
         // only add button if browser supports Clipboard API
         if (!navigator.clipboard) { return }
@@ -199,6 +231,7 @@
 
         hid += 1
         header.parentNode.insertBefore(tempdiv, header.nextSibling);
+        tempdiv.after(document.createElement('br'))
     });
 
     async function copyCode(block) {
