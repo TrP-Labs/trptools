@@ -5,6 +5,7 @@ declare global {
     id: string;
     owner: number;
     title: string;
+    previewImage: string?
   };
 
   type baseArticleObject = {

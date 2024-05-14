@@ -118,6 +118,12 @@ async function findArticle(query : string, type : string) {
   return dbquery
 }
 
+async function findArticlesWithTag(tag : string, type : string) {
+  const dbquery = client.db(process.env.DB_ID).collection('articles').find({ tags: { $in: [tag] } })
+
+  return dbquery
+}
+
 async function findAllArticles(type : string) {
   const dbquery = client.db(process.env.DB_ID).collection('articles').find({
     type: type
@@ -144,5 +150,6 @@ module.exports = {
   findArticle,
   findAllArticles,
   deleteArticle,
-  editArticle
+  editArticle,
+  findArticlesWithTag
 };

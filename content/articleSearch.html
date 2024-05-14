@@ -18,28 +18,50 @@
         <script src="/public/scripts/universalUtils.js"></script>    
         
         <script>
-            const tags = [
-                "About TrP Tools",
-                "Commands",
-                "Vehicles",
-                "Routes",
-                "Stops",
-                "Driver Guide"
-            ]
-
             document.addEventListener('DOMContentLoaded', function () {
-                tags.forEach(async tag => {
-                    let data = `
-                        <a href="/articles/search?type=officialDoc&tag=${tag}">
-                            <div class="frontbox">
-                                <h1 style="color: white;">${tag}</h1>
-                            </div>
-                        </a>
-                    `
-                    const holder = document.getElementById('frontboxholder')
-                    holder.innerHTML += data
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const url = '/articles/get?' + urlParams.toString();
+    
+                fetch(url).then(response => {
+                    return response.json()
+                }).then(json => {
+                    json.forEach(async mdbdocument => {
+                        let name = await fetch('/proxy/name?id=' + mdbdocument.owner)
+                        name = await name.json()
+
+                        let data 
+                        if (mdbdocument.previewImage) {
+                            data = `
+                                <a href="/articles/${mdbdocument.id}" style="order: 0;"">
+                                    <div class="frontbox">
+                                        <img src="${mdbdocument.previewImage}" height="225" width="350" style="border-radius: 30px;">
+                                        <h1 style="color: white;">${mdbdocument.title}</h1>
+                                        <p style="color: white;">By ${name.data}</p>
+                                    </div>
+                                </a>
+                            `
+
+                            const holder = document.getElementById('frontboxholder')
+                            holder.innerHTML += data
+                        } else {
+                            data = `
+                                <a href="/articles/${mdbdocument.id}" style="order: 1;">
+                                    <div class="frontbox">
+                                        <h1 style="color: white;">${mdbdocument.title}</h1>
+                                        <p style="color: white;">By ${name.data}</p>
+                                    </div>
+                                </a>
+                            `
+                            const holder = document.getElementById('bottomboxholder')
+                            holder.innerHTML += data
+                        }
+    
+
+                    })
                 })
-            })
+    
+            });
 
             function postArticle() {
                 window.location.href = "/articles/post?articleType=officialDoc"
@@ -66,6 +88,10 @@
         </div>
 
         <div class="frontboxholder" id="frontboxholder">
+
+        </div>
+
+        <div class="frontboxholder" id="bottomboxholder">
 
         </div>
         

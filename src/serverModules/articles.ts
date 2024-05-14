@@ -18,10 +18,13 @@ const articleEditPermissions : ArticleEditPermissions = {
 router.get('/get', async (req, res) => {
     const type = req.query.type
     const query = req.query.query
+    const tag = req.query.tag
     let result 
 
     if (query) {
         result = await db.findArticle(query, type)
+    } else if (tag) {
+        result = await db.findArticlesWithTag(tag, type)
     } else {
         result = await db.findAllArticles(type)
     }
@@ -30,11 +33,13 @@ router.get('/get', async (req, res) => {
 
     let queryResult : Array<publicArticleObject> = []
 
-    await result.forEach((document : publicArticleObject) => {
+    await result.forEach((document : articleObject) => {
+        const previewImage = document.body.match(/!\[.*?\]\((.*?)\)/)?.[1] || null;
         queryResult.push({
             id: document.id,
             title: document.title,
-            owner: document.owner
+            owner: document.owner,
+            previewImage: previewImage
         })
     });
 
@@ -218,6 +223,10 @@ router.get('/post', async (req, res) => {
     });
 });
 
+router.get('/search', async (req, res) => {
+    res.sendFile(rootDir + "/content/articleSearch.html")
+});
+
 router.get('/:id', async (req, res) => {
     const article : articleObject = await db.getArticle(req.params.id)
 
@@ -243,6 +252,9 @@ router.get('/:id', async (req, res) => {
     const userImage = await noblox.getPlayerThumbnail(article.owner, 420, "png", true, "headshot")
     const imageUrl = userImage[0].imageUrl
 
+    let previewImage = rawbody.match(/!\[.*?\]\((.*?)\)/)?.[1] || null;
+    if (!previewImage) {previewImage = ""}
+
     res.render('article.ejs', {
         title: article.title,
         body: mdbody,
@@ -252,7 +264,8 @@ router.get('/:id', async (req, res) => {
         views: article.views,
         ownsPage: ownsPage,
         articleId: article.id,
-        tags: JSON.stringify(article.tags)
+        tags: JSON.stringify(article.tags),
+        imageUrl: previewImage
       });
 });
 
