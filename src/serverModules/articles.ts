@@ -118,11 +118,11 @@ router.post('/edit/:id', async (req, res) => {
     const article : articleObject = await db.getArticle(req.params.id)
 
     // get values to edit
-    if (!req.query.title || typeof req.query.title !== "string") {return}
-    if (!req.query.body || typeof req.query.body !== "string") {return}
+    if (!req.body.title || typeof req.body.title !== "string") {return}
+    if (!req.body.body || typeof req.body.body !== "string") {return}
 
-    const title : string = req.query.title
-    const body : string = req.query.body
+    const title : string = req.body.title
+    const body : string = req.body.body
 
     // run permission checks
     if (!article) {
@@ -156,13 +156,13 @@ router.post('/post', async (req, res) => {
     const loggedInUser = await db.getId(req.cookies.token)
 
     // get values to edit
-    if (!req.query.title || typeof req.query.title !== "string") {return}
-    if (!req.query.body || typeof req.query.body !== "string") {return}
-    if (!req.query.articleType || typeof req.query.articleType !== "string") {return}
+    if (!req.body.title || typeof req.body.title !== "string") {return}
+    if (!req.body.body || typeof req.body.body !== "string") {return}
+    if (!req.body.articleType || typeof req.body.articleType !== "string") {return}
 
-    const title : string = req.query.title
-    const body : string = req.query.body
-    const articleType : string = req.query.articleType
+    const title : string = decodeURI(req.body.title)
+    const body : string = decodeURI(req.body.body)
+    const articleType : string = req.body.articleType
 
     // run permission checks
     let hasPermission = false

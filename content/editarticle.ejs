@@ -91,22 +91,32 @@
 
     async function Submit() {
         let title = document.getElementById('title').value
-        title = encodeURIComponent(title)
         let body = document.getElementById('body').value
+        
         body = body.replace(/(?:\r\n|\r|\n)/g, '\n');
-        body = encodeURIComponent(body)
 
         const thisUrl = new URLSearchParams(window.location.search);
         const articleType = thisUrl.get('articleType');
 
         if (id) {
-            await fetch(`/articles/edit/${id}?title=${title}&body=${body}`, {
-                method: 'POST'
+            await fetch(`/articles/edit/${id}`, {
+                method: 'POST',
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    title: title,
+                    body: body,
+                })
             })
             window.location = '/articles/' + id
         } else {
-            let response = await fetch(`/articles/post?title=${title}&body=${body}&articleType=${articleType}`, {
-                method: 'POST'
+            let response = await fetch(`/articles/post`, {
+                method: 'POST',
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    title: title,
+                    body: body,
+                    articleType: articleType
+                })
             })
 
             if (response.status == 200) {

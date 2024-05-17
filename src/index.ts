@@ -20,6 +20,8 @@ app.use(cookieParser())
 app.set('views', rootDir + '/content');
 app.set('view engine', 'ejs');
 
+app.use(express.json({limit: '8mb'}));
+
 app.use('/public', express.static(rootDir + '/content/public', {
     extensions: ['html'],
 }));
