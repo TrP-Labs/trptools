@@ -27,8 +27,14 @@
                     return response.json()
                 }).then(json => {
                     json.forEach(async mdbdocument => {
-                        let name = await fetch('/proxy/name?id=' + mdbdocument.owner)
-                        name = await name.json()
+                        if (mdbdocument.owner == "TrP Tools Staff") {
+                            var name = {
+                                data : "TrP Tools Staff"
+                            }
+                        } else {
+                            let name = await fetch('/proxy/name?id=' + mdbdocument.owner)
+                            name = await name.json()
+                        }
 
                         let data 
                         if (mdbdocument.previewImage) {

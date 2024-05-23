@@ -250,10 +250,14 @@ router.get('/:id', async (req, res) => {
     const sanitizedbody = sanitizeHtml(rawbody)
     const mdbody = marked.parse(sanitizedbody)
 
-    const username = await noblox.getUsernameFromId(article.owner)
-
-    const userImage = await noblox.getPlayerThumbnail(article.owner, 420, "png", true, "headshot")
-    const imageUrl = userImage[0].imageUrl
+    try {
+        var username = await noblox.getUsernameFromId(article.owner)
+        var userImage = await noblox.getPlayerThumbnail(article.owner, 420, "png", true, "headshot")
+        var imageUrl = userImage[0].imageUrl || ""
+    } catch {
+        var username = "TrP Tools Staff"
+        var imageUrl = "https://cdn.trptools.com/icon.webp"
+    }
 
     let previewImage = rawbody.match(/!\[.*?\]\((.*?)\)/)?.[1] || null;
     if (!previewImage) {previewImage = ""}
