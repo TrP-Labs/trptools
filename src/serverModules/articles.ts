@@ -19,12 +19,15 @@ router.get('/get', async (req, res) => {
     const type = req.query.type
     const query = req.query.query
     const tag = req.query.tag
+    const user = req.query.user
     let result 
 
     if (query) {
         result = await db.findArticle(query, type)
     } else if (tag) {
-        result = await db.findArticlesWithTag(tag, type)
+        result = await db.findArticlesWithTag(tag)
+    } else if (user) {
+        result = await db.findArticlesFromUser(user)
     } else {
         result = await db.findAllArticles(type)
     }

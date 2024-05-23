@@ -26,6 +26,15 @@ declare global {
     [key: string]: number;
   }
 
+  type profile = {
+    token: string;
+    id: string;
+    createdAt: number;
+    sitePermissionLevel: number;
+    favoriteRoutes?: Array<string>
+    settings: Array<any>;
+  }
+
   type user = {
     id: string; 
     socketId: string; 
@@ -38,6 +47,7 @@ declare global {
     Id: number;
     Depot: string;
     VehicleName: string;
+    OwnerId: number;
     // Internally assigned types
     route: string;
     dead: boolean;

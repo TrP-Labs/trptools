@@ -41,6 +41,7 @@ async function addId(id : string, token : string) {
       id: id,
       createdAt: Date.now(),   
       sitePermissionLevel: 1,
+      favoriteRoutes: [],
       settings: {
         darkMode: true
       }
@@ -54,6 +55,14 @@ async function getId(token : string) { // Simply find and return the document th
     });
 
     return query
+}
+
+async function getUserById(id : string) { // Return profile by the userid
+  const query = await client.db(process.env.DB_ID).collection('userAccounts').findOne({
+    id: id,
+  });
+
+  return query
 }
 
 async function createArticle(info : baseArticleObject) {
@@ -118,8 +127,14 @@ async function findArticle(query : string, type : string) {
   return dbquery
 }
 
-async function findArticlesWithTag(tag : string, type : string) {
+async function findArticlesWithTag(tag : string) {
   const dbquery = client.db(process.env.DB_ID).collection('articles').find({ tags: { $in: [tag] } })
+
+  return dbquery
+}
+
+async function findArticlesFromUser(user : string) {
+  const dbquery = client.db(process.env.DB_ID).collection('articles').find({owner:user})
 
   return dbquery
 }
@@ -151,5 +166,7 @@ module.exports = {
   findAllArticles,
   deleteArticle,
   editArticle,
-  findArticlesWithTag
+  findArticlesWithTag,
+  findArticlesFromUser,
+  getUserById
 };
