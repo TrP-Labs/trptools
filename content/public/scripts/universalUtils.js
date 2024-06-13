@@ -260,16 +260,27 @@ async function loadLogin() {
     let element = document.getElementById('loginAccount')
     const par = element.parentElement
     element.remove()
-    element = document.createElement('span')
+    element = document.createElement('a')
+    element.style.padding = '0%'
+    element.style.display = 'flex'
+    element.style.flexDirection = 'row'
+    element.style.height = '100%'
+    element.style.cursor = 'pointer'
+    element.href = '/profiles/' + info.id
+
     par.append(element)
     
     const img = document.createElement('img')
     img.style.height = '50px';
     img.style.width = 'auto';
     img.src = info.imageUrl
-    element.style.height = '100%'
+    
     element.append(img)
-    element.append(info.username)
+
+    const usernameTag = document.createElement('span')
+    usernameTag.innerHTML = info.username
+
+    element.append(usernameTag)
 }
 
 loadLogin()

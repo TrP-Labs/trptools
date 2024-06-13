@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>TrP Tools Profile Settings</title>
+
+    <link rel="stylesheet" type="text/css" href="/public/stylesheets/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="icon" type="image/png" href="/public/favicon.ico">
+
+    <style>
+        a {
+            color: rgb(170, 174, 224);
+            text-decoration: none;
+        }
+
+        .centerdiv {
+            display: block;
+            margin: auto;
+            margin-bottom: 25px;
+            margin-top: 25px;
+            /*text-align: center;*/
+            width: 80%;
+            height: auto;
+            background-color: #3a3a3a;
+            color: white;
+            padding: 15px;
+            border-radius: 30px;
+            position: relative;
+        }
+
+        pre {
+            position: relative;
+            margin: 5px 0;
+            white-space: pre-wrap;
+        }
+
+        pre button {
+            position: absolute;
+            right: 0px;
+            border: none;
+            opacity: 75%;
+        }
+
+        code {
+            background-color: rgb(202, 202, 202);
+            padding: 5px;
+        }
+
+        pre code {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+            word-wrap: break-word;
+            word-break: break-all;
+            height: auto;
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            padding-bottom: 5px;
+        }
+
+        .profilepicture {
+            width: 25px;
+            height: auto;
+            border-radius: 100%;
+            padding-bottom: 0px;
+        }
+
+        hr {
+            border: 0px;
+            border-top: 3px solid #bbb;
+        }
+
+        h1, h2, h3 {
+            display: inline-block;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+
+        
+        h1:target, h2:target, h3:target {
+            background-color: rgba(255, 255, 0, 0.308);
+            border-radius: 10px;
+            padding: 5px;
+            transition-duration: 1s;
+        }
+
+        .linkanchor {
+            padding-left: 10px;
+            cursor: pointer;
+            display: inline-block;
+            user-select: none;
+            transition-duration: 100ms;
+        }
+
+        .linkanchor:hover {
+            color: rgb(144, 145, 179);
+        }
+
+        .linkanchor:active {
+            transform: scale(0.8);
+        }
+
+        .adminActions {
+            position: absolute;
+            right: 0px;
+        }
+
+        .tag {
+            background-color: #585858;
+            border-radius: 25px;
+            padding: 10px;
+            margin-right: 5px;
+        }
+
+        .routeicon {
+            border-radius: 100%;
+            background-color: white;
+            margin-right: 10px;
+            text-decoration: none;
+            cursor: pointer;
+            color: black;
+            padding: 15px;
+            border: 10px solid;
+            text-align: center;
+            font-size: 3em;
+            font-weight: bold;
+        }
+
+        .frontbox {
+            background-color: #4b4b4b;
+            max-width: none;
+            word-wrap: normal;
+            margin-right: 10px;
+        }
+
+        .frontbox h1 {
+            max-width: none;
+        }
+    </style>
+
+    <script src="/public/scripts/universalUtils.js"></script>
+</head>
+
+<body id="docbody">
+    <div class="topnavholder">
+        <div class="topnav">
+            <a href="/">Tools</a>
+            <a class="active" href="/articles/about">About</a>
+            <a href="https://github.com/Ticko-Grey/trptools">Open Source</a>
+        </div>
+
+        <div class="topnav nav-right">
+            <a id="loginAccount" href="/auth/login">Login</a>
+        </div>
+    </div>
+
+    <div class="centerdiv" style="padding-top: 25px; padding-bottom: 25px;">
+        <h1 style="display: block;">TrP Tools settings</h1>
+    </div>
+
+    <div class="centerdiv" style="display: flex; flex-direction: row;" id="routedisplay">
+        <div style="width: 50%; display: flex; flex-direction: column; align-items: center;">
+            <h1> Favorite Routes</h1>
+            <div style="height: 100px; width: 90%; display: flex; background-color: #4b4b4b; padding: 5px;  border-radius: 25px; overflow-x: scroll;" id="favoriteRoutes">
+
+            </div>
+        </div>
+
+        <div style="width: 50%; display: flex; flex-direction: column; align-items: center;">
+            <h1> UnFavorite Routes</h1>
+            <div style="height: 100px; width: 90%; display: flex; background-color: #4b4b4b; padding: 5px; border-radius: 25px; overflow-x: scroll;" id="unfavoriteRoutes">
+                <span class="routeicon" style="border-color: rgb(141, 45, 45);" id="Route_16">16</span>
+                <span class="routeicon" style="border-color: rgb(45, 45, 141);" id="Route_14">14</span>
+                <span class="routeicon" style="border-color: rgb(141, 135, 45);" id="Route_10">10</span>
+                <span class="routeicon" style="border-color: rgb(45, 141, 66);" id="Route_9">09</span>
+                <span class="routeicon" style="border-color: rgb(83, 58, 20);" id="Route_6">06</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="centerdiv" id="articledisplay">
+        <h1>Toggle profile sections</h1>
+        <div id="bottomboxholder">
+            <input class="settingbox" type="checkbox" style="height: 25px; width: 25px;" id="setting_hideprofile">
+            <span for="setting_hideprofile" style="font-size: 25px;">Hide profile</span>
+            <br>
+            <input class="settingbox" type="checkbox" style="height: 25px; width: 25px;" id="setting_hideroutes">
+            <span for="setting_hideroutes" style="font-size: 25px;">Hide favorite routes</span>
+            <br>
+            <input class="settingbox" type="checkbox" style="height: 25px; width: 25px;" id="setting_hidearticles">
+            <span for="setting_hidearticles" style="font-size: 25px;">Hide articles</span>
+        </div>
+    </div>
+
+    <div class="centerdiv" id="articledisplay">
+        <h1>Appearance</h1>
+        <div id="bottomboxholder">
+            <input class="settingbox" type="checkbox" style="height: 25px; width: 25px;" id="setting_darkMode">
+            <span for="setting_darkMode" style="font-size: 25px;">Dark mode</span>
+        </div>
+    </div>
+
+    <div class="centerdiv" style="width: 15%; margin: auto; display: flex; justify-content: center;">
+        <button class="inputbutton" style="background-color: #802c2c;" onclick="Cancel()">Cancel</button>
+        <button class="inputbutton" style="background-color: #4CAF50;" onclick="Submit()">Submit</button>
+    </div>
+</body>
+
+<script>
+    const id = <%- id %>
+    let settings = '<%- settings%>'
+    try {
+        settings = JSON.parse(settings)
+    } catch {
+        console.log('could not parse settings')
+        settings = {}
+    }
+
+    for (const [setting, value] of Object.entries(settings)) {
+        const settingobj = document.getElementById('setting_' + setting)
+        if (settingobj) {
+            settingobj.checked = value
+        }
+    }
+    
+
+    const favorite = document.getElementById('favoriteRoutes')
+    const unFavorite = document.getElementById('unfavoriteRoutes')
+    function routeClicker(r) {
+        r.addEventListener("click", function() {
+            if (r.parentElement == unFavorite) {
+                favorite.appendChild(r)
+            } else if (r.parentElement == favorite) {
+                unFavorite.appendChild(r)
+            }
+        });
+    }
+
+    routeClicker(document.getElementById('Route_16'))
+    routeClicker(document.getElementById('Route_14'))
+    routeClicker(document.getElementById('Route_10'))
+    routeClicker(document.getElementById('Route_9'))
+    routeClicker(document.getElementById('Route_6'))
+
+
+    fetch('/profiles/info/' + id).then(async response => {
+        let profileInfo = await response.json()
+        if (profileInfo.routes.length >= 1) {
+            profileInfo.routes.forEach(async route => {
+                const routeobj = document.getElementById('Route_' + route)
+                if (routeobj) {
+                    favorite.appendChild(routeobj)
+                }
+            })
+        }
+    })
+
+    async function Submit() {
+        const collection = document.getElementsByClassName("settingbox");
+        let newSettings = {}
+        for (let item of collection) {
+            const settingName = item.id.split('_')[1]
+            const settingValue = item.checked
+            newSettings[settingName] = settingValue
+        }
+
+        const routeCollection = document.getElementsByClassName("routeicon");
+        let newRoutes = []
+        for (let item of routeCollection) {
+            if (item.parentElement == favorite) {
+                const routeName = item.id.split('_')[1]
+                newRoutes.push(routeName)
+            }
+        }
+
+        const response = await fetch('/profiles/edit', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({favoriteRoutes: newRoutes, settings : newSettings})
+        })
+
+        if (response.status == 200) {
+            window.location.href = "/profiles/" + id;
+        }
+    }
+
+    function Cancel() {
+        window.location.href = "/profiles/" + id;
+    }
+</script>
+
+</html>

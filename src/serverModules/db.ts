@@ -49,6 +49,23 @@ async function addId(id : string, token : string) {
   }
 }
 
+async function editId(id : string, edits : profileEditRequest) {
+  // check if account already exists
+  const query = await client.db(process.env.DB_ID).collection('userAccounts').findOne({
+    id: id,
+  });
+
+  if (query) {
+    client.db(process.env.DB_ID).collection('userAccounts').updateOne(
+      { _id: query._id },
+      { $set: {
+        favoriteRoutes: edits.favoriteRoutes,
+        settings: edits.settings 
+      } }
+    );
+  }
+}
+
 async function getId(token : string) { // Simply find and return the document that matches the token
     const query = await client.db(process.env.DB_ID).collection('userAccounts').findOne({
       token: token,
@@ -160,6 +177,7 @@ async function deleteArticle(id : string) {
 module.exports = {
   addId, 
   getId, 
+  editId,
   getArticle, 
   createArticle,
   findArticle,

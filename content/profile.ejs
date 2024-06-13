@@ -170,6 +170,11 @@
         <div style="display: flex; align-items: center;">
             <img style="width: 250px; height: auto; background-color: rgb(77, 77, 77); border-radius: 100%; padding: 0px;" src="<%- imageUrl %>">
             <h1 style="display: inline; font-size: 50px; padding-left: 25px;"><%-username%></h1>
+
+            <div style="margin-left: auto; display: flex; flex-direction: column;">
+                <button class="inputbutton" style="background-color: #4b4b4b; width: 200px;" onclick="viewOnRoblox()">View on roblox</button>
+                <button id="edit" class="inputbutton" style="display: none; background-color: #4b4b4b; width: 200px;" onclick="editProfile()">Edit</button>
+            </div>
         </div>
     </div>
 
@@ -196,7 +201,9 @@
     const ownsPage = <%- ownsPage %>
     const id = "<%- userId %>"
 
-
+    if (ownsPage == true) {
+        document.getElementById('edit').style.display = 'block'
+    }
 
     // Load articles
         const urlParams = new URLSearchParams(window.location.search);
@@ -252,6 +259,14 @@
                 })
             }
         })
+
+        function editProfile() {
+            window.location.href = '/profiles/edit'
+        }
+
+        function viewOnRoblox() {
+            window.open('https://www.roblox.com/users/' + id + '/profile').focus()
+        }
 </script>
 
 </html>

@@ -32,7 +32,12 @@ declare global {
     createdAt: number;
     sitePermissionLevel: number;
     favoriteRoutes?: Array<string>
-    settings: Array<any>;
+    settings: Object<any>;
+  }
+
+  type profileEditRequest = {
+    favoriteRoutes: Array<string>
+    settings: Object<any>;
   }
 
   type user = {
