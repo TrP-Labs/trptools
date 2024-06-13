@@ -27,6 +27,19 @@ router.get('/get', async (req, res) => {
     } else if (tag) {
         result = await db.findArticlesWithTag(tag)
     } else if (user) {
+        const selectedUser = await db.getUserById(user)
+        const loggedInUser = await db.getUserById(req.cookies.token)
+
+        if (selectedUser.settings && selectedUser.settings.hidearticles == true) {
+            if (loggedInUser && loggedInUser.id != selectedUser.id) {
+                res.status(403).send('Access denied')
+                return;
+            } else if (!loggedInUser) {
+                res.status(403).send('Access denied')
+                return;            
+            }
+        }
+
         result = await db.findArticlesFromUser(user)
     } else {
         result = await db.findAllArticles(type)
