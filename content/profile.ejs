@@ -245,6 +245,8 @@
                     }
                 })
             }
+        }).catch(err => {
+            console.log("One or more articles private or unavailable")
         })
 
         fetch('/profiles/info/' + id).then(async response => {
@@ -259,7 +261,7 @@
                 })
             }
         }).catch(err => {
-            console.log("Routes private or not unavailable")
+            console.log("Routes private or unavailable")
         })
 
         function editProfile() {

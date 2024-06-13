@@ -277,6 +277,7 @@ router.get('/:id', async (req, res) => {
 
     res.render('article.ejs', {
         title: article.title,
+        ownerId : article.owner,
         body: mdbody,
         shortbody: sanitizedbody.substring(0,150),
         username: username,
