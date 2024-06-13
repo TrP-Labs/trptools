@@ -56,6 +56,12 @@ router.post('/edit', async (req, res) => {
 router.get('/info/:id', async (req, res) => {
     const id : string = req.params.id
     const selectedUser : profile = await db.getUserById(id)
+
+    if (!selectedUser) {
+        res.status(404).send('User does not exist')
+        return;
+    }
+
     const loggedInUser = await db.getId(req.cookies.token)
 
     const groupList = null

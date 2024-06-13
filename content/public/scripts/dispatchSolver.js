@@ -1,4 +1,4 @@
-let routeAPI = null
+let useRouteAPI = true
 const MAX_PEOPLE_PER_ROUTE = 6
 
 let spawnlocations = {
@@ -73,12 +73,11 @@ function getLowestNumberWithPreferences(obj, pref) {
     key = looparray[key]
     const value = obj[key];
 
-    if (value < minValue && pref[key] == true) {
+    if (value < minValue && pref.find((element) => element == key)) {
       minValue = value;
       minIndex = key;
     }
   }
-
   return minIndex;
 }
 
@@ -112,16 +111,16 @@ async function autoSolve(data, exclude) { // issue: ignores the routestatus list
     delete filteredObject[exclude]
   }
 
-  if (routeAPI) { // deal with route API if it exists
+  if (useRouteAPI == true) {
     try {
-      let result = await fetch("https://" + routeAPI + "?id=" + data.OwnerId)
+      let result = await fetch("/profiles/info/" + data.OwnerId)
       if (result.ok) {
         result = await result.json()
       } else {
         result = {}
       }
-      if (!result.R) { result.R = {} }
-      route = getLowestNumberWithPreferences(filteredObject, result.R)
+      if (!result.routes) { result.routes = {} }
+      route = getLowestNumberWithPreferences(filteredObject, result.routes)
     } catch {
       // silence fetch errors which can happen
     }
@@ -129,6 +128,8 @@ async function autoSolve(data, exclude) { // issue: ignores the routestatus list
 
   if (!route) {
     route = getLowestNumber(filteredObject)
+  } else {
+    // route = route + ' ⭐' - will have to figure out a better way for this, possibly some sort of "special" tag inside the vehicle data and caching the result from this inside it too
   }
 
   return route

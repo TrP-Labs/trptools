@@ -166,7 +166,6 @@ function openSettings() {
         title: "Settings",
         description: "Configure how your portal will behave (currently does not save) <br> <sub> Please note advanced route assignment will not be available for custom routes </sub>",
         input: [
-            {title: 'Custom route API', id: 'prompt-api', textarea: false},
             {title: 'Custom route listings', id: 'prompt-routes', textarea: true}
         ],
         buttons: [
