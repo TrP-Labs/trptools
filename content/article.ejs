@@ -124,6 +124,18 @@
             border-radius: 25px;
             padding: 10px;
             margin-right: 5px;
+            cursor: pointer;
+            user-select: none;
+            transition-duration: 100ms;
+        }
+
+        .tag:hover {
+            background-color: rgb(184, 184, 184) !important;
+        }
+
+        .tag:active {
+            background-color: rgb(216, 216, 216) !important;
+            transform: scale(0.75);
         }
 
         table {
@@ -193,6 +205,7 @@
     const copyButtonLabel = "Copy";
     const ownsPage = <%- ownsPage %>
     const id = "<%- articleId %>"
+    const articleType = "<%- articleType %>"
 
     let tags = `<%- tags %>`
     if (tags) {
@@ -204,6 +217,10 @@
             tagobj.className = "tag"
             tagobj.innerHTML = tag
             tagholder.appendChild(tagobj);
+
+            tagobj.addEventListener('click', function(){
+                window.location.replace('/articles/search?type=' + articleType + '&tag=' + tag)
+            });
         });
     }
 

@@ -285,6 +285,7 @@ router.get('/:id', async (req, res) => {
         views: article.views,
         ownsPage: ownsPage,
         articleId: article.id,
+        articleType: article.type,
         tags: JSON.stringify(article.tags),
         imageUrl: previewImage
       });

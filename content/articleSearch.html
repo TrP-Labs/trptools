@@ -32,8 +32,9 @@
                                 data : "TrP Tools Staff"
                             }
                         } else {
-                            let name = await fetch('/proxy/name?id=' + mdbdocument.owner)
+                            var name = await fetch('/proxy/name?id=' + mdbdocument.owner)
                             name = await name.json()
+                            console.log(name)
                         }
 
                         let data 
