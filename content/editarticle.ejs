@@ -5,7 +5,13 @@
 <head>
     <link rel="stylesheet" type="text/css" href="/public/stylesheets/style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="/public/scripts/editArticle.js"></script>
     <link rel="icon" type="image/png" href="/public/favicon.ico">
+
+    <script>
+        const id = "<%- articleId %>"
+    </script>
 
     <style>
         a {
@@ -17,6 +23,7 @@
             display: block;
             margin: auto;
             margin-bottom: 25px;
+            margin-top: 25px;
             /*text-align: center;*/
             width: 700px;
             height: auto;
@@ -34,18 +41,45 @@
             padding-bottom: 5px;
         }
 
-        .formfield {
-            display: flex;
-            align-items:normal;
+        .formbar {
+            font-size: 20px;
+            width: 100%;
+            outline: none;
+            font-family: sans-serif;
+            box-sizing: border-box;
+            padding: 10px;
         }
 
-        .formfield label {
+        .bodybar {
+            display: flex; 
+            background-color: #4b4b4b; 
+            width: 100%;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            box-sizing: border-box;
+            padding-left: 10px;
             padding-right: 10px;
+            padding-top: 2px;
+            user-select: none;
         }
 
-        .formfield input {
-            margin-left: 5px;
-            padding: 0px;
+        .bodybar div {
+            padding-right: 20px;
+        }
+
+        .bodybar span {
+            cursor: pointer;
+            padding-right: 5px;
+            transition-duration: 100ms;
+        }
+
+        .bodybar span:hover {
+            color: rgb(184, 184, 184) !important;
+        }
+
+        .bodybar span:active {
+            color: rgb(216, 216, 216) !important;
+            transform: scale(0.75);
         }
     </style>
 
@@ -53,6 +87,31 @@
 </head>
 
 <body>
+    <div class="promptdiv" id="prompt-parent" style="display: none;">
+        <h1 id="prompt-title"></h1>
+        <p id="prompt-desc">
+            
+        </p>
+        
+        <div id="prompt-inputholder"> 
+        </div>     
+
+        <div id="prompt-choiceholder"> 
+        </div>  
+
+        <div class="alert" id="alert-parent" style="display: none;">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            <p id="alert-text" style="margin: 0;">Alert box</p>
+          </div>
+
+        <div id="prompt-buttonholder">          
+        </div>
+    </div>
+
+    <div id="overlay" class="overlay" style="display: none;"></div>
+
+    <input type="file" id="fileInput" style="display:none" accept="image/*">
+
     <div class="topnavholder">
         <div class="topnav">
             <a href="/">Tools</a>
@@ -66,16 +125,38 @@
     </div>
 
     <div class="centerdiv">
+
+        <h1 style="margin-top: 0px;">TrP Tools Article composer</h1>
+
         <div class="formfield">
-            <label for="title">Title: </label>
-            <input value="<%- title %>" id="title">            
+            <input value="<%- title %>" id="title" class="formbar" placeholder="Title" style="height: 30px;">            
         </div>
 
         <br>
 
         <div class="formfield">
-            <label for="body">Body: </label>
-            <textarea style="height: 200px; width: 100%; resize: vertical;" id="body"><%- body %></textarea> 
+            <div class="bodybar">
+                <div>
+                    <span class="textEditIcon material-symbols-outlined" id="edit_heading">title</span>
+                    <span class="textEditIcon material-symbols-outlined" id="edit_bold">format_bold</span>
+                    <span class="textEditIcon material-symbols-outlined" id="edit_italic">format_italic</span>
+                    <span class="textEditIcon material-symbols-outlined" id="edit_strikethrough">format_strikethrough</span>
+                </div>
+                
+                <div>
+                    <span class="textEditIcon material-symbols-outlined" id="edit_code">code</span>
+                    <span class="textEditIcon material-symbols-outlined" id="edit_quote">format_quote</span>
+                    <span class="textEditIcon material-symbols-outlined" id="edit_list">list</span>
+                </div>
+
+                <div>
+                    <span class="textEditIcon material-symbols-outlined" id="edit_link">link</span>
+                    <span class="textEditIcon material-symbols-outlined" id="edit_image">image</span>
+                    <span class="textEditIcon material-symbols-outlined" id="edit_groups">groups</span>
+                </div>
+
+            </div>
+            <textarea style="height: 200px; width: 100%; resize: vertical; display: block;" id="body" class="formbar" placeholder="Post content"><%- body %></textarea> 
         </div>
 
         <div>
@@ -85,50 +166,4 @@
     </div>
 
 </body>
-
-<script>
-    const id = "<%- articleId %>"
-
-    async function Submit() {
-        let title = document.getElementById('title').value
-        let body = document.getElementById('body').value
-        
-        body = body.replace(/(?:\r\n|\r|\n)/g, '\n');
-
-        const thisUrl = new URLSearchParams(window.location.search);
-        const articleType = thisUrl.get('articleType');
-
-        if (id) {
-            await fetch(`/articles/edit/${id}`, {
-                method: 'POST',
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                    title: title,
-                    body: body,
-                })
-            })
-            window.location = '/articles/' + id
-        } else {
-            let response = await fetch(`/articles/post`, {
-                method: 'POST',
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                    title: title,
-                    body: body,
-                    articleType: articleType
-                })
-            })
-
-            if (response.status == 200) {
-                response = await response.json()
-                window.location = '/articles/' + response.data
-            }
-        }        
-    }
-
-    async function Cancel() {
-        history.back()
-    }
-</script>
-
 </html>
