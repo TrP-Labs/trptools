@@ -252,7 +252,8 @@ router.get('/post', async (req, res) => {
     res.render('editarticle.ejs', {
         title: "",
         body: "",
-        articleId: ""
+        articleId: "",
+        tags: JSON.stringify([])
     });
 });
 
