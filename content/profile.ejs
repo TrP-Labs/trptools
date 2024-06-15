@@ -222,13 +222,17 @@
                     if (mdbdocument.previewImage) {
                         data = `
                             <a href="/articles/${mdbdocument.id}" style="order: 0; flex-shrink: 0;"">
-                                <div class="frontbox">
-                                    <img src="${mdbdocument.previewImage}" height="225" width="350" style="border-radius: 30px;">
-                                    <h1 style="color: white; max-width: 350px; word-wrap: break-word;">${mdbdocument.title}</h1>
-                                    <p style="color: white;">By ${name.data}</p>
+                                <div class="frontbox" style="display: flex; flex-direction: row;">
+                                    <div style="display: flex; flex-direction: column;">
+                                        <h1 style="color: white; max-width: 350px; word-wrap: break-word;">${mdbdocument.title}</h1>
+                                        <p style="color: white;">By ${name.data}</p>
+                                    </div>
+                                    <img src="${mdbdocument.previewImage}" style="border-radius: 30px; width: 100px; height: 100px; margin-left: 10px;">
                                 </div>
                             </a>
                         `
+
+                        console.log(data)
                         const holder = document.getElementById('bottomboxholder')
                         holder.innerHTML += data
                     } else {
