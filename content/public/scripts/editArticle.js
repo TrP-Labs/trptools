@@ -234,13 +234,25 @@ $(document).ready(function(){
             textEditButtonPress($(this).attr('id'))
         });
     });
+
+    tags = JSON.parse(tags)
+    let i = 0
+    tags.forEach((tag) => {
+        if (i == 0) {
+            $('#tags').val($('#tags').val() + `${tag}`)
+        } else {
+            $('#tags').val($('#tags').val() + `, ${tag}`)
+        }
+        i++
+    });
 });
 
 // Publish and Cancel button handlers
 async function Submit() {
     let title = document.getElementById('title').value
     let body = document.getElementById('body').value
-    
+    let tags = $('#tags').val().replace(/\s+/g, '').split(',')
+
     body = body.replace(/(?:\r\n|\r|\n)/g, '\n');
 
     const thisUrl = new URLSearchParams(window.location.search);
@@ -253,6 +265,7 @@ async function Submit() {
             body: JSON.stringify({
                 title: title,
                 body: body,
+                tags: JSON.stringify(tags),
             })
         })
         window.location = '/articles/' + id
@@ -263,7 +276,8 @@ async function Submit() {
             body: JSON.stringify({
                 title: title,
                 body: body,
-                articleType: articleType
+                tags: JSON.stringify(tags),
+                articleType: articleType,
             })
         })
 

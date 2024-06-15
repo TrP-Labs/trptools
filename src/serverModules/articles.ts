@@ -124,7 +124,8 @@ router.get('/edit/:id', async (req, res) => {
     res.render('editarticle.ejs', {
         title: article.title.replace(/"/g, "&quot;"),
         body: body,
-        articleId: article.id
+        articleId: article.id,
+        tags: JSON.stringify(article.tags)
     });
 });
 
@@ -139,6 +140,7 @@ router.post('/edit/:id', async (req, res) => {
 
     const title : string = req.body.title
     const body : string = req.body.body
+    const tags : Array<string> = JSON.parse(req.body.tags)
 
     // run permission checks
     if (!article) {
@@ -161,8 +163,15 @@ router.post('/edit/:id', async (req, res) => {
         return        
     }
 
+    // tags xss security
+    let newtags : Array<string> = []
+    tags.forEach((tag) => {
+        newtags.push(sanitizeHtml(tag))
+    });
+    newtags = newtags.filter(Boolean)
+
     // run the command
-    await db.editArticle(req.params.id, title, body)
+    await db.editArticle(req.params.id, title, body, newtags)
 
     res.status(200).send("updated article")
 });
@@ -179,6 +188,7 @@ router.post('/post', async (req, res) => {
     const title : string = decodeURI(req.body.title)
     const body : string = decodeURI(req.body.body)
     const articleType : string = req.body.articleType
+    const tags : Array<string> = JSON.parse(req.body.tags)
 
     // run permission checks
     let hasPermission = false
@@ -195,12 +205,19 @@ router.post('/post', async (req, res) => {
         return        
     }
 
+    let newtags : Array<string> = []
+
+    tags.forEach((tag) => {
+        newtags.push(sanitizeHtml(tag))
+    });
+
     // run the command
     const info : baseArticleObject = {
         owner: loggedInUser.id,
         title: title,
         body: body,
-        type: articleType
+        type: articleType,
+        tags: newtags
     }
 
     const id = await db.createArticle(info)

@@ -13,13 +13,13 @@ declare global {
     title: string;
     body: string;
     type: string;
+    tags: Array<string>;
   };
 
   interface articleObject extends baseArticleObject {
     id: string;
     createdAt: Number;
     views: number;
-    tags: Array<string>;
   }
 
   interface ArticleEditPermissions {

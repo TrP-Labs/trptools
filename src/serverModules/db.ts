@@ -119,7 +119,7 @@ async function getArticle(id : string) : Promise<articleObject | null> {
   }
 }
 
-async function editArticle(id : string, title: string, body : string) {
+async function editArticle(id : string, title: string, body : string, tags : Array<string>) {
   const query = await client.db(process.env.DB_ID).collection('articles').findOne({
     id: id,
   });
@@ -129,7 +129,8 @@ async function editArticle(id : string, title: string, body : string) {
       { _id: query._id },
       { $set: {
         title: title,
-        body: body 
+        body: body,
+        tags: tags
       } }
     );
   }

@@ -11,6 +11,7 @@
 
     <script>
         const id = "<%- articleId %>"
+        let tags = `<%- tags %>`
     </script>
 
     <style>
@@ -129,7 +130,8 @@
         <h1 style="margin-top: 0px;">TrP Tools Article composer</h1>
 
         <div class="formfield">
-            <input value="<%- title %>" id="title" class="formbar" placeholder="Title" style="height: 30px;">            
+            <input value="<%- title %>" id="title" class="formbar" placeholder="Title" style="height: 30px;">   
+            <input value="" id="tags" class="formbar" placeholder="Enter tags (seperated by commas, ex: apples, oranges, pears)" style="height: 30px; margin-top: 25px; border-radius: 25px; border: none;">             
         </div>
 
         <br>
