@@ -27,6 +27,7 @@
                     return response.json()
                 }).then(json => {
                     json.forEach(async mdbdocument => {
+                        console.log('article')
                         if (mdbdocument.owner == "TrP Tools Staff") {
                             var name = {
                                 data : "TrP Tools Staff"

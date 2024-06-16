@@ -94,7 +94,7 @@ async function createArticle(info : baseArticleObject) {
     createdAt: Date.now(),
     type: info.type,
     views: 0,
-    tags: []
+    tags: info.tags
   });
 
   return id

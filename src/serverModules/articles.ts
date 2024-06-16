@@ -297,7 +297,6 @@ router.get('/:id', async (req, res) => {
         title: article.title,
         ownerId : article.owner,
         body: mdbody,
-        shortbody: sanitizedbody.substring(0,150),
         username: username,
         profileSource: imageUrl,
         views: article.views,
