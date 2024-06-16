@@ -23,7 +23,7 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const url = '/articles/get?' + urlParams.toString();
 
-                async function loadArticle(mdbocument){
+                async function loadArticle(mdbdocument){
                     if (mdbdocument.owner == "TrP Tools Staff") {
                             var name = {
                                 data : "TrP Tools Staff"
