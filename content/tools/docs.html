@@ -30,7 +30,7 @@
             document.addEventListener('DOMContentLoaded', function () {
                 tags.forEach(async tag => {
                     let data = `
-                        <a href="/articles/search?type=officialDoc&tag=${tag}">
+                        <a href="/articles/search?type=officialDoc&tags=[%22${tag}%22]">
                             <div class="frontbox">
                                 <h1 style="color: white;">${tag}</h1>
                             </div>

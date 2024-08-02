@@ -140,7 +140,7 @@ async function findArticle(data : articleSearch) {
   let search : any = {}
   if (data.query) {search.title = { $regex: new RegExp(data.query, 'i') }}
   if (data.owner) {search.owner = { $eq: data.owner}}
-  if (data.tags) {search.tags = { $in: [data.tags] }}
+  if (data.tags) {search.tags = { $in: data.tags }}
   search.type = { $eq: data.type }
 
   let dbquery : any = client.db(process.env.DB_ID).collection('articles').find(search)
