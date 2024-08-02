@@ -24,16 +24,6 @@
                 const url = '/articles/get?' + urlParams.toString();
 
                 async function loadArticle(mdbdocument){
-                    if (mdbdocument.owner == "TrP Tools Staff") {
-                            var name = {
-                                data : "TrP Tools Staff"
-                            }
-                        } else {
-                            var name = await fetch('/proxy/name?id=' + mdbdocument.owner)
-                            name = await name.json()
-                            console.log(name)
-                        }
-
                         let data 
                         if (mdbdocument.previewImage) {
                             data = `
@@ -41,7 +31,7 @@
                                     <div class="frontbox">
                                         <img src="${mdbdocument.previewImage}" height="225" width="350" style="border-radius: 30px;">
                                         <h1 style="color: white; max-width: 350px; word-wrap: break-word;">${mdbdocument.title}</h1>
-                                        <p style="color: white;">By ${name.data}</p>
+                                        <p style="color: white;">By ${mdbdocument.owner.name}</p>
                                     </div>
                                 </a>
                             `
@@ -53,7 +43,7 @@
                                 <a href="/articles/${mdbdocument.id}" style="order: 1;">
                                     <div class="frontbox">
                                         <h1 style="color: white;">${mdbdocument.title}</h1>
-                                        <p style="color: white;">By ${name.data}</p>
+                                        <p style="color: white;">By ${mdbdocument.owner.name}</p>
                                     </div>
                                 </a>
                             `

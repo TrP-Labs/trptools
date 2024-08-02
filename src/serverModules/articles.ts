@@ -15,49 +15,84 @@ const articleEditPermissions : ArticleEditPermissions = {
     'officialDoc':3
 }
 
+const entities : Array<ownerData> = [
+    {id: 'staff', name:"TrP Tools Staff", icon:"https://cdn.trptools.com/icon.webp"}
+]
+
+async function getInfoByOwner(ownerId : string) : Promise<ownerData | null> {
+    const ownerIdTable : Array<string> = ownerId.split(':')
+    const ownerType : string = ownerIdTable[0]
+    const ownerData : string = ownerIdTable[1]
+
+    switch (ownerType) {
+        case 'entity':
+            const entity : ownerData | null = entities.find(item => item.id === ownerData) || null;
+            return entity
+        case 'user':
+            const intOwnerData : number = parseInt(ownerData)
+            var username = await noblox.getUsernameFromId(intOwnerData)
+            var userImage = await noblox.getPlayerThumbnail(intOwnerData, 420, "png", true, "headshot")
+            var imageUrl = userImage[0].imageUrl || ""
+
+            const data : ownerData = {id : ownerData, name : username, icon : imageUrl}
+            return data
+        case 'group':
+            // coming soon
+            return null
+        default:
+            return null
+    }
+}
+
+async function compileDocumentFromSearch(document : articleObject) {
+    const previewImage = document.body.match(/!\[.*?\]\((.*?)\)/)?.[1] || null;
+    const info = await getInfoByOwner(document.owner);
+    return {
+        id: document.id,
+        title: document.title,
+        owner: info,
+        previewImage: previewImage
+    };
+}
+
 router.get('/get', async (req, res) => {
     const type = req.query.type
+
     const query = req.query.query
-    const tag = req.query.tag
-    const user = req.query.user
-    let result 
+    let owner = req.query.user
+    let tags : any = req.query.tags
 
-    if (query) {
-        result = await db.findArticle(query, type)
-    } else if (tag) {
-        result = await db.findArticlesWithTag(tag)
-    } else if (user) {
-        const selectedUser = await db.getUserById(user)
-        const loggedInUser = await db.getUserById(req.cookies.token)
+    if (tags) {
+        tags = JSON.parse(tags)
+    }
 
-        if (selectedUser.settings && selectedUser.settings.hidearticles == true) {
-            if (loggedInUser && loggedInUser.id != selectedUser.id) {
-                res.status(403).send('Access denied')
-                return;
-            } else if (!loggedInUser) {
-                res.status(403).send('Access denied')
-                return;            
-            }
+    if (owner) {
+        owner = 'user:' + owner
+    }
+    
+    let result = await db.findArticle({type : type, query : query, owner : owner, tags : tags})
+
+    const selectedUser = await db.getUserById(owner)
+    const loggedInUser = await db.getUserById(req.cookies.token)
+
+    if (selectedUser && selectedUser.settings && selectedUser.settings.hidearticles == true) {
+        if (loggedInUser && loggedInUser.id != selectedUser.id) {
+            res.status(403).send('Access denied')
+            return;
+        } else if (!loggedInUser) {
+            res.status(403).send('Access denied')
+            return;
         }
-
-        result = await db.findArticlesFromUser(user)
-    } else {
-        result = await db.findAllArticles(type)
     }
 
     if (!result) {res.status(500); return}
 
     let queryResult : Array<publicArticleObject> = []
 
-    await result.forEach((document : articleObject) => {
-        const previewImage = document.body.match(/!\[.*?\]\((.*?)\)/)?.[1] || null;
-        queryResult.push({
-            id: document.id,
-            title: document.title,
-            owner: document.owner,
-            previewImage: previewImage
-        })
-    });
+    for await (const doc of result) {
+        const compiledDoc = await compileDocumentFromSearch(doc)
+        queryResult.push(compiledDoc)
+    }
 
     res.status(200).send(queryResult)
 });
@@ -74,7 +109,7 @@ router.post('/delete/:id', async (req, res) => {
     let ownsPage = false
 
     if (loggedInUser) {
-        if (loggedInUser.id == article.owner) {ownsPage = true}
+        if (loggedInUser.id == article.owner.split(':')[1]) {ownsPage = true}
         if (loggedInUser.sitePermissionLevel >= articleEditPermissions[article.type]) {ownsPage = true}
     } else {
         res.status(403).send('Access denied')
@@ -107,7 +142,7 @@ router.get('/edit/:id', async (req, res) => {
     let ownsPage = false
 
     if (loggedInUser) {
-        if (loggedInUser.id == article.owner) {ownsPage = true}
+        if (loggedInUser.id == article.owner.split(':')[1]) {ownsPage = true}
         if (loggedInUser.sitePermissionLevel >= articleEditPermissions[article.type]) {ownsPage = true}
     } else {
         res.status(403).send('Access denied')
@@ -151,7 +186,7 @@ router.post('/edit/:id', async (req, res) => {
     let ownsPage = false
 
     if (loggedInUser) {
-        if (loggedInUser.id == article.owner) {ownsPage = true}
+        if (loggedInUser.id == article.owner.split(':')[1]) {ownsPage = true}
         if (loggedInUser.sitePermissionLevel >= articleEditPermissions[article.type]) {ownsPage = true}
     } else {
         res.status(403).send('Access denied')
@@ -213,7 +248,7 @@ router.post('/post', async (req, res) => {
 
     // run the command
     const info : baseArticleObject = {
-        owner: loggedInUser.id,
+        owner: 'user:' + loggedInUser.id,
         title: title,
         body: body,
         type: articleType,
@@ -273,7 +308,7 @@ router.get('/:id', async (req, res) => {
     const loggedInUser = await db.getId(req.cookies.token)
 
     if (loggedInUser) {
-        if (loggedInUser.id == article.owner) {ownsPage = true}
+        if (loggedInUser.id == article.owner.split(':')[1]) {ownsPage = true}
         if (loggedInUser.sitePermissionLevel >= articleEditPermissions[article.type]) {ownsPage = true}
     }
 
@@ -281,24 +316,22 @@ router.get('/:id', async (req, res) => {
     const sanitizedbody = sanitizeHtml(rawbody)
     const mdbody = marked.parse(sanitizedbody)
 
-    try {
-        var username = await noblox.getUsernameFromId(article.owner)
-        var userImage = await noblox.getPlayerThumbnail(article.owner, 420, "png", true, "headshot")
-        var imageUrl = userImage[0].imageUrl || ""
-    } catch {
-        var username = "TrP Tools Staff"
-        var imageUrl = "https://cdn.trptools.com/icon.webp"
-    }
+    let ownerData : ownerData | null = await getInfoByOwner(article.owner)
+    if (!ownerData) {ownerData = {
+        id: 'unknown',
+        name: 'unknown',
+        icon: 'unknown'
+    }}
 
     let previewImage = rawbody.match(/!\[.*?\]\((.*?)\)/)?.[1] || null;
     if (!previewImage) {previewImage = ""}
 
     res.render('article.ejs', {
         title: article.title,
-        ownerId : article.owner,
+        ownerId : article.owner.split(':')[1],
         body: mdbody,
-        username: username,
-        profileSource: imageUrl,
+        username: ownerData.name,
+        profileSource: ownerData.icon,
         views: article.views,
         ownsPage: ownsPage,
         articleId: article.id,

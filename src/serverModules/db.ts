@@ -136,31 +136,15 @@ async function editArticle(id : string, title: string, body : string, tags : Arr
   }
 }
 
-async function findArticle(query : string, type : string) {
-  const dbquery = client.db(process.env.DB_ID).collection('articles').find({
-    title: { $regex: new RegExp(query, 'i') }, // Case-insensitive partial match for title
-    type: { $eq: type } // Exact match for type
-  });
+async function findArticle(data : articleSearch) {
+  let search : any = {}
+  if (data.query) {search.title = { $regex: new RegExp(data.query, 'i') }}
+  if (data.owner) {search.owner = { $eq: data.owner}}
+  if (data.tags) {search.tags = { $in: [data.tags] }}
+  search.type = { $eq: data.type }
 
-  return dbquery
-}
-
-async function findArticlesWithTag(tag : string) {
-  const dbquery = client.db(process.env.DB_ID).collection('articles').find({ tags: { $in: [tag] } })
-
-  return dbquery
-}
-
-async function findArticlesFromUser(user : string) {
-  const dbquery = client.db(process.env.DB_ID).collection('articles').find({owner:user})
-
-  return dbquery
-}
-
-async function findAllArticles(type : string) {
-  const dbquery = client.db(process.env.DB_ID).collection('articles').find({
-    type: type
-  });
+  let dbquery : any = client.db(process.env.DB_ID).collection('articles').find(search)
+  dbquery = await dbquery.toArray()
 
   return dbquery
 }
@@ -182,10 +166,7 @@ module.exports = {
   getArticle, 
   createArticle,
   findArticle,
-  findAllArticles,
   deleteArticle,
   editArticle,
-  findArticlesWithTag,
-  findArticlesFromUser,
   getUserById
 };

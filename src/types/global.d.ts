@@ -1,15 +1,21 @@
 export {};
 
 declare global {
+  type ownerData = {
+    id:string,
+    name:string,
+    icon:string
+  }
+
   type publicArticleObject = {
     id: string;
-    owner: number;
+    owner: ownerData?;
     title: string;
     previewImage: string?
   };
 
   type baseArticleObject = {
-    owner: number;
+    owner: string;
     title: string;
     body: string;
     type: string;
@@ -20,6 +26,13 @@ declare global {
     id: string;
     createdAt: Number;
     views: number;
+  }
+
+  type articleSearch = {
+    query? : string,
+    owner? : string,
+    tags? : Array<string>,
+    type : string
   }
 
   interface ArticleEditPermissions {

@@ -218,7 +218,7 @@
             tagholder.appendChild(tagobj);
 
             tagobj.addEventListener('click', function(){
-                window.location.replace('/articles/search?type=' + articleType + '&tag=' + tag)
+                window.location.replace('/articles/search?type=' + articleType + '&tags=["' + tag + '"]')
             });
         });
     }
