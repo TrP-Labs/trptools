@@ -1,8 +1,11 @@
 import { Server } from "http";
 import { Socket } from "socket.io";
+import express from 'express';
 
 // Server code for dispatch socket
 const data : data = {}
+
+const router = express.Router();
 
 function generateRandomString() {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -154,4 +157,12 @@ const socketIO = (server : Server) => {
     });
 };
 
-module.exports = socketIO;
+router.get('/get', async (req, res) => {
+    const roomid = req.query.roomid
+    if (!roomid) {res.status(400).send('bad request'); return}
+    const room : room = data['ROOM_' + req.query.roomid]
+    if (!room) {res.status(404).send('room not found'); return}
+    res.send(room.data)
+});
+
+module.exports = {socket: socketIO, router: router};

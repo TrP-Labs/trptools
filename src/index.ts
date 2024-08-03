@@ -40,8 +40,9 @@ app.use('/auth', require(__dirname + '/serverModules/auth.js'));
 app.use('/articles', require(__dirname + '/serverModules/articles.js'));
 app.use('/profiles', require(__dirname + '/serverModules/profiles.js'));
 
-const socketIO = require(__dirname + '/serverModules/dispatchSocket.js');
-socketIO(server);
+const dispatch = require(__dirname + '/serverModules/dispatchSocket.js');
+app.use('/dispatch', dispatch.router);
+dispatch.socket(server);
 
 // 404 Handler - This must come last
 app.use(function(req, res) {
