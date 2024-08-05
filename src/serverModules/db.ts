@@ -90,6 +90,17 @@ async function getGroupById(id : string) { // Return profile by the userid
   return query
 }
 
+async function createGroupId(id : string) { // Create a new group
+  const query = await client.db(process.env.DB_ID).collection('groups').insertOne({
+    id: id,
+    staff: [{role: 255, color: "#753a83"}],
+    routes: [],
+    shifts: []
+  });
+
+  return query
+}
+
 async function createArticle(info : baseArticleObject) {
   const count : number = await client.db(process.env.DB_ID).collection('articles').countDocuments();
   const id = (count + 1).toString()
@@ -177,5 +188,6 @@ module.exports = {
   deleteArticle,
   editArticle,
   getUserById,
-  getGroupById
+  getGroupById,
+  createGroupId
 };

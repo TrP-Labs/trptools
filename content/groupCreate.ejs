@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Create TrP Tools Group</title>
+
+    <link rel="stylesheet" type="text/css" href="/public/stylesheets/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="icon" type="image/png" href="/public/favicon.ico">
+
+    <style>
+        a {
+            text-decoration: none;
+        }
+
+        .centerdiv {
+            display: block;
+            width: 40%;
+            margin: auto;
+            margin-top: 25px;
+            text-align: center;
+            background-color: #3a3a3a;
+            color: white;
+            padding: 15px;
+            border-radius: 30px;
+        }
+    </style>
+
+    <script src="/public/scripts/universalUtils.js"></script>
+</head>
+
+<body>
+    <div class="topnavholder">
+        <div class="topnav">
+            <a href="/">Tools</a>
+            <a class="active" href="/articles/about">About</a>
+            <a href="https://github.com/Ticko-Grey/trptools">Open Source</a>
+        </div>
+
+        <div class="topnav nav-right">
+            <a id="loginAccount" href="/auth/login">Login</a>
+        </div>
+    </div>
+
+    <div class="centerdiv">
+        <h2 style="display: inline; font-size: 50px; padding-left: 25px;">Create <%=groupName%> group on TrP Tools</h2>
+        <br>
+        <button class="inputbutton" style="background-color: #4CAF50; width: 200px; margin-top: 50px;" onclick="create()">Create</button>
+    </div>
+</body>
+
+<script>
+    const id = <%-id%>
+
+    async function create() {
+        const grouprespone = await fetch('/groups/' + id + '/create', {
+            method: "POST",
+        })
+
+        window.location.reload()
+    }
+</script>
+
+</html>

@@ -17,14 +17,20 @@ router.get('/:id', async (req, res) => {
 
     // validate group
     const group = await db.getGroupById(req.params.id)
+    const robloxGroup = await noblox.getGroup(NumId)
+    const loggedInUser = await db.getId(req.cookies.token)
     if (!group) {
-        res.sendFile(rootDir + "/content/404-group.html");
-        return;
+        if (robloxGroup && loggedInUser && robloxGroup.owner.userId == loggedInUser.id) {
+            res.redirect(`/groups/${StringId}/create`)
+            return
+        } else {
+            res.sendFile(rootDir + "/content/404-group.html");
+            return;
+        }
     }
 
     // collect group data
     const logo = await noblox.getLogo(NumId, "420x420")
-    const name = await noblox.getGroup(NumId)
 
     let staff : Array<any> = []
     for (let roleDB of group.staff) {
@@ -53,11 +59,61 @@ router.get('/:id', async (req, res) => {
 
     // return group object
     res.render('group', {
-        groupName: name.name,
+        groupName: robloxGroup.name,
         imageUrl: logo,
         staff : staff || [],
         routes : group.routes || []
     })
+})
+
+router.get('/:id/create', async (req, res) => {
+    // validate input
+    const StringId : string = req.params.id
+    const NumId : number = Number(StringId)
+    if (!NumId) {
+        res.sendFile(rootDir + "/content/404-group.html");
+        return;
+    }
+
+    // validate group
+    const group = await db.getGroupById(req.params.id)
+    if (group) {
+        res.redirect("/groups/" + StringId);
+        return;
+    }
+
+    // collect group data
+    const name = await noblox.getGroup(NumId)
+
+    // return group object
+    res.render('groupCreate', {
+        groupName: name.name,
+        id : StringId
+    })
+})
+
+router.post('/:id/create', async (req, res) => {
+    // validate input
+    const StringId : string = req.params.id
+    const NumId : number = Number(StringId)
+    if (!NumId) {
+        res.sendFile(rootDir + "/content/404-group.html");
+        return;
+    }
+
+    const group = await db.getGroupById(req.params.id)
+    const robloxGroup = await noblox.getGroup(NumId)
+    const loggedInUser = await db.getId(req.cookies.token)
+    if (group || !robloxGroup) {
+        res.status(400).send('400 bad request')
+    }
+    if (loggedInUser && robloxGroup.owner.userId == loggedInUser.id) {
+        db.createGroupId(StringId)
+        res.status(200).send('200 group created')
+    } else {
+        res.status(403).send('403 forbidden')
+    }
+
 })
 
 module.exports = router;
