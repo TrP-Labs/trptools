@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>TrP Tools Profile</title>
+    <meta content='<%- groupName %>' property="og:title" />
+    <meta content="Check out <%- groupName %>'s page and many more on trptools.com." property="og:description" />
+    <meta name="og:image" itemprop="image" content='<%- imageUrl %>'>
+
+    <link rel="stylesheet" type="text/css" href="/public/stylesheets/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="icon" type="image/png" href="/public/favicon.ico">
+
+    <style>
+        a {
+            text-decoration: none;
+        }
+
+        .centerdiv {
+            display: block;
+            margin: auto;
+            margin-bottom: 25px;
+            margin-top: 25px;
+            /*text-align: center;*/
+            width: 80%;
+            height: auto;
+            background-color: #3a3a3a;
+            color: white;
+            padding: 15px;
+            border-radius: 30px;
+            position: relative;
+        }
+
+        pre {
+            position: relative;
+            margin: 5px 0;
+            white-space: pre-wrap;
+        }
+
+        pre button {
+            position: absolute;
+            right: 0px;
+            border: none;
+            opacity: 75%;
+        }
+
+        code {
+            background-color: rgb(202, 202, 202);
+            padding: 5px;
+        }
+
+        pre code {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+            word-wrap: break-word;
+            word-break: break-all;
+            height: auto;
+        }
+
+        .profilepicture {
+            width: 25px;
+            height: auto;
+            border-radius: 100%;
+            padding-bottom: 0px;
+        }
+
+        hr {
+            border: 0px;
+            border-top: 3px solid #bbb;
+        }
+
+        h1, h2, h3 {
+            display: inline-block;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+
+        
+        h1:target, h2:target, h3:target {
+            background-color: rgba(255, 255, 0, 0.308);
+            border-radius: 10px;
+            padding: 5px;
+            transition-duration: 1s;
+        }
+
+        .linkanchor {
+            padding-left: 10px;
+            cursor: pointer;
+            display: inline-block;
+            user-select: none;
+            transition-duration: 100ms;
+        }
+
+        .linkanchor:hover {
+            color: rgb(144, 145, 179);
+        }
+
+        .linkanchor:active {
+            transform: scale(0.8);
+        }
+
+        .adminActions {
+            position: absolute;
+            right: 0px;
+        }
+
+        .tag {
+            background-color: #585858;
+            border-radius: 25px;
+            padding: 10px;
+            margin-right: 5px;
+        }
+
+        .routeicon {
+            border-radius: 100%;
+            background-color: white;
+            text-decoration: none;
+            cursor: pointer;
+            color: black;
+            padding: 15px;
+            border: 10px solid;
+            text-align: center;
+            font-size: 3em;
+            font-weight: bold;
+            margin-right: 25px;
+        }
+
+        .frontbox {
+            background-color: #4b4b4b;
+            max-width: none;
+            word-wrap: normal;
+            margin-right: 10px;
+        }
+
+        .frontbox h1 {
+            max-width: none;
+        }
+
+        .staffBox {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 5px;
+            cursor: pointer;
+            transition-duration: 0.5s;
+            width: 125px;
+            color: white;
+        }
+
+        .staffBox:hover {
+            background-color: rgb(189, 189, 189) !important; 
+        }
+
+        .staffDiv {
+            display: flex;
+            flex-direction: row;
+            margin-right: 15px;
+            border-radius: 25px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .staffDiv h2 {
+            display: block;
+        }
+    </style>
+
+    <script src="/public/scripts/universalUtils.js"></script>
+</head>
+
+<body>
+    <div class="topnavholder">
+        <div class="topnav">
+            <a href="/">Tools</a>
+            <a class="active" href="/articles/about">About</a>
+            <a href="https://github.com/Ticko-Grey/trptools">Open Source</a>
+        </div>
+
+        <div class="topnav nav-right">
+            <a id="loginAccount" href="/auth/login">Login</a>
+        </div>
+    </div>
+
+    <div class="centerdiv">
+        <div style="display: flex; align-items: center;">
+            <img style="width: 250px; height: auto; background-color: rgb(77, 77, 77); padding: 0px;" src="<%- imageUrl %>">
+            <h1 style="display: inline; font-size: 50px; padding-left: 25px;"><%-groupName%></h1>
+
+            <div style="margin-left: auto; display: flex; flex-direction: column;">
+                <button class="inputbutton" style="background-color: #4b4b4b; width: 200px;" onclick="viewOnRoblox()">View on roblox</button>
+                <button id="edit" class="inputbutton" style="display: none; background-color: #4b4b4b; width: 200px;" onclick="editProfile()">Edit</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="centerdiv" id="staffdisplayholder">
+        <h1> Staff</h1>
+        <div style="display: flex; flex-wrap: no-wrap; width: 100%; overflow-x: auto; overflow: auto;" id="staffdisplay">
+        </div>
+    </div>
+
+    <div class="centerdiv" id="routedisplayholder">
+        <h1> Custom Routes</h1>
+        <div style="display: flex; flex-wrap: wrap; width: 100%;" id="routedisplay">
+        </div>
+    </div>
+
+    <div class="centerdiv" id="articledisplay" style="display: none;">
+        <h1> Articles</h1>
+        <div style="display: flex; flex-direction: row; overflow-x: scroll; width: 100%;" id="bottomboxholder">
+
+        </div>
+    </div>
+</body>
+
+<script>
+    let staff = <%- JSON.stringify(staff) %>;
+    let routes = <%- JSON.stringify(routes) %>;
+
+    const sd = document.getElementById('staffdisplay')
+    if (staff && staff.length >= 1) {
+        staff.forEach((rank) => {
+            const staffDivHolder = document.createElement('div')
+            staffDivHolder.style.whiteSpace = 'nowrap'
+            staffDivHolder.innerHTML = `
+                <h2>${rank.name}</h1>
+            `
+
+            const staffDiv = document.createElement('div')
+            staffDiv.className = 'staffDiv'
+            staffDiv.style.backgroundColor = rank.color
+            staffDivHolder.appendChild(staffDiv)
+            sd.appendChild(staffDivHolder)
+
+            rank.members.forEach((member, index, array) => {
+                const div = document.createElement('a')
+                staffDiv.appendChild(div)
+
+                div.href = `https://trptools.com/profiles/${member.id}`
+                div.className = 'staffBox'
+
+                div.innerHTML = `
+                    <img height="100" width="100" src="${member.image}">
+                    <span>${member.username}</span>
+                `
+            })
+        })
+    } else {
+        const sdd = document.getElementById('staffdisplayholder')
+        sdd.style.display = "none";
+    }
+    
+    const rd = document.getElementById('routedisplay')
+    if (routes && routes.length >= 1) {
+        routes.forEach((route) => {
+            const elemn = document.createElement('a')
+
+            elemn.innerHTML = route.name
+            elemn.href = route.url
+            elemn.style.borderColor = route.color
+            elemn.className = 'routeicon'
+
+            rd.appendChild(elemn)
+        })
+    } else {
+        const rdd = document.getElementById('routedisplayholder')
+        rdd.style.display = "none";
+    }
+</script>
+
+</html>

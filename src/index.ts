@@ -39,6 +39,7 @@ app.use('/proxy', require(__dirname + '/serverModules/proxy.js'));
 app.use('/auth', require(__dirname + '/serverModules/auth.js'));
 app.use('/articles', require(__dirname + '/serverModules/articles.js'));
 app.use('/profiles', require(__dirname + '/serverModules/profiles.js'));
+app.use('/groups', require(__dirname + '/serverModules/groups.js'));
 
 const dispatch = require(__dirname + '/serverModules/dispatchSocket.js');
 app.use('/dispatch', dispatch.router);
