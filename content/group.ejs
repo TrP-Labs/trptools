@@ -206,7 +206,14 @@
 
     <div class="centerdiv" id="routedisplayholder">
         <h1> Custom Routes</h1>
-        <div style="display: flex; flex-wrap: wrap; width: 100%;" id="routedisplay">
+        <div style="display: flex; flex-wrap: wrap; width: 100%; overflow-x: auto; overflow: auto" id="routedisplay">
+        </div>
+    </div>
+
+    <div class="centerdiv" id="shiftdisplayholder">
+        <h1> Shifts</h1>
+        <div style="display: flex; flex-direction: row; width: 100%; overflow-x: auto; overflow: auto;" id="shiftdisplay">
+
         </div>
     </div>
 
@@ -219,8 +226,65 @@
 </body>
 
 <script>
+    function timeAgo(date) {
+        const now = new Date();
+        const seconds = Math.floor((now - date) / 1000);
+
+        const intervals = {
+            year: 31536000,
+            month: 2592000,
+            week: 604800,
+            day: 86400,
+            hour: 3600,
+            minute: 60,
+            second: 1,
+        };
+
+        const isFuture = seconds < 0;
+        const secondsAbs = Math.abs(seconds);
+
+        for (const [unit, value] of Object.entries(intervals)) {
+            const intervalCount = Math.floor(secondsAbs / value);
+            if (intervalCount >= 1) {
+                const suffix = isFuture ? "in " : "";
+                const prefix = isFuture ? "" : " ago";
+                return `${suffix}${intervalCount} ${unit}${intervalCount !== 1 ? 's' : ''}${prefix}`;
+            }
+        }
+
+        return "just now";
+    }
+
+    function getShiftTime(shiftObject, offset) {
+        const currentDate = new Date()
+
+        while (true) {
+            if (currentDate.getUTCDay() != shiftObject.dayOfWeek) {
+                currentDate.setUTCDate(currentDate.getUTCDate() + 1)
+            } else {
+                break
+            }
+        }
+
+        currentDate.setUTCHours(shiftObject.timeUTC.split(':')[0])
+        currentDate.setUTCMinutes(shiftObject.timeUTC.split(':')[1])
+
+        // check if the shift was hosted more than 30 minutes ago, if so return a recursive function where the offset is by 1 day (to get the next occurance of it)
+        const timestamp = Math.floor(currentDate.getTime() / 1000)
+        const distance = timestamp - Math.floor(new Date().getTime() / 1000)
+
+        if (distance != Math.abs(distance)) {
+            if (Math.abs(distance) > 1800) {
+                return getShiftTime(shiftObject, 1) 
+            }
+        }
+
+        return currentDate
+    }
+
     let staff = <%- JSON.stringify(staff) %>;
     let routes = <%- JSON.stringify(routes) %>;
+    let shifts = <%- JSON.stringify(shifts) %>;
 
     const sd = document.getElementById('staffdisplay')
     if (staff && staff.length >= 1) {
@@ -269,6 +333,30 @@
         })
     } else {
         const rdd = document.getElementById('routedisplayholder')
+        rdd.style.display = "none";
+    }
+
+    const shd = document.getElementById('shiftdisplay')
+    if (shifts && shifts.length >= 1) {
+        shifts.forEach((shift) => {
+            const element = document.createElement('a')
+
+            const dateObject = getShiftTime(shift)
+            const timestamp = timeAgo(dateObject)
+            data = `
+                <a href="${shift.url}" style="order: 1; flex-shrink: 0;">
+                    <div class="frontbox">
+                        <h1 style="color: white;">${shift.name}</h1>
+                        <p style="color: white;">Hosted ${timestamp}</p>
+                    </div>
+                </a>
+            `
+
+            element.innerHTML = data
+            shd.appendChild(element)
+        })
+    } else {
+        const rdd = document.getElementById('shiftdisplayholder')
         rdd.style.display = "none";
     }
 </script>

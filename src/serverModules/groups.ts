@@ -62,7 +62,8 @@ router.get('/:id', async (req, res) => {
         groupName: robloxGroup.name,
         imageUrl: logo,
         staff : staff || [],
-        routes : group.routes || []
+        routes : group.routes || [],
+        shifts : group.shifts || []
     })
 })
 
