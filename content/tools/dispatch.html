@@ -31,7 +31,9 @@
             // instant connector
             const urlParams = new URLSearchParams(window.location.search);
             const roomId = urlParams.get('roomid');
+            console.log('loading page...')
             if (roomId) {
+                console.log('roomId to connect to: ' + roomId)
                 window.location = 'https://trptools.com/tools/dispatch'
                 connectRoom(roomId)
             } 
