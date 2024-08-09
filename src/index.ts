@@ -42,8 +42,7 @@ app.use('/profiles', require(__dirname + '/serverModules/profiles.js'));
 
 const dispatch = require(__dirname + '/serverModules/dispatchSocket.js');
 app.use('/dispatch', dispatch.router);
-dispatch.socket(server);
-
+dispatch.socketIO(server);
 // 404 Handler - This must come last
 app.use(function(req, res) {
     res.status(404).sendFile(rootDir + '/content/404.html');

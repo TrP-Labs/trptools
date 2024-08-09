@@ -28,3 +28,9 @@
     vertical-align: middle;
     padding: 3px;
   }
+
+.linebutton {
+  padding: 0px;
+  margin: 0px;
+  width: 80px;
+}

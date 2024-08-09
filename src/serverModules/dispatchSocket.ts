@@ -1,11 +1,38 @@
 import { Server } from "http";
 import { Socket } from "socket.io";
 import express from 'express';
+import path from 'path';
 
+const rootDir : string = path.resolve(__dirname, '../..');
 // Server code for dispatch socket
 const data : data = {}
 
 const router = express.Router();
+
+// dispatch api stuff
+
+router.get('/get', async (req, res) => {
+    const roomid = req.query.roomid
+    if (!roomid) {res.status(400).send('bad request'); return}
+    const room : room = data['ROOM_' + req.query.roomid]
+    if (!room) {res.status(404).send('room not found'); return}
+    res.send(room.data)
+});
+
+router.get('/link', async (req, res) => {
+    const roomid = req.query.roomid
+    if (!roomid) {
+        res.sendFile(path.join(rootDir, 'content/404.html'))
+        return
+    }
+    const room : room = data['ROOM_' + req.query.roomid]
+    if (!room) {
+        res.redirect('https://trptools.com/tools/dispatch')
+    }
+    res.sendFile(path.join(rootDir, 'content/tools/dispatch.html'))
+});
+
+// socket stuff
 
 function generateRandomString() {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -157,12 +184,7 @@ const socketIO = (server : Server) => {
     });
 };
 
-router.get('/get', async (req, res) => {
-    const roomid = req.query.roomid
-    if (!roomid) {res.status(400).send('bad request'); return}
-    const room : room = data['ROOM_' + req.query.roomid]
-    if (!room) {res.status(404).send('room not found'); return}
-    res.send(room.data)
-});
-
-module.exports = {socket: socketIO, router: router};
+module.exports = {
+    router,
+    socketIO
+};

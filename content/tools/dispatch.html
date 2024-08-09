@@ -22,6 +22,20 @@
         <meta property="og:description" content="TrP Tools is an open source web service which aims to provide easy to use tools to the TrP community"/>
         <meta property="og:url" content="https://trptools.tickogrey.com"/>
         <meta property="og:image" content="/public/icon.png"/>
+
+        <script>
+            function copyUrl() {
+                navigator.clipboard.writeText('https://trptools.com/dispatch/link?roomid=' + currentsocket.roomId)
+            }
+
+            // instant connector
+            const urlParams = new URLSearchParams(window.location.search);
+            const roomId = urlParams.get('roomid');
+            if (roomId) {
+                window.location = 'https://trptools.com/tools/dispatch'
+                connectRoom(roomId)
+            } 
+        </script>
     </head>
 
     <body>
@@ -112,7 +126,8 @@
             </div>
 
             <div class="network" style="max-width: 50%; margin-left: auto; margin-right: 7px; display: none;">
-                <span class="connectiontype">Master</span>
+                <button class="inputbutton linebutton" style="background-color: #be5575;" onclick="copyUrl()">Copy url</button>
+                | <span class="connectiontype">Master</span>
                 | <span class="connectionlatency"></span>
                 | <span class="connectionstatus"></span>
                 | <span class="connected">1 Connected</span>
